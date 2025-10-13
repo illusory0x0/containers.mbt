@@ -9,8 +9,16 @@ package "illusory0x0/containers/graphviz"
 pub(all) struct Digraph {
   nodes : Array[Node]
   edges : Array[Edge]
+  rankdir : Direction
 }
 impl Show for Digraph
+
+pub(all) enum Direction {
+  LeftToRight
+  TopToBottom
+  RightToLeft
+  BottomToTop
+}
 
 pub(all) struct Edge {
   from : Int
@@ -34,6 +42,12 @@ pub(all) struct NodePayloadTree {
   children : Array[NodePayloadTree]
 }
 fn NodePayloadTree::to_digraph(Self) -> Digraph
+
+pub(all) struct Sequence {
+  contents : Array[String]
+  rankdir : Direction
+}
+fn Sequence::to_digraph(Self) -> Digraph
 
 // Type aliases
 

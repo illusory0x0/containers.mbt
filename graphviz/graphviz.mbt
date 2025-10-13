@@ -12,14 +12,29 @@ pub(all) struct Node {
 }
 
 ///|
+pub(all) enum Direction {
+  LeftToRight
+  TopToBottom
+  RightToLeft
+  BottomToTop
+}
+
+///|
 pub(all) struct Digraph {
   nodes : Array[Node]
   edges : Array[Edge]
+  rankdir : Direction
 }
 
 ///|
 pub impl Show for Digraph with output(self, logger) {
   logger.write_string("\ndigraph {\n")
+  match self.rankdir {
+    LeftToRight => logger.write_string("rankdir=LR;\n")
+    TopToBottom => logger.write_string("rankdir=TB;\n")
+    RightToLeft => logger.write_string("rankdir=RL;\n")
+    BottomToTop => logger.write_string("rankdir=BT;\n")
+  }
   logger.write_string("node [shape = circle; style = filled;];\n")
   for edge in self.edges {
     logger.write_object(edge.from)
@@ -50,6 +65,25 @@ pub(all) struct NodePayloadTree {
 }
 
 ///|
+pub(all) struct Sequence {
+  contents : Array[String]
+  rankdir : Direction
+}
+
+///|
+pub fn Sequence::to_digraph(self : Sequence) -> Digraph {
+  let edges = []
+  let nodes = []
+  for i = 0; i < self.contents.length(); i = i + 1 {
+    nodes.push(Node::{ id: i + 1, label: Some(self.contents[i]) })
+    if i > 0 {
+      edges.push(Edge::{ from: i, to: i + 1, label: None })
+    }
+  }
+  Digraph::{ edges, nodes, rankdir: self.rankdir }
+}
+
+///|
 pub fn LeafPayloadTree::to_digraph(self : LeafPayloadTree) -> Digraph {
   let edges = []
   let nodes = []
@@ -74,7 +108,7 @@ pub fn LeafPayloadTree::to_digraph(self : LeafPayloadTree) -> Digraph {
   }
 
   dfs(self) |> ignore
-  Digraph::{ edges, nodes }
+  Digraph::{ edges, nodes, rankdir: LeftToRight }
 }
 
 ///|
@@ -94,5 +128,5 @@ pub fn NodePayloadTree::to_digraph(self : NodePayloadTree) -> Digraph {
   }
 
   dfs(self) |> ignore
-  Digraph::{ edges, nodes }
+  Digraph::{ edges, nodes, rankdir: LeftToRight }
 }
