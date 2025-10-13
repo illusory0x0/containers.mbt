@@ -1,0 +1,24 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/tsil"
+
+import(
+  "illusory0x0/containers/graphviz"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Tsil[A] {
+  Lin
+  Snoc(Tsil[A], A)
+}
+fn[A, B] Tsil::fold_left(Self[A], B, (B, A) -> B) -> B
+fn[A, B] Tsil::fold_right(Self[A], B, (B, A) -> B) -> B
+fn[A : Show] Tsil::to_sequence(Self[A]) -> @graphviz.Sequence
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/vector"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Vector[A]
+fn[A] Vector::length(Self[A]) -> Int
+fn[A] Vector::make(Int, A) -> Self[A]
+fn[A] Vector::makei(Int, (Int) -> A) -> Self[A]
+fn[A] Vector::op_get(Self[A], Int) -> A
+fn[A] Vector::update(Self[A], (FixedArray[A]) -> Unit) -> Self[A]
+
+// Type aliases
+
+// Traits
+
