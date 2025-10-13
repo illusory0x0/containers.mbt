@@ -1,0 +1,41 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/graphviz"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Digraph {
+  nodes : Array[Node]
+  edges : Array[Edge]
+}
+impl Show for Digraph
+
+pub(all) struct Edge {
+  from : Int
+  to : Int
+  label : String?
+}
+
+pub(all) enum LeafPayloadTree {
+  Leaf(String)
+  Children(Array[LeafPayloadTree])
+}
+fn LeafPayloadTree::to_digraph(Self) -> Digraph
+
+pub(all) struct Node {
+  id : Int
+  label : String?
+}
+
+pub(all) struct NodePayloadTree {
+  label : String
+  children : Array[NodePayloadTree]
+}
+fn NodePayloadTree::to_digraph(Self) -> Digraph
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/finger_tree"
+
+// Values
+
+// Errors
+
+// Types and methods
+type FingerTree[A]
+fn[A] FingerTree::concat(Self[A], Self[A]) -> Self[A]
+fn[A] FingerTree::cons(A, Self[A]) -> Self[A]
+fn[A, B] FingerTree::fold_left(Self[A], B, (B, A) -> B) -> B
+fn[A] FingerTree::snoc(Self[A], A) -> Self[A]
+
+// Type aliases
+
+// Traits
+
