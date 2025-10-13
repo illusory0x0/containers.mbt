@@ -72,7 +72,6 @@ fn[A] Tree::node_aux2(left : Tree[A], right : Tree[A]) -> Tree[A] {
   }
 
   match (left, right) {
-
     (Deep(left), Deep(right)) => {
       let leaf = Tree::Single(_)
       match (left, right) {
@@ -149,7 +148,6 @@ fn[A] Tree::node_aux2(left : Tree[A], right : Tree[A]) -> Tree[A] {
         }
       }
     }
-
     (DeepNode(left), DeepNode(right)) => {
       let leaf = Tree::SingleNode(_)
       match (left, right) {

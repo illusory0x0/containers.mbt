@@ -33,6 +33,7 @@ enum FingerTree[A] {
   Deep(Tree[A], FingerTree[A], Tree[A])
 }
 
+///|
 pub fn[A] FingerTree::empty() -> FingerTree[A] {
   FingerTree::Empty
 }

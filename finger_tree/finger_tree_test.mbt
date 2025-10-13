@@ -1,7 +1,8 @@
 ///|
 typealias @list.List
-typealias @finger_tree.FingerTree
 
+///|
+typealias @finger_tree.FingerTree
 
 ///|
 fn[A] FingerTree::to_list(self : FingerTree[A]) -> List[A] {
