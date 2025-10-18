@@ -33,3 +33,31 @@ test "snoc" (t : @test.T) {
   t.writeln(tree.to_node_payload_tree().to_digraph())
   t.snapshot(filename="two_three_four_snoc.dot")
 }
+
+///|
+test "blance: cons" {
+  let mut tree = Empty
+  let heights = []
+  for x in 0..=36 {
+    heights.push(tree.height())
+    tree = TwoThreeFourTree::cons(x, tree)
+  }
+  inspect(
+    heights,
+    content="[0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]",
+  )
+}
+
+///|
+test "blance: snoc" {
+  let mut tree = Empty
+  let heights = []
+  for x in 0..=36 {
+    heights.push(tree.height())
+    tree = TwoThreeFourTree::snoc(tree, x)
+  }
+  inspect(
+    heights,
+    content="[0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]",
+  )
+}
