@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/two_three_tree"
+
+import(
+  "illusory0x0/containers/graphviz"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+type Tree[A]
+fn[A] Tree::cons(A, Self[A]) -> Self[A]
+fn[A] Tree::empty() -> Self[A]
+fn[A : Show] Tree::output(Self[A], &Logger) -> Unit // from trait `Show`
+fn[A : ToJson] Tree::to_json(Self[A]) -> Json // from trait `ToJson`
+fn[A : Show] Tree::to_node_payload_tree(Self[A]) -> @graphviz.NodePayloadTree
+fn[A : Show] Tree::to_string(Self[A]) -> String // from trait `Show`
+impl[A : Show] Show for Tree[A]
+impl[A : ToJson] ToJson for Tree[A]
+
+// Type aliases
+
+// Traits
+
