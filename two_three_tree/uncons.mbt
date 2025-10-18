@@ -39,13 +39,13 @@ fn[A] TwoThreeTree::uncons_aux(xs : TwoThreeTree[A]) -> UnconsResult[A] {
 }
 
 ///|
-pub fn[A] TwoThreeTree::uncons(xs : TwoThreeTree[A]) -> (A, TwoThreeTree[A])? {
+pub fn[A] TwoThreeTree::uncons(xs : TwoThreeTree[A]) -> ViewLeft[A] {
   match xs {
-    Empty => None
+    Empty => Nil
     _ as xs =>
       match TwoThreeTree::uncons_aux(xs) {
-        Keep(x, xs) => Some((x, xs))
-        Underflow(x, xs) => Some((x, xs))
+        Keep(x, xs) => Cons(x, xs)
+        Underflow(x, xs) => Cons(x, xs)
       }
   }
 }

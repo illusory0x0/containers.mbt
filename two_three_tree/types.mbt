@@ -9,3 +9,9 @@ enum TwoThreeTree[A] {
 pub fn[A] TwoThreeTree::empty() -> TwoThreeTree[A] {
   Empty
 }
+
+///|
+pub enum ViewLeft[A] {
+  Nil
+  Cons(A, TwoThreeTree[A])
+}
