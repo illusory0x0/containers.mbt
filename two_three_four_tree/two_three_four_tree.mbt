@@ -7,7 +7,7 @@ fn[A] TwoThreeFourTree::to_list(tree : TwoThreeFourTree[A]) -> List[A] {
 }
 
 ///|
-test (t : @test.T) {
+test "cons" (t : @test.T) {
   let mut tree = Empty
   for x in 0..<32 {
     tree = TwoThreeFourTree::cons(x, tree)
@@ -21,7 +21,7 @@ test (t : @test.T) {
 }
 
 ///|
-test (t : @test.T) {
+test "snoc" (t : @test.T) {
   let mut tree = Empty
   for x in 0..<32 {
     tree = TwoThreeFourTree::snoc(tree, x)
