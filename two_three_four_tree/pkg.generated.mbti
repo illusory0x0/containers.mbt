@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/two_three_four_tree"
+
+import(
+  "illusory0x0/containers/graphviz"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+type TwoThreeFourTree[A]
+fn[A, B] TwoThreeFourTree::fold_left(Self[A], B, (B, A) -> B) -> B
+fn[A, B] TwoThreeFourTree::fold_right(Self[A], B, (B, A) -> B) -> B
+fn[A : Show] TwoThreeFourTree::to_node_payload_tree(Self[A]) -> @graphviz.NodePayloadTree
+
+// Type aliases
+
+// Traits
+
