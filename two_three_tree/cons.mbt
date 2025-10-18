@@ -1,11 +1,11 @@
 ///|
-fn[A] Tree::cons_aux(x : A, xs : Tree[A]) -> Tree[A] {
+fn[A] TwoThreeTree::cons_aux(x : A, xs : TwoThreeTree[A]) -> TwoThreeTree[A] {
   match xs {
     Two(Empty, y, Empty) => Three(Empty, x, Empty, y, Empty)
     Three(Empty, y, Empty, z, Empty) =>
       Four(Empty, x, Empty, y, Empty, z, Empty)
     Two(Two(_) | Three(_) as left, z, right) =>
-      match Tree::cons_aux(x, left) {
+      match TwoThreeTree::cons_aux(x, left) {
         Four(left, w, m1, x, m2, y, m3) => {
           // number is the payload
           //
@@ -26,7 +26,7 @@ fn[A] Tree::cons_aux(x : A, xs : Tree[A]) -> Tree[A] {
         _ as left => Two(left, z, right)
       }
     Three(Two(_) | Three(_) as left, y, middle, z, right) =>
-      match Tree::cons_aux(x, left) {
+      match TwoThreeTree::cons_aux(x, left) {
         Four(left, v, m1, w, m2, x, m3) =>
           // number is the payload
           //
@@ -50,8 +50,8 @@ fn[A] Tree::cons_aux(x : A, xs : Tree[A]) -> Tree[A] {
 }
 
 ///|
-pub fn[A] Tree::cons(x : A, xs : Tree[A]) -> Tree[A] {
-  match Tree::cons_aux(x, xs) {
+pub fn[A] TwoThreeTree::cons(x : A, xs : TwoThreeTree[A]) -> TwoThreeTree[A] {
+  match TwoThreeTree::cons_aux(x, xs) {
     Four(left, x, m1, y, m2, z, right) =>
       Two(Two(left, x, m1), y, Two(m2, z, right))
     _ as tree => tree

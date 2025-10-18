@@ -1,12 +1,20 @@
 ///|
-enum Tree[A] {
+enum TwoThreeTree[A] {
   Empty
-  Two(Tree[A], A, Tree[A])
-  Three(Tree[A], A, Tree[A], A, Tree[A])
-  Four(Tree[A], A, Tree[A], A, Tree[A], A, Tree[A])
+  Two(TwoThreeTree[A], A, TwoThreeTree[A])
+  Three(TwoThreeTree[A], A, TwoThreeTree[A], A, TwoThreeTree[A])
+  Four(
+    TwoThreeTree[A],
+    A,
+    TwoThreeTree[A],
+    A,
+    TwoThreeTree[A],
+    A,
+    TwoThreeTree[A]
+  )
 } derive(ToJson, Show)
 
 ///|
-pub fn[A] Tree::empty() -> Tree[A] {
+pub fn[A] TwoThreeTree::empty() -> TwoThreeTree[A] {
   Empty
 }

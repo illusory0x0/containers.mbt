@@ -1,11 +1,11 @@
 ///|
-fn[A] Tree::snoc_aux(xs : Tree[A], x : A) -> Tree[A] {
+fn[A] TwoThreeTree::snoc_aux(xs : TwoThreeTree[A], x : A) -> TwoThreeTree[A] {
   match xs {
     Two(Empty, y, Empty) => Three(Empty, y, Empty, x, Empty)
     Three(Empty, y, Empty, z, Empty) =>
       Four(Empty, y, Empty, z, Empty, x, Empty)
     Two(left, z, Two(_) | Three(_) as right) =>
-      match Tree::snoc_aux(right, x) {
+      match TwoThreeTree::snoc_aux(right, x) {
         Four(m1, w, m2, x, m3, y, right) => {
           // number is the payload
           //
@@ -26,7 +26,7 @@ fn[A] Tree::snoc_aux(xs : Tree[A], x : A) -> Tree[A] {
         _ as right => Two(left, z, right)
       }
     Three(left, y, middle, z, Two(_) | Three(_) as right) =>
-      match Tree::snoc_aux(right, x) {
+      match TwoThreeTree::snoc_aux(right, x) {
         Four(m1, v, m2, w, m3, x, right) =>
           // number is the payload
           //
@@ -50,8 +50,8 @@ fn[A] Tree::snoc_aux(xs : Tree[A], x : A) -> Tree[A] {
 }
 
 ///|
-pub fn[A] Tree::snoc(xs : Tree[A], x : A) -> Tree[A] {
-  match Tree::snoc_aux(xs, x) {
+pub fn[A] TwoThreeTree::snoc(xs : TwoThreeTree[A], x : A) -> TwoThreeTree[A] {
+  match TwoThreeTree::snoc_aux(xs, x) {
     Four(left, x, m1, y, m2, z, right) =>
       Two(Two(left, x, m1), y, Two(m2, z, right))
     _ as tree => tree

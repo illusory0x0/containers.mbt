@@ -2,15 +2,15 @@
 typealias @list.List
 
 ///|
-fn[A] Tree::to_list(tree : Tree[A]) -> List[A] {
+fn[A] TwoThreeTree::to_list(tree : TwoThreeTree[A]) -> List[A] {
   tree.fold_left(@list.empty(), (acc, x) => @list.cons(x, acc))
 }
 
 ///|
 test (t : @test.T) {
-  let mut tree = Tree::empty()
+  let mut tree = TwoThreeTree::empty()
   for x in 1..=36 {
-    tree = Tree::cons(x, tree)
+    tree = TwoThreeTree::cons(x, tree)
   }
   inspect(
     tree.to_list(),
@@ -23,9 +23,9 @@ test (t : @test.T) {
 
 ///|
 test (t : @test.T) {
-  let mut tree = Tree::empty()
+  let mut tree = TwoThreeTree::empty()
   for x in 1..=36 {
-    tree = Tree::snoc(tree, x)
+    tree = TwoThreeTree::snoc(tree, x)
   }
   inspect(
     tree.to_list(),
