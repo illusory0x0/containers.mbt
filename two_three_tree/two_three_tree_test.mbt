@@ -7,7 +7,7 @@ fn[A] TwoThreeTree::to_list(tree : TwoThreeTree[A]) -> List[A] {
 }
 
 ///|
-test (t : @test.T) {
+test "cons" (t : @test.T) {
   let mut tree = TwoThreeTree::empty()
   for x in 1..=36 {
     tree = TwoThreeTree::cons(x, tree)
@@ -22,7 +22,7 @@ test (t : @test.T) {
 }
 
 ///|
-test (t : @test.T) {
+test "snoc" (t : @test.T) {
   let mut tree = TwoThreeTree::empty()
   for x in 1..=36 {
     tree = TwoThreeTree::snoc(tree, x)
@@ -37,11 +37,17 @@ test (t : @test.T) {
 }
 
 ///|
-test {
+test "blance: cons/uncons" {
   let mut tree = TwoThreeTree::empty()
+  let heights = []
   for x in 1..=36 {
+    heights.push(tree.height())
     tree = TwoThreeTree::cons(x, tree)
   }
+  inspect(
+    heights,
+    content="[0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5]",
+  )
   let heights = []
   for _ in 1..<36 {
     heights.push(tree.height())
@@ -55,29 +61,17 @@ test {
 }
 
 ///|
-test {
+test "blance: snoc/unsnoc" {
   let mut tree = TwoThreeTree::empty()
+  let height = []
   for x in 1..=36 {
-    tree = TwoThreeTree::cons(x, tree)
-  }
-  let heights = []
-  for _ in 1..<36 {
-    heights.push(tree.height())
-    guard TwoThreeTree::uncons(tree) is Cons(_, tree_) else { break }
-    tree = tree_
-  }
-  inspect(
-    heights,
-    content="[5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1]",
-  )
-}
-
-///|
-test {
-  let mut tree = TwoThreeTree::empty()
-  for x in 1..=36 {
+    height.push(tree.height())
     tree = TwoThreeTree::snoc(tree, x)
   }
+  inspect(
+    height,
+    content="[0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5]",
+  )
   let heights = []
   for _ in 1..<36 {
     heights.push(tree.height())
