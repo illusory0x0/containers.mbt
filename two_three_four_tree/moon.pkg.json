@@ -1,4 +1,3 @@
 {
-  "import": ["illusory0x0/containers/graphviz"],
-  "warn-list": "-29"
+  "import": ["illusory0x0/containers/graphviz"]
 }
