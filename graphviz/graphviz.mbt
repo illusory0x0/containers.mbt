@@ -108,7 +108,7 @@ pub fn LeafPayloadTree::to_digraph(self : LeafPayloadTree) -> Digraph {
   }
 
   dfs(self) |> ignore
-  Digraph::{ edges, nodes, rankdir: LeftToRight }
+  Digraph::{ edges, nodes, rankdir: TopToBottom }
 }
 
 ///|
@@ -128,5 +128,5 @@ pub fn NodePayloadTree::to_digraph(self : NodePayloadTree) -> Digraph {
   }
 
   dfs(self) |> ignore
-  Digraph::{ edges, nodes, rankdir: LeftToRight }
+  Digraph::{ edges, nodes, rankdir: TopToBottom }
 }

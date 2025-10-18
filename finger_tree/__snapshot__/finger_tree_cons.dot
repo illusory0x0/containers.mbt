@@ -1,5 +1,6 @@
 
 digraph {
+rankdir=TB;
 node [shape = circle; style = filled;];
 2->3;
 2->4;
