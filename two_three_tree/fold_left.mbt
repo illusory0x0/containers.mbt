@@ -18,6 +18,5 @@ pub fn[A, B] TwoThreeTree::fold_left(
       let acc4 = f(acc3, value2)
       TwoThreeTree::fold_left(right, acc4, f)
     }
-    Four(_) => panic()
   }
 }

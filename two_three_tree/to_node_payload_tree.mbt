@@ -17,13 +17,5 @@ pub fn[A : Show] TwoThreeTree::to_node_payload_tree(
           TwoThreeTree::to_node_payload_tree,
         ),
       }
-    Four(left, x, m1, y, m2, z, right) =>
-      {
-        label: Array::to_string([x, y, z]),
-        children: Array::map(
-          [left, m1, m2, right],
-          TwoThreeTree::to_node_payload_tree,
-        ),
-      }
   }
 }
