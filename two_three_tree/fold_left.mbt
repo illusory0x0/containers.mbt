@@ -18,14 +18,6 @@ pub fn[A, B] TwoThreeTree::fold_left(
       let acc4 = f(acc3, value2)
       TwoThreeTree::fold_left(right, acc4, f)
     }
-    Four(left, value1, m1, value2, m2, value3, right) => {
-      let acc1 = TwoThreeTree::fold_left(left, acc, f)
-      let acc2 = f(acc1, value1)
-      let acc3 = TwoThreeTree::fold_left(m1, acc2, f)
-      let acc4 = f(acc3, value2)
-      let acc5 = TwoThreeTree::fold_left(m2, acc4, f)
-      let acc6 = f(acc5, value3)
-      TwoThreeTree::fold_left(right, acc6, f)
-    }
+    Four(_) => panic()
   }
 }
