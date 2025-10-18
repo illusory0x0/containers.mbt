@@ -7,6 +7,6 @@ enum Tree[A] {
 } derive(ToJson, Show)
 
 ///|
-pub fn[A] Tree::emtpy() -> Tree[A] {
+pub fn[A] Tree::empty() -> Tree[A] {
   Empty
 }

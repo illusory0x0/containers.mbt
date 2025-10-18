@@ -1,6 +1,6 @@
 ///|
 test (t : @test.T) {
-  let mut tree = Tree::emtpy()
+  let mut tree = Tree::empty()
   for x in 1..=36 {
     tree = Tree::cons(x, tree)
   }
