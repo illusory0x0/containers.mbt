@@ -14,6 +14,7 @@ type Tree[A]
 fn[A] Tree::cons(A, Self[A]) -> Self[A]
 fn[A] Tree::empty() -> Self[A]
 fn[A : Show] Tree::output(Self[A], &Logger) -> Unit // from trait `Show`
+fn[A] Tree::snoc(Self[A], A) -> Self[A]
 fn[A : ToJson] Tree::to_json(Self[A]) -> Json // from trait `ToJson`
 fn[A : Show] Tree::to_node_payload_tree(Self[A]) -> @graphviz.NodePayloadTree
 fn[A : Show] Tree::to_string(Self[A]) -> String // from trait `Show`
