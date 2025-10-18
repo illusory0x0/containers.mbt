@@ -15,3 +15,9 @@ pub enum ViewLeft[A] {
   Nil
   Cons(A, TwoThreeTree[A])
 }
+
+///|
+pub enum ViewRight[A] {
+  Lin
+  Snoc(TwoThreeTree[A], A)
+}

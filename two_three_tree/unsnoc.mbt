@@ -1,10 +1,4 @@
 ///|
-pub enum ViewRight[A] {
-  Nil
-  Snoc(TwoThreeTree[A], A)
-} derive(Show)
-
-///|
 priv enum UnsnocResult[A] {
   Keep(TwoThreeTree[A], A)
   Underflow(TwoThreeTree[A], A)
@@ -47,7 +41,7 @@ fn[A] TwoThreeTree::unsnoc_aux(xs : TwoThreeTree[A]) -> UnsnocResult[A] {
 ///|
 pub fn[A] TwoThreeTree::unsnoc(xs : TwoThreeTree[A]) -> ViewRight[A] {
   match xs {
-    Empty => Nil
+    Empty => Lin
     _ as xs =>
       match TwoThreeTree::unsnoc_aux(xs) {
         Keep(xs, x) => Snoc(xs, x)

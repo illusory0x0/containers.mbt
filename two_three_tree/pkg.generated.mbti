@@ -33,12 +33,9 @@ pub enum ViewLeft[A] {
 }
 
 pub enum ViewRight[A] {
-  Nil
+  Lin
   Snoc(TwoThreeTree[A], A)
 }
-fn[A : Show] ViewRight::output(Self[A], &Logger) -> Unit // from trait `Show`
-fn[A : Show] ViewRight::to_string(Self[A]) -> String // from trait `Show`
-impl[A : Show] Show for ViewRight[A]
 
 // Type aliases
 
