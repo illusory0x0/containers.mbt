@@ -23,6 +23,7 @@ fn[A : ToJson] TwoThreeTree::to_json(Self[A]) -> Json // from trait `ToJson`
 fn[A : Show] TwoThreeTree::to_node_payload_tree(Self[A]) -> @graphviz.NodePayloadTree
 fn[A : Show] TwoThreeTree::to_string(Self[A]) -> String // from trait `Show`
 fn[A] TwoThreeTree::uncons(Self[A]) -> ViewLeft[A]
+fn[A] TwoThreeTree::unsnoc(Self[A]) -> ViewRight[A]
 impl[A : Show] Show for TwoThreeTree[A]
 impl[A : ToJson] ToJson for TwoThreeTree[A]
 
@@ -30,6 +31,14 @@ pub enum ViewLeft[A] {
   Nil
   Cons(A, TwoThreeTree[A])
 }
+
+pub enum ViewRight[A] {
+  Nil
+  Snoc(TwoThreeTree[A], A)
+}
+fn[A : Show] ViewRight::output(Self[A], &Logger) -> Unit // from trait `Show`
+fn[A : Show] ViewRight::to_string(Self[A]) -> String // from trait `Show`
+impl[A : Show] Show for ViewRight[A]
 
 // Type aliases
 
