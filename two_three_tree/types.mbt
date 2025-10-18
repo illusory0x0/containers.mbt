@@ -6,6 +6,7 @@ enum Tree[A] {
   Four(Tree[A], A, Tree[A], A, Tree[A], A, Tree[A])
 } derive(ToJson, Show)
 
+///|
 pub fn[A] Tree::emtpy() -> Tree[A] {
   Empty
 }

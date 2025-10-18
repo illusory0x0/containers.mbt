@@ -1,4 +1,3 @@
-
 ///|
 fn[A] Tree::cons_aux(x : A, xs : Tree[A]) -> Tree[A] {
   match xs {
