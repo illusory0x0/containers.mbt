@@ -83,6 +83,7 @@ fn[A] TwoThreeFourTree::uncons_aux(
 pub fn[A] TwoThreeFourTree::uncons(xs : TwoThreeFourTree[A]) -> ViewLeft[A] {
   match xs {
     Empty => Nil
+    Two(Empty, x, Empty) => Cons(x, Empty)
     Two(_) | Three(_) | Four(_) as tree => {
       let (a, rest) = TwoThreeFourTree::uncons_aux(tree)
       Cons(a, rest)
