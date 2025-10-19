@@ -82,3 +82,17 @@ test (t : @test.T) {
   t.writeln(tree.to_leaf_payload_tree().to_digraph())
   t.snapshot(filename="finger_tree_uncons.dot")
 }
+
+///|
+test (t : @test.T) {
+  let mut tree = FingerTree::empty()
+  for x in 0..<128 {
+    tree = FingerTree::snoc(tree, x)
+  }
+  for _ in 0..<32 {
+    guard FingerTree::unsnoc(tree) is Snoc(init, _) else { break }
+    tree = init
+  }
+  t.writeln(tree.to_leaf_payload_tree().to_digraph())
+  t.snapshot(filename="finger_tree_unsnoc.dot")
+}

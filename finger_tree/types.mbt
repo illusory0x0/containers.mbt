@@ -43,3 +43,9 @@ pub enum ViewLeft[A] {
   Nil
   Cons(A, FingerTree[A])
 }
+
+///|
+pub enum ViewRight[A] {
+  Nil
+  Snoc(FingerTree[A], A)
+}

@@ -19,10 +19,16 @@ fn[A, B] FingerTree::fold_right(Self[A], B, (B, A) -> B) -> B
 fn[A] FingerTree::snoc(Self[A], A) -> Self[A]
 fn[A : Show] FingerTree::to_leaf_payload_tree(Self[A]) -> @graphviz.LeafPayloadTree
 fn[A] FingerTree::uncons(Self[A]) -> ViewLeft[A]
+fn[A] FingerTree::unsnoc(Self[A]) -> ViewRight[A]
 
 pub enum ViewLeft[A] {
   Nil
   Cons(A, FingerTree[A])
+}
+
+pub enum ViewRight[A] {
+  Nil
+  Snoc(FingerTree[A], A)
 }
 
 // Type aliases
