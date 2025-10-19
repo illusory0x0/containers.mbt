@@ -11,9 +11,8 @@ fn[A] FingerTree::to_list(self : FingerTree[A]) -> List[A] {
 
 ///|
 test (t : @test.T) {
-  let xs = Array::makei(128, i => i + 1)
   let mut ft = FingerTree::empty()
-  for x in xs {
+  for x in 1..<129 {
     ft = FingerTree::cons(x, ft)
   }
   inspect(
@@ -26,9 +25,8 @@ test (t : @test.T) {
 
 ///|
 test (t : @test.T) {
-  let xs = Array::makei(128, i => i + 1)
   let mut ft = FingerTree::empty()
-  for x in xs {
+  for x in 1..<129 {
     ft = FingerTree::snoc(ft, x)
   }
   inspect(
@@ -41,10 +39,9 @@ test (t : @test.T) {
 
 ///|
 test {
-  let xs = Array::makei(10, i => i + 1)
   let mut ft = FingerTree::empty()
   let mut ft_rev = FingerTree::empty()
-  for x in xs {
+  for x in 1..<11 {
     ft = FingerTree::snoc(ft, x)
     ft_rev = FingerTree::cons(x, ft_rev)
   }
@@ -55,10 +52,9 @@ test {
 
 ///|
 test (t : @test.T) {
-  let xs = Array::makei(9, i => i + 1)
   let mut left = FingerTree::empty()
   let mut right = FingerTree::empty()
-  for x in xs {
+  for x in 1..<10 {
     left = FingerTree::snoc(left, x)
     right = FingerTree::cons(x, right)
   }
