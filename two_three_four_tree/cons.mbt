@@ -1,5 +1,5 @@
 ///|
-fn[A] TwoThreeFourTree::cons(
+pub fn[A] TwoThreeFourTree::cons(
   w : A,
   ws : TwoThreeFourTree[A],
 ) -> TwoThreeFourTree[A] {

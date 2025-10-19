@@ -8,7 +8,7 @@ priv enum UnconsResult[A] {
 fn[A] TwoThreeTree::uncons_aux(xs : TwoThreeTree[A]) -> UnconsResult[A] {
   match xs {
     Two(Empty, a, Empty) => Underflow(a, Empty)
-    Three(Empty, a, Empty, y, Empty) => Keep(a, Two(Empty, y, Empty))
+    Three(Empty, a, Empty, x, Empty) => Keep(a, Two(Empty, x, Empty))
     Two(left, x, right) =>
       match TwoThreeTree::uncons_aux(left) {
         Keep(a, left) => Keep(a, Two(left, x, right))

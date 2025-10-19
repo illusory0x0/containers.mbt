@@ -1,5 +1,5 @@
 ///|
-fn[A] TwoThreeFourTree::snoc(
+pub fn[A] TwoThreeFourTree::snoc(
   ws : TwoThreeFourTree[A],
   w : A,
 ) -> TwoThreeFourTree[A] {

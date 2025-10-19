@@ -13,3 +13,8 @@ enum TwoThreeFourTree[A] {
     TwoThreeFourTree[A]
   )
 }
+
+///|
+pub fn[A] TwoThreeFourTree::empty() -> TwoThreeFourTree[A] {
+  Empty
+}
