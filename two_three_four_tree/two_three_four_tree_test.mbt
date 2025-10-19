@@ -59,15 +59,25 @@ test "blance: cons/uncons" {
 }
 
 ///|
-test "blance: snoc" {
+test "blance: snoc/unsnoc" {
   let mut tree = TwoThreeFourTree::empty()
   let heights = []
-  for x in 0..=36 {
+  for x in 1..=36 {
     heights.push(tree.height())
     tree = TwoThreeFourTree::snoc(tree, x)
   }
   inspect(
     heights,
-    content="[0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]",
+    content="[0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]",
+  )
+  let heights = []
+  for _ in 1..=36 {
+    heights.push(tree.height())
+    guard TwoThreeFourTree::unsnoc(tree) is Snoc(tree_, _) else { break }
+    tree = tree_
+  }
+  inspect(
+    heights,
+    content="[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1]",
   )
 }
