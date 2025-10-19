@@ -17,15 +17,10 @@ fn[A] TwoThreeTree::empty() -> Self[A]
 fn[A, B] TwoThreeTree::fold_left(Self[A], B, (B, A) -> B) -> B
 fn[A, B] TwoThreeTree::fold_right(Self[A], B, (B, A) -> B) -> B
 fn[A] TwoThreeTree::height(Self[A]) -> Int raise Imbalance
-fn[A : Show] TwoThreeTree::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] TwoThreeTree::snoc(Self[A], A) -> Self[A]
-fn[A : ToJson] TwoThreeTree::to_json(Self[A]) -> Json // from trait `ToJson`
 fn[A : Show] TwoThreeTree::to_node_payload_tree(Self[A]) -> @graphviz.NodePayloadTree
-fn[A : Show] TwoThreeTree::to_string(Self[A]) -> String // from trait `Show`
 fn[A] TwoThreeTree::uncons(Self[A]) -> ViewLeft[A]
 fn[A] TwoThreeTree::unsnoc(Self[A]) -> ViewRight[A]
-impl[A : Show] Show for TwoThreeTree[A]
-impl[A : ToJson] ToJson for TwoThreeTree[A]
 
 pub enum ViewLeft[A] {
   Nil
