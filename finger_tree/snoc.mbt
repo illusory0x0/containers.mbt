@@ -21,21 +21,21 @@ fn[A] FingerTree::snoc_tree(
     (Empty, a) => FingerTree::Single(a)
     // case 2:
     (Single(Single(b)), Single(a)) =>
-      FingerTree::Deep(Deep(One(b)), Empty, Deep(One(a)))
+      FingerTree::Deep(Deep(One(b)), spine_val(Empty), Deep(One(a)))
     (Single(SingleNode(b)), SingleNode(a)) =>
-      FingerTree::Deep(DeepNode(One(b)), Empty, DeepNode(One(a)))
+      FingerTree::Deep(DeepNode(One(b)), spine_val(Empty), DeepNode(One(a)))
     // case 3:
     (Deep(pf, m, Deep(Four(e, d, c, b))), Single(a)) => {
       let prefix = pf
       let node3 : Tree[A] = SingleNode(Node3(Single(e), Single(d), Single(c)))
-      let middle = FingerTree::snoc_tree(m, node3)
+      let middle = spine(fn() { FingerTree::snoc_tree(m.force(), node3) })
       let suffix = Tree::Deep(Two(b, a))
       FingerTree::Deep(prefix, middle, suffix)
     }
     (Deep(pf, m, DeepNode(Four(e, d, c, b))), SingleNode(a)) => {
       let prefix = pf
       let node3 = SingleNode(Node3(SingleNode(e), SingleNode(d), SingleNode(c)))
-      let middle = FingerTree::snoc_tree(m, node3)
+      let middle = spine(fn() { FingerTree::snoc_tree(m.force(), node3) })
       let suffix = Tree::DeepNode(Two(b, a))
       FingerTree::Deep(prefix, middle, suffix)
     }

@@ -77,7 +77,7 @@ test (t : @test.T) {
   }
   for _ in 0..<32 {
     guard FingerTree::uncons(tree) is Cons(_, tl) else { break }
-    tree = tl
+    tree = tl.force()
   }
   t.writeln(tree.to_leaf_payload_tree().to_digraph())
   t.snapshot(filename="finger_tree_uncons.dot")
@@ -91,7 +91,7 @@ test (t : @test.T) {
   }
   for _ in 0..<32 {
     guard FingerTree::unsnoc(tree) is Snoc(init, _) else { break }
-    tree = init
+    tree = init.force()
   }
   t.writeln(tree.to_leaf_payload_tree().to_digraph())
   t.snapshot(filename="finger_tree_unsnoc.dot")

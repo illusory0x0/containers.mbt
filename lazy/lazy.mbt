@@ -65,11 +65,11 @@ pub fn[A, B] Lazy::bind(self : Lazy[A], f : (A) -> Lazy[B]) -> Lazy[B] {
 }
 
 ///|
-fn[A] Lazy::from_val(val : A) -> Lazy[A] {
+pub fn[A] Lazy::from_val(val : A) -> Lazy[A] {
   { repr: Value(val) }
 }
 
 ///|
-fn[A] Lazy::from_fun(fun : () -> A) -> Lazy[A] {
+pub fn[A] Lazy::from_fun(fun : () -> A) -> Lazy[A] {
   { repr: Thunk(fun) }
 }

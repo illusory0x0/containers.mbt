@@ -9,7 +9,7 @@ pub fn[A, B] FingerTree::fold_right(
     Single(t) => Tree::fold_right(t, acc, f)
     Deep(pr, m, sf) => {
       let acc1 = Tree::fold_right(sf, acc, f)
-      let acc2 = FingerTree::fold_right(m, acc1, f)
+      let acc2 = FingerTree::fold_right(m.force(), acc1, f)
       Tree::fold_right(pr, acc2, f)
     }
   }

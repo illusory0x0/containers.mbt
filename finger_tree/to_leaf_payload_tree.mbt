@@ -8,7 +8,7 @@ pub fn[A : Show] FingerTree::to_leaf_payload_tree(
     Deep(prefix, middle, suffix) =>
       Children([
         prefix.to_leaf_payload_tree(),
-        middle.to_leaf_payload_tree(),
+        middle.force().to_leaf_payload_tree(),
         suffix.to_leaf_payload_tree(),
       ])
   }

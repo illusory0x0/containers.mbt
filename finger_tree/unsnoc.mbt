@@ -1,17 +1,20 @@
 ///|
 priv enum TreeViewRight[A] {
   Nil
-  Snoc(FingerTree[A], Tree[A])
+  Snoc(Spine[A], Tree[A])
 }
 
 ///|
 fn[A] FingerTree::unsnoc_tree(tree : FingerTree[A]) -> TreeViewRight[A] {
   match tree {
     Empty => Nil
-    Single(x) => Snoc(Empty, x)
+    Single(x) => Snoc(spine_val(Empty), x)
     Deep(pr, m, sf) => {
       let (init, last) = Tree::unsnoc_digit(sf)
-      Snoc(FingerTree::deep_right_tree(pr, m, init), last)
+      Snoc(
+        spine(fn() { FingerTree::deep_right_tree(pr, m.force(), init) }),
+        last,
+      )
     }
   }
 }
@@ -44,7 +47,7 @@ fn[A] FingerTree::deep_right_tree(
         Nil => Tree::digit_to_tree(pr)
         Snoc(m, a) => Deep(pr, m, Tree::node_to_digit(a))
       }
-    Some(sf) => Deep(pr, m, sf)
+    Some(sf) => Deep(pr, spine_val(m), sf)
   }
 }
 

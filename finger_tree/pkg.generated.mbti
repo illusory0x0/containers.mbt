@@ -3,6 +3,7 @@ package "illusory0x0/containers/finger_tree"
 
 import(
   "illusory0x0/containers/graphviz"
+  "illusory0x0/containers/lazy"
 )
 
 // Values
@@ -23,12 +24,12 @@ fn[A] FingerTree::unsnoc(Self[A]) -> ViewRight[A]
 
 pub enum ViewLeft[A] {
   Nil
-  Cons(A, FingerTree[A])
+  Cons(A, @lazy.Lazy[FingerTree[A]])
 }
 
 pub enum ViewRight[A] {
   Nil
-  Snoc(FingerTree[A], A)
+  Snoc(@lazy.Lazy[FingerTree[A]], A)
 }
 
 // Type aliases

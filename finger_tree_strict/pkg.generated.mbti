@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "illusory0x0/containers/finger_tree"
+package "illusory0x0/containers/finger_tree_strict"
 
 import(
   "illusory0x0/containers/graphviz"

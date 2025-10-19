@@ -16,21 +16,24 @@ priv enum Digit[A] {
 priv enum Tree[A] {
   Single(A)
   SingleNode(Node[Tree[A]])
-  //              ^^^^^^^ 
-  //              Self 
   Deep(Digit[A])
   DeepNode(Digit[Node[Tree[A]]])
-  //                  ^^^^^^^
-  //                   Self 
 }
+
+///|
+fnalias Lazy::(new as spine, from_val as spine_val)
+
+///|
+typealias @lazy.Lazy
+
+///|
+typealias Lazy[FingerTree[A]] as Spine[A]
 
 ///|
 enum FingerTree[A] {
   Empty
   Single(Tree[A])
-  //     ^^^^^^
-  //     type refine to `Single[A]` or  `SingleNode[A]`
-  Deep(Tree[A], FingerTree[A], Tree[A])
+  Deep(Tree[A], Spine[A], Tree[A])
 }
 
 ///|
@@ -41,11 +44,11 @@ pub fn[A] FingerTree::empty() -> FingerTree[A] {
 ///|
 pub enum ViewLeft[A] {
   Nil
-  Cons(A, FingerTree[A])
+  Cons(A, Spine[A])
 }
 
 ///|
 pub enum ViewRight[A] {
   Nil
-  Snoc(FingerTree[A], A)
+  Snoc(Spine[A], A)
 }

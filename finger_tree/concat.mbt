@@ -10,11 +10,13 @@ pub fn[A] FingerTree::concat(
     (xs, Single(x)) => FingerTree::snoc_tree(xs, x)
     (Deep(pr1, m1, sf1), Deep(pr2, m2, sf2)) => {
       let prefix = pr1
-      let middle = FingerTree::append3_aux(
-        m1,
-        Tree::nodes(DeepNode(One(Node2(sf1, pr2)))),
-        m2,
-      )
+      let middle = spine(fn() {
+        FingerTree::append3_aux(
+          m1,
+          Tree::nodes(DeepNode(One(Node2(sf1, pr2)))),
+          m2,
+        )
+      })
       let suffix = sf2
       Deep(prefix, middle, suffix)
     }
@@ -23,11 +25,11 @@ pub fn[A] FingerTree::concat(
 
 ///|
 fn[A] FingerTree::append3_aux(
-  left : FingerTree[A],
+  left : Spine[A],
   middle : Tree[A],
-  right : FingerTree[A],
+  right : Spine[A],
 ) -> FingerTree[A] {
-  match (left, right) {
+  match (left.force(), right.force()) {
     (Empty, xs) => FingerTree::cons_tree(middle, xs)
     (xs, Empty) => FingerTree::snoc_tree(xs, middle)
     (Single(x), xs) =>
@@ -36,11 +38,13 @@ fn[A] FingerTree::append3_aux(
       FingerTree::snoc_tree(FingerTree::snoc_tree(xs, middle), x)
     (Deep(pr1, m1, sf1), Deep(pr2, m2, sf2)) => {
       let prefix = pr1
-      let middle = FingerTree::append3_aux(
-        m1,
-        Tree::nodes(DeepNode(One(Node3(sf1, middle, pr2)))),
-        m2,
-      )
+      let middle = spine(fn() {
+        FingerTree::append3_aux(
+          m1,
+          Tree::nodes(DeepNode(One(Node3(sf1, middle, pr2)))),
+          m2,
+        )
+      })
       let suffix = sf2
       Deep(prefix, middle, suffix)
     }

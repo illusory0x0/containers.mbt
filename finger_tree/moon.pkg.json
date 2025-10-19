@@ -1,3 +1,6 @@
 {
-  "import": ["illusory0x0/containers/graphviz"]
+  "import": [
+    "illusory0x0/containers/graphviz",
+    "illusory0x0/containers/lazy"
+  ]
 }

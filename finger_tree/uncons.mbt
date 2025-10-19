@@ -1,17 +1,17 @@
 ///|
 priv enum TreeViewLeft[A] {
   Nil
-  Cons(Tree[A], FingerTree[A])
+  Cons(Tree[A], Spine[A])
 }
 
 ///|
 fn[A] FingerTree::uncons_tree(tree : FingerTree[A]) -> TreeViewLeft[A] {
   match tree {
     Empty => Nil
-    Single(x) => Cons(x, Empty)
+    Single(x) => Cons(x, spine_val(Empty))
     Deep(pr, m, sf) => {
       let (hd, tl) = Tree::uncons_digit(pr)
-      Cons(hd, FingerTree::deep_left_tree(tl, m, sf))
+      Cons(hd, spine(fn() { FingerTree::deep_left_tree(tl, m, sf) }))
     }
   }
 }
@@ -88,12 +88,12 @@ fn[A] Tree::node_to_digit(node : Tree[A]) -> Tree[A] {
 ///|
 fn[A] FingerTree::deep_left_tree(
   pr : Tree[A]?,
-  m : FingerTree[A],
+  m : Spine[A],
   sf : Tree[A],
 ) -> FingerTree[A] {
   match pr {
     None =>
-      match FingerTree::uncons_tree(m) {
+      match FingerTree::uncons_tree(m.force()) {
         Nil => Tree::digit_to_tree(sf)
         Cons(a, m) => Deep(Tree::node_to_digit(a), m, sf)
       }
