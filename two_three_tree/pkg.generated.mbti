@@ -8,7 +8,7 @@ import(
 // Values
 
 // Errors
-pub suberror Imblance
+pub suberror Imbalance
 
 // Types and methods
 type TwoThreeTree[A]
@@ -16,7 +16,7 @@ fn[A] TwoThreeTree::cons(A, Self[A]) -> Self[A]
 fn[A] TwoThreeTree::empty() -> Self[A]
 fn[A, B] TwoThreeTree::fold_left(Self[A], B, (B, A) -> B) -> B
 fn[A, B] TwoThreeTree::fold_right(Self[A], B, (B, A) -> B) -> B
-fn[A] TwoThreeTree::height(Self[A]) -> Int raise Imblance
+fn[A] TwoThreeTree::height(Self[A]) -> Int raise Imbalance
 fn[A : Show] TwoThreeTree::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] TwoThreeTree::snoc(Self[A], A) -> Self[A]
 fn[A : ToJson] TwoThreeTree::to_json(Self[A]) -> Json // from trait `ToJson`

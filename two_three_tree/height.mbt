@@ -1,8 +1,8 @@
 ///|
-pub suberror Imblance
+pub suberror Imbalance
 
 ///|
-pub fn[A] TwoThreeTree::height(self : TwoThreeTree[A]) -> Int raise Imblance {
+pub fn[A] TwoThreeTree::height(self : TwoThreeTree[A]) -> Int raise Imbalance {
   match self {
     Two(left, _, right) => {
       let lh = left.height()
@@ -10,7 +10,7 @@ pub fn[A] TwoThreeTree::height(self : TwoThreeTree[A]) -> Int raise Imblance {
       if lh == rh {
         lh + 1
       } else {
-        raise Imblance
+        raise Imbalance
       }
     }
     Empty => 0
@@ -21,7 +21,7 @@ pub fn[A] TwoThreeTree::height(self : TwoThreeTree[A]) -> Int raise Imblance {
       if lh == mh && mh == rh {
         lh + 1
       } else {
-        raise Imblance
+        raise Imbalance
       }
     }
   }

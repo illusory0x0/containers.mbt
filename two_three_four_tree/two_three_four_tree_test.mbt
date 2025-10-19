@@ -35,7 +35,7 @@ test "snoc" (t : @test.T) {
 }
 
 ///|
-test "blance: cons/uncons" {
+test "balance: cons/uncons" {
   let mut tree = TwoThreeFourTree::empty()
   let heights = []
   for x in 1..=36 {
@@ -59,7 +59,7 @@ test "blance: cons/uncons" {
 }
 
 ///|
-test "blance: snoc/unsnoc" {
+test "balance: snoc/unsnoc" {
   let mut tree = TwoThreeFourTree::empty()
   let heights = []
   for x in 1..=36 {

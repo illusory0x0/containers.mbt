@@ -8,7 +8,7 @@ import(
 // Values
 
 // Errors
-pub(all) suberror Imblance
+pub(all) suberror Imbalance
 
 // Types and methods
 type TwoThreeFourTree[A]
@@ -16,7 +16,7 @@ fn[A] TwoThreeFourTree::cons(A, Self[A]) -> Self[A]
 fn[A] TwoThreeFourTree::empty() -> Self[A]
 fn[A, B] TwoThreeFourTree::fold_left(Self[A], B, (B, A) -> B) -> B
 fn[A, B] TwoThreeFourTree::fold_right(Self[A], B, (B, A) -> B) -> B
-fn[A] TwoThreeFourTree::height(Self[A]) -> Int raise Imblance
+fn[A] TwoThreeFourTree::height(Self[A]) -> Int raise Imbalance
 fn[A] TwoThreeFourTree::snoc(Self[A], A) -> Self[A]
 fn[A : Show] TwoThreeFourTree::to_node_payload_tree(Self[A]) -> @graphviz.NodePayloadTree
 fn[A] TwoThreeFourTree::uncons(Self[A]) -> ViewLeft[A]

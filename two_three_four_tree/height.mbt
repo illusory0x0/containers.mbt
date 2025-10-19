@@ -1,10 +1,10 @@
 ///|
-pub(all) suberror Imblance
+pub(all) suberror Imbalance
 
 ///|
 pub fn[A] TwoThreeFourTree::height(
   self : TwoThreeFourTree[A],
-) -> Int raise Imblance {
+) -> Int raise Imbalance {
   match self {
     Three(left, _, middle, _, right) => {
       let lh = left.height()
@@ -13,7 +13,7 @@ pub fn[A] TwoThreeFourTree::height(
       if lh == mh && mh == rh {
         lh + 1
       } else {
-        raise Imblance
+        raise Imbalance
       }
     }
     Two(left, _, right) => {
@@ -22,7 +22,7 @@ pub fn[A] TwoThreeFourTree::height(
       if lh == rh {
         lh + 1
       } else {
-        raise Imblance
+        raise Imbalance
       }
     }
     Empty => 0
@@ -34,7 +34,7 @@ pub fn[A] TwoThreeFourTree::height(
       if lth == lmh && lmh == rmh && rmh == rth {
         lth + 1
       } else {
-        raise Imblance
+        raise Imbalance
       }
     }
   }
