@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/containers/lazy"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Lazy[A]
+fn[A, B] Lazy::bind(Self[A], (A) -> Self[B]) -> Self[B]
+fn[A] Lazy::fix((Self[A]) -> Self[A]) -> Self[A]
+fn[A] Lazy::force(Self[A]) -> A
+fn[A] Lazy::join(Self[Self[A]]) -> Self[A]
+fn[A, B] Lazy::map(Self[A], (A) -> B) -> Self[B]
+fn[A] Lazy::new(() -> A) -> Self[A]
+
+// Type aliases
+
+// Traits
+
