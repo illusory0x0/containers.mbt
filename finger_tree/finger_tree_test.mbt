@@ -71,5 +71,18 @@ test (t : @test.T) {
   )
   t.writeln(ys.to_leaf_payload_tree().to_digraph())
   t.snapshot(filename="finger_tree_concat.dot")
-  // let ys = FingerTree::conc
+}
+
+///|
+test (t : @test.T) {
+  let mut tree = FingerTree::empty()
+  for x in 0..<128 {
+    tree = FingerTree::cons(x, tree)
+  }
+  for _ in 0..<32 {
+    guard FingerTree::uncons(tree) is Cons(_, tl) else { break }
+    tree = tl
+  }
+  t.writeln(tree.to_leaf_payload_tree().to_digraph())
+  t.snapshot(filename="finger_tree_uncons.dot")
 }

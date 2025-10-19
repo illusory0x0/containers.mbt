@@ -37,3 +37,9 @@ enum FingerTree[A] {
 pub fn[A] FingerTree::empty() -> FingerTree[A] {
   FingerTree::Empty
 }
+
+///|
+pub enum ViewLeft[A] {
+  Nil
+  Cons(A, FingerTree[A])
+}
