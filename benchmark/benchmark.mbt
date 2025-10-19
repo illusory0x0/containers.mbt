@@ -31,7 +31,7 @@ test (b : @bench.T) {
       xs = TwoThreeFourTree::cons(i, xs)
     }
   })
-  b.bench(name="@list::cons",fn() {
+  b.bench(name="list::cons",fn() {
     let mut xs = List::Nil 
     for i in 0..<len {
       xs = List::Cons(i, xs)
