@@ -11,12 +11,21 @@ typealias @two_three_four_tree.TwoThreeFourTree
 typealias @two_three_tree.TwoThreeTree
 
 ///|
+typealias @finger_tree_strict.FingerTree as FingerTreeStrict
+
+///|
 test (b : @bench.T) {
-  let len = 1024
+  let len = 10000
   b.bench(name="finger_tree::cons", fn() {
     let mut xs = FingerTree::empty()
     for i in 0..<len {
       xs = FingerTree::cons(i, xs)
+    }
+  })
+  b.bench(name="finger_tree_strict::cons", fn() {
+    let mut xs = FingerTreeStrict::empty()
+    for i in 0..<len {
+      xs = FingerTreeStrict::cons(i, xs)
     }
   })
   b.bench(name="two_three_tree::cons", fn() {

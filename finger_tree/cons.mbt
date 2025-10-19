@@ -27,15 +27,21 @@ fn[A] FingerTree::cons_tree(
     // case 3:
     (Single(a), Deep(Deep(Four(b, c, d, e)), m, sf)) => {
       let prefix = Tree::Deep(Two(a, b))
-      let node3 : Tree[A] = SingleNode(Node3(Single(c), Single(d), Single(e)))
-      let middle = spine(fn() { FingerTree::cons_tree(node3, m.force()) })
+      let middle = spine(fn() {
+        let node3 : Tree[A] = SingleNode(Node3(Single(c), Single(d), Single(e)))
+        FingerTree::cons_tree(node3, m.force())
+      })
       let suffix = sf
       FingerTree::Deep(prefix, middle, suffix)
     }
     (SingleNode(a), Deep(DeepNode(Four(b, c, d, e)), m, sf)) => {
       let prefix = Tree::DeepNode(Two(a, b))
-      let node3 = SingleNode(Node3(SingleNode(c), SingleNode(d), SingleNode(e)))
-      let middle = spine(fn() { FingerTree::cons_tree(node3, m.force()) })
+      let middle = spine(fn() {
+        let node3 = SingleNode(
+          Node3(SingleNode(c), SingleNode(d), SingleNode(e)),
+        )
+        FingerTree::cons_tree(node3, m.force())
+      })
       let suffix = sf
       FingerTree::Deep(prefix, middle, suffix)
     }
