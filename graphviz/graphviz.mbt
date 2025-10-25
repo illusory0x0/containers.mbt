@@ -40,6 +40,10 @@ pub impl Show for Digraph with output(self, logger) {
     logger.write_object(edge.from)
     logger.write_string("->")
     logger.write_object(edge.to)
+    match edge.label {
+      None => ()
+      Some(label) => logger.write_string("[label=\{label.escape()}]")
+    }
     logger.write_string(";\n")
   }
   for node in self.nodes {

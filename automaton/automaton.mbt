@@ -7,23 +7,18 @@ enum Regex {
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
-struct NFA {
-  initial : Int
-  regex : RNFA
-  final : Int
-} derive(Eq, Show, Compare, ToJson)
-
-///|
-enum RNFA {
+enum NFA {
+  Symbol(initial~ : Int, Int, final~ : Int)
   Concat(NFA, NFA)
-  Choice(NFA, NFA)
-  Repeat(NFA)
-  Symbol(Int)
-} derive(Eq, Show, Compare, ToJson)
+  Choice(initial~ : Int, NFA, NFA, final~ : Int)
+  Repeat(initial~ : Int, NFA, final~ : Int)
+}
+
+const ToplevelInitialState = 0
 
 ///|
-fn Regex::to_nfa(self : Regex) -> (NFA, Int) {
-  let mut state = 0
+fn Regex::to_nfa_with_size(self : Regex) -> (NFA, Int) {
+  let mut state = ToplevelInitialState
   fn fresh() {
     state += 1
     state
@@ -31,25 +26,11 @@ fn Regex::to_nfa(self : Regex) -> (NFA, Int) {
 
   fn dfs(self : Regex) -> NFA {
     match self {
-      Symbol(sym) =>
-        NFA::{ initial: fresh(), regex: Symbol(sym), final: fresh() }
-      Concat(left, right) => {
-        let nfa_left = dfs(left)
-        let nfa_right = dfs(right)
-        NFA::{
-          initial: nfa_left.initial,
-          regex: Concat(nfa_left, nfa_right),
-          final: nfa_right.final,
-        }
-      }
-      Choice(left, right) =>
-        NFA::{
-          initial: fresh(),
-          regex: Choice(dfs(left), dfs(right)),
-          final: fresh(),
-        }
-      Repeat(regex) =>
-        NFA::{ initial: fresh(), regex: Repeat(dfs(regex)), final: fresh() }
+      Symbol(sym) => Symbol(initial=fresh(), sym, final=fresh())
+      Concat(left, right) => Concat(dfs(left), dfs(right))
+      Choice(top, bot) =>
+        Choice(initial=fresh(), dfs(top), dfs(bot), final=fresh())
+      Repeat(regex) => Repeat(initial=fresh(), dfs(regex), final=fresh())
     }
   }
 
