@@ -10,6 +10,10 @@ pub fn[A] Vector::length(self : Vector[A]) -> Int = "%fixedarray.length"
 ///|
 pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] = "%fixedarray.make"
 
+pub fn[A] Vector::op_as_view(self : Vector[A], start~ : Int = 0, end~ : Int = self.length()) -> ArrayView[A] {
+  FixedArray::op_as_view(self.0,start~,end~)
+}
+
 ///|
 #locals(f)
 pub fn[A] Vector::makei(len : Int, f : (Int) -> A) -> Vector[A] {

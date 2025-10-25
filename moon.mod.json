@@ -1,4 +1,24 @@
 {
   "name": "illusory0x0/containers",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "deps": {
+    "illusory0x0/graphviz": {
+      "path": "graphviz"
+    },
+    "illusory0x0/lazy": {
+      "path": "lazy"
+    },
+    "illusory0x0/two_three_four_tree": {
+      "path": "two_three_four_tree"
+    },
+    "illusory0x0/two_three_tree": {
+      "path": "two_three_tree"
+    },
+    "illusory0x0/finger_tree": {
+      "path": "finger_tree"
+    },
+    "illusory0x0/finger_tree_strict": {
+      "path": "finger_tree_strict"
+    }
+  }
 }
