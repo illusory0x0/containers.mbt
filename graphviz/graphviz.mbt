@@ -49,8 +49,8 @@ pub impl Show for Digraph with output(self, logger) {
   for node in self.nodes {
     let id = node.id
     match node.label {
-      None => logger.write_string("\{id} [label=\"\"; height=0.1; width=0.1;]")
-      Some(label) => logger.write_string("\{id} [label=\{label.escape()};]")
+      None => logger.write_string("\{id} [label=\"\"; height=0.1; width=0.1;]\n")
+      Some(label) => logger.write_string("\{id} [label=\{label.escape()};]\n")
     }
   }
   logger.write_string("}\n")
