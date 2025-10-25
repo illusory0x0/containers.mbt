@@ -77,11 +77,14 @@ jobs:
         if: ${{ matrix.os.name != 'windows-latest' }}
         run: |
           ulimit -s 8176
+      
+      - name: install tsx 
+        run :  npm install -g tsx
 
       - name: moon test
         run: |
-          node test.mts --target all,native 
-          node test.mts --target all,native --release 
+          tsx test.mts --target all,native 
+          tsx test.mts --target all,native --release 
 
   moon-json-format-check:
     runs-on: ubuntu-latest
