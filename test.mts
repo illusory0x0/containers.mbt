@@ -15,8 +15,9 @@ let moonbit_modules = dirs.filter(d => {
 
 for (let module of moonbit_modules) {
     process.chdir(module);
-    console.log(`===== Testing module: ${module} =====`);
-    let log = child_process.execSync("moon test")
+    console.log(`===== in module: ${module} =====`);
+    let args = process.argv.slice(2).join(" ");
+    let log = child_process.execSync(`moon ${args}`)
     console.log(log.toString());
     process.chdir("..");
 }
