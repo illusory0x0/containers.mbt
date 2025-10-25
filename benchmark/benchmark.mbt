@@ -2,7 +2,7 @@
 typealias @finger_tree.FingerTree
 
 ///|
-typealias @illusory0x0/containers/list.List
+typealias @illusory0x0/list.List
 
 ///|
 typealias @two_three_four_tree.TwoThreeFourTree

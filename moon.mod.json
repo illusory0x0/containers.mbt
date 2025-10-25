@@ -19,6 +19,9 @@
     },
     "illusory0x0/finger_tree_strict": {
       "path": "finger_tree_strict"
+    },
+    "illusory0x0/list": {
+      "path": "list"
     }
   }
 }
