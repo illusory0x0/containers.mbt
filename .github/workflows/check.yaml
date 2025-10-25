@@ -83,10 +83,8 @@ jobs:
 
       - name: moon test
         run: |
-          tsx test.mts --target all
-          tsx test.mts --target native 
-          tsx test.mts --target all --release
-          tsx test.mts --target native --release
+          tsx monorepo.mts test --target all,native 
+          tsx monorepo.mts test --target all,native --release
 
   moon-json-format-check:
     runs-on: ubuntu-latest
