@@ -306,10 +306,9 @@ fn DFA::to_digraph(self : DFA) -> @graphviz.Digraph {
 
   fn add_fresh_state(s : DFAState) {
     if !s.0.is_empty() {
-
-    nodes.push(state_to_node(s))
+      nodes.push(state_to_node(s))
     } else {
-      nodes.push(@graphviz.Node::{ id: map[s],label:Some("E")})
+      nodes.push(@graphviz.Node::{ id: map[s], label: Some("E") })
     }
   }
 
