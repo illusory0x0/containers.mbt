@@ -80,8 +80,8 @@ jobs:
 
       - name: moon test
         run: |
-          moon test --target all,native
-          moon test --target all,native --release
+          node test.mts --target all,native 
+          node test.mts --target all,native --release 
 
   moon-json-format-check:
     runs-on: ubuntu-latest
