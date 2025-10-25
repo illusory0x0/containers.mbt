@@ -39,22 +39,16 @@ fn Regex::to_nfa_with_size(self : Regex) -> (NFA, Int) {
 }
 
 ///|
-struct Transition(FixedArray[Map[Int, Set[Int]]]) derive(Eq, Show, ToJson)
+struct NFAT(FixedArray[Map[Int, Set[Int]]]) derive(Eq, Show, ToJson)
 
 ///|
-fn Transition::new(state_count : Int) -> Transition {
-  Transition(FixedArray::makei(state_count, _ => Map::new()))
+fn NFAT::new(state_count : Int) -> NFAT {
+  NFAT(FixedArray::makei(state_count, _ => Map::new()))
 }
 
 ///|
-fn Transition::add_transition(
-  self : Transition,
-  from : Int,
-  sym : Int,
-  to : Int,
-) -> Unit {
+fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
   let edge = self.0[from]
-  // edge.update()
   edge.update(sym, fn(set) {
     match set {
       None => Some(Set::new()..add(to))
@@ -85,7 +79,7 @@ fn letter_to_symbol(letter : Char) -> Int {
 const Epsilon = 'ε'
 
 ///|
-fn Transition::to_digraph(self : Transition) -> @graphviz.Digraph {
+fn NFAT::to_digraph(self : NFAT) -> @graphviz.Digraph {
   let nodes = []
   let edges = []
   fn int_to_node(id : Int) {
@@ -116,15 +110,48 @@ fn Transition::to_digraph(self : Transition) -> @graphviz.Digraph {
 }
 
 ///|
+fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
+  let edges = self.0[from]
+  edges[sym]
+}
+
+///|
+fn NFAT::epsilon_closure(nfat : NFAT, initials : Set[Int]) -> Set[Int] {
+  let result = initials.copy()
+  let pending = initials.to_array()
+  let eps = 0
+  while pending.pop() is Some(initial) {
+    for final in nfat.trans(initial, 0) {
+      if !result.contains(final) {
+        result.add(final)
+        pending.push(final)
+      }
+    }
+  }
+  result
+}
+
+///|
+fn NFAT::move(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
+  let result = Set::new()
+  for initial in initials {
+    for final in nfat.trans(initial, sym) {
+      result.add(final)
+    }
+  }
+  result
+}
+
+///|
 struct Edge {
   initial : Int
   final : Int
 }
 
 ///|
-fn Regex::to_transition(regex : Regex) -> Transition {
+fn Regex::to_transition(regex : Regex) -> NFAT {
   let (nfa, size) = regex.to_nfa_with_size()
-  let transition = Transition::new(size)
+  let transition = NFAT::new(size)
   fn connect(from : Int, sym : Int, to : Int) {
     transition.add_transition(from, sym, to)
   }
@@ -164,4 +191,63 @@ fn Regex::to_transition(regex : Regex) -> Transition {
   let { initial, .. } = dfs(nfa)
   connect(ToplevelInitialState, eps, initial)
   transition
+}
+
+///|
+struct DFAState(Set[Int]) derive(Eq)
+
+///|
+impl Hash for DFAState with hash_combine(self, hasher) {
+  for state in self.0 {
+    hasher.combine(state)
+  }
+}
+
+///|
+struct DFA {
+  initial : DFAState
+  transition : Map[DFAState, Map[Int, DFAState]]
+}
+
+///|
+fn DFA::new(initial~ : DFAState) -> DFA {
+  DFA::{ initial, transition: Map::new() }
+}
+
+///|
+fn DFA::add_transition(
+  self : DFA,
+  from : DFAState,
+  sym : Int,
+  to : DFAState,
+) -> Unit {
+  let edge = self.transition[from]
+  edge.update(sym, fn(dfa_state) {
+    match dfa_state {
+      None => Some(to)
+      Some(_) => abort("impossible")
+    }
+  })
+}
+
+///|
+fn NFAT::powerset_construction(nfat : NFAT, alphatbet_count : Int) -> DFA {
+  let pending = []
+  let dfa_initial : DFAState = nfat.epsilon_closure(Set::new()..add(0))
+  let dfa = DFA::new(initial=dfa_initial)
+  pending.push(dfa_initial)
+  fn connect(from : DFAState, sym : Int, to : DFAState) {
+    dfa.add_transition(from, sym, to)
+  }
+
+  while pending.pop() is Some(dfs_state) {
+    for sym in 1..<alphatbet_count {
+      let new_dfa_state = nfat.epsilon_closure(nfat.move(dfs_state.0, sym))
+      connect(dfs_state, sym, new_dfa_state)
+      if !dfa.transition.contains(new_dfa_state) {
+        pending.push(new_dfa_state)
+      }
+    }
+  }
+  dfa
 }

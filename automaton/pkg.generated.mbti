@@ -1,0 +1,53 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "illusory0x0/automaton"
+
+// Values
+
+// Errors
+
+// Types and methods
+type DFAT
+
+type Edge
+
+type NFA
+fn NFA::compare(Self, Self) -> Int // from trait `Compare`
+fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFA::to_json(Self) -> Json // from trait `ToJson`
+fn NFA::to_string(Self) -> String // from trait `Show`
+impl Compare for NFA
+impl Eq for NFA
+impl Show for NFA
+impl ToJson for NFA
+
+type NFAT
+fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn NFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAT::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFAT::to_json(Self) -> Json // from trait `ToJson`
+fn NFAT::to_string(Self) -> String // from trait `Show`
+impl Eq for NFAT
+impl Show for NFAT
+impl ToJson for NFAT
+
+type Regex
+fn Regex::compare(Self, Self) -> Int // from trait `Compare`
+fn Regex::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn Regex::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn Regex::output(Self, &Logger) -> Unit // from trait `Show`
+fn Regex::to_json(Self) -> Json // from trait `ToJson`
+fn Regex::to_string(Self) -> String // from trait `Show`
+impl Compare for Regex
+impl Eq for Regex
+impl Show for Regex
+impl ToJson for Regex
+
+// Type aliases
+
+// Traits
+
