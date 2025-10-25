@@ -112,7 +112,15 @@ fn NFAT::to_digraph(self : NFAT) -> @graphviz.Digraph {
 ///|
 fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
   let edges = self.0[from]
-  edges[sym]
+  match self.0.get(from) {
+    Some(from) =>
+      match edges.get(sym) {
+        Some(to) => to
+        None => Set::new()
+      }
+    None => Set::new()
+  }
+  // edges[sym]
 }
 
 ///|
@@ -194,7 +202,7 @@ fn Regex::to_transition(regex : Regex) -> NFAT {
 }
 
 ///|
-struct DFAState(Set[Int]) derive(Eq)
+struct DFAState(Set[Int]) derive(Eq, ToJson, Show)
 
 ///|
 impl Hash for DFAState with hash_combine(self, hasher) {
@@ -207,7 +215,7 @@ impl Hash for DFAState with hash_combine(self, hasher) {
 struct DFA {
   initial : DFAState
   transition : Map[DFAState, Map[Int, DFAState]]
-}
+} derive(ToJson, Show)
 
 ///|
 fn DFA::new(initial~ : DFAState) -> DFA {
@@ -221,11 +229,27 @@ fn DFA::add_transition(
   sym : Int,
   to : DFAState,
 ) -> Unit {
-  let edge = self.transition[from]
-  edge.update(sym, fn(dfa_state) {
-    match dfa_state {
-      None => Some(to)
-      Some(_) => abort("impossible")
+  self.transition.update(from, fn(edge) {
+    match edge {
+      Some(edge) => {
+        edge.update(sym, fn(dfa_state) {
+          match dfa_state {
+            None => Some(to)
+            Some(_) => abort("impossible")
+          }
+        })
+        Some(edge)
+      }
+      None => {
+        let edge = {}
+        edge.update(sym, fn(dfa_state) {
+          match dfa_state {
+            None => Some(to)
+            Some(_) => abort("impossible")
+          }
+        })
+        Some(edge)
+      }
     }
   })
 }
@@ -250,4 +274,52 @@ fn NFAT::powerset_construction(nfat : NFAT, alphatbet_count : Int) -> DFA {
     }
   }
   dfa
+}
+
+///|
+fn DFA::to_digraph(self : DFA) -> @graphviz.Digraph {
+  let map : Map[DFAState, Int] = {}
+  let mut count = 0
+  for dfs_state, _ in self.transition {
+    map[dfs_state] = count
+    count += 1
+  }
+  map[self.initial] = 0
+  let nodes = []
+  let edges = []
+  fn state_to_node(s : DFAState) {
+    let id = map[s]
+    // let label = s.0.iter().to_string()
+    let label = if id == 0 { "S" } else { id.to_string() }
+    @graphviz.Node::{ id, label: Some(label) }
+  }
+
+  fn mk_edge(from : DFAState, label : Char, to : DFAState) -> @graphviz.Edge {
+    let from = map[from]
+    let to = map[to]
+    { from, to, label: Some(String::make(1, label)) }
+  }
+
+  fn connect(from : DFAState, sym : Int, to : DFAState) {
+    edges.push(mk_edge(from, symbol_to_letter(sym), to))
+  }
+
+  fn add_fresh_state(s : DFAState) {
+    if !s.0.is_empty() {
+
+    nodes.push(state_to_node(s))
+    } else {
+      nodes.push(@graphviz.Node::{ id: map[s],label:Some("E")})
+    }
+  }
+
+  for initial, trans in self.transition {
+    add_fresh_state(initial)
+    if !initial.0.is_empty() {
+      for sym, final in trans {
+        connect(initial, sym, final)
+      }
+    }
+  }
+  { nodes, edges, rankdir: LeftToRight }
 }

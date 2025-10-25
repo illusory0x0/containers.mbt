@@ -187,3 +187,14 @@ test "NFA Transition/complex" (t : @test.T) {
   t.writeln(digraph)
   t.snapshot(filename="nfa_trans_complex.dot")
 }
+
+///|
+test "DFA/Normal symbol" (t : @test.T) {
+  let regex : Regex = Symbol(letter_to_symbol('a'))
+  // let (nfa, size) = Regex::to_nfa_with_size(regex)
+  let nfat = regex.to_transition()
+  let dfa = nfat.powerset_construction(1 + 2)
+  let digraph = dfa.to_digraph()
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_symbol_normal.dot")
+}
