@@ -426,32 +426,27 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
 }
 
 ///|
-pub fn DFA::partition(
-  dfa : DFA,
-  alphatbet_count : Int,
-) -> @immut/sorted_set.SortedSet[DFAS] {
-  let mut result : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::new()
-  let all : DFAS = @immut/sorted_set.SortedSet::from_iter(
-    Int::until(0, dfa.dead_state()),
-  )
-  let finals : DFAS = @immut/sorted_set.SortedSet::from_array(
-    dfa.finals.to_array(),
-  )
+pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
+  let mut result : Set[DFAS] = Set::new()
+  let all : DFAS = Set::from_iter(Int::until(0, dfa.dead_state()))
+  let finals : DFAS = Set::from_iter(dfa.finals.iter())
   let non_finals : DFAS = all - finals
-  let mut pending : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::singleton(
+  let mut pending : Set[DFAS] = Set::new() 
+  
+  (
     if finals.length() < non_finals.length() {
-      finals
+      pending.add(finals)
     } else {
-      non_finals
+      pending.add(non_finals)
     },
   )
-  result = result.add(finals)
-  result = result.add(non_finals)
+   result.add(finals)
+  result.add(non_finals)
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
-    let mut result = @immut/sorted_set.SortedSet::new()
+    let  result = Set::new()
     for from in 0..<dfa.dead_state() {
       if to_set.0.contains(dfa.edfat[from][sym]) {
-        result = result.add(from)
+         result.add(from)
       }
     }
     result
