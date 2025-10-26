@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "illusory0x0/automaton"
 
+import(
+  "moonbitlang/core/set"
+)
+
 // Values
 const Epsilon : Char = 'ε'
 
@@ -13,6 +17,7 @@ const ToplevelInitialState : Int = 0
 // Types and methods
 pub struct DFA {
   initial : DFAS
+  finals : @set.Set[DFAS]
   dfat : DFAT
 }
 fn DFA::output(Self, &Logger) -> Unit // from trait `Show`

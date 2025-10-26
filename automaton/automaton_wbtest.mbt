@@ -105,6 +105,7 @@ fn regex_to_nfat(regex : Regex) -> NFAT {
   regex.to_nfa(initial=ToplevelInitialState).nfat
 }
 
+///|
 fn regex_to_nfa(regex : Regex) -> NFA {
   regex.to_nfa(initial=ToplevelInitialState)
 }
