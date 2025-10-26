@@ -486,31 +486,39 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
     }
   }
 
+  let unrefined = []
   while pop(refiners) is Some(to_set) {
     refiners.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
-      let finished = []
       while pop(result) is Some(partition) {
         let intersection = from_set & partition
         let difference = partition - from_set
         if !intersection.is_empty() && !difference.is_empty() {
+          // refine partition
           result.add(intersection)
           result.add(difference)
           if refiners.contains(partition) {
-            refine(refiners, old=partition, new=(intersection, difference))
+            // refine existing refiner
+            refiners.remove(partition)
+            refiners.add(intersection)
+            refiners.add(difference)
           } else if intersection.length() < difference.length() {
+            // add new refiner
             refiners.add(intersection)
           } else {
+            // add new refiner
             refiners.add(difference)
           }
         } else {
-          finished.push(partition)
+          // doesn't refine the partition
+          unrefined.push(partition)
         }
       }
-      for part in finished {
+      for part in unrefined {
         result.add(part)
       }
+      unrefined.clear()
     }
   }
   result
@@ -562,12 +570,4 @@ pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
     finals.add(map[final_])
   }
   DFA::{ initial, finals, edfat }
-}
-
-///|
-fn refine(set : Set[DFAS], old~ : DFAS, new~ : (DFAS, DFAS)) -> Unit {
-  let (x, y) = new
-  set.remove(old)
-  set.add(x)
-  set.add(y)
 }
