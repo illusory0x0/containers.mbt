@@ -123,7 +123,7 @@ fn NFAT::move(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
 
 ///|
 fn DFA::new(initial~ : DFAS) -> DFA {
-  DFA::{ initial, transition: Map::new() }
+  DFA::{ initial, dfat: Map::new() }
 }
 
 ///|
@@ -140,7 +140,7 @@ fn DFA::add_transition(self : DFA, from : DFAS, sym : Int, to : DFAS) -> Unit {
     Some(edge)
   }
 
-  self.transition.update(from, fn(edge) {
+  self.dfat.0.update(from, fn(edge) {
     match edge {
       Some(edge) => connect(edge)
       None => connect({})
@@ -162,7 +162,7 @@ fn NFAT::powerset_construction(nfat : NFAT, alphatbet_count : Int) -> DFA {
     for sym in 1..<alphatbet_count {
       let new_dfa_state = nfat.epsilon_closure(nfat.move(dfs_state.0, sym))
       connect(dfs_state, sym, new_dfa_state)
-      if !dfa.transition.contains(new_dfa_state) {
+      if !dfa.dfat.0.contains(new_dfa_state) {
         pending.push(new_dfa_state)
       }
     }
@@ -177,7 +177,7 @@ fn DFA::to_digraph(
 ) -> @graphviz.Digraph {
   let map : Map[DFAS, Int] = {}
   let mut count = 0
-  for dfs_state, _ in self.transition {
+  for dfs_state, _ in self.dfat.0 {
     map[dfs_state] = count
     count += 1
   }
@@ -209,7 +209,7 @@ fn DFA::to_digraph(
     }
   }
 
-  for initial, trans in self.transition {
+  for initial, trans in self.dfat.0 {
     add_fresh_state(initial)
     if !initial.0.is_empty() {
       for sym, final in trans {

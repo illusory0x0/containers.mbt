@@ -43,10 +43,12 @@ impl Hash for DFAS with hash_combine(self, hasher) {
   }
 }
 
+struct DFAT (Map[DFAS, Map[Int, DFAS]]) derive(Eq, Show, ToJson)
+
 ///|
 pub struct DFA {
   initial : DFAS
-  transition : Map[DFAS, Map[Int, DFAS]]
+  dfat : DFAT
 } derive(ToJson, Show)
 
 ///|
