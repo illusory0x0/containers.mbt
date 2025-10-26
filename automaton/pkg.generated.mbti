@@ -22,6 +22,7 @@ pub struct DFA {
   edfat : FixedArray[FixedArray[Int]]
 }
 fn DFA::dead_state(Self) -> Int
+fn DFA::partition(Self, Int) -> @set.Set[DFAS]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS
@@ -68,6 +69,17 @@ pub struct NFAC {
   count : Int
 }
 
+type NFAS
+fn NFAS::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn NFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAS::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFAS::to_json(Self) -> Json // from trait `ToJson`
+fn NFAS::to_string(Self) -> String // from trait `Show`
+impl Eq for NFAS
+impl Show for NFAS
+impl ToJson for NFAS
+
 type NFAT
 fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
@@ -81,8 +93,8 @@ impl Show for NFAT
 impl ToJson for NFAT
 
 pub struct RDFA {
-  initial : DFAS
-  finals : @set.Set[DFAS]
+  initial : NFAS
+  finals : @set.Set[NFAS]
   dfat : DFAT
 }
 fn RDFA::output(Self, &Logger) -> Unit // from trait `Show`
