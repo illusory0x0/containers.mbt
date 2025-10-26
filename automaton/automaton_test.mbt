@@ -339,3 +339,30 @@ test "DFA/minimize/repeat" (t : @test.T) {
   t.writeln(digraph)
   t.snapshot(filename="dfa_minimize_repeat.dot")
 }
+
+///|
+test "DFA/minimize/choice and repeat" (t : @test.T) {
+  let sym : Regex = Choice(Symbol(letter_to_symbol('a')),Symbol(letter_to_symbol('b')))
+  let regex : Regex = Repeat(sym)
+  let nfa = regex_to_nfa(regex)
+  let rdfa = nfa.powerset_construction(3)
+  let dfa = rdfa.to_dfa()
+  let p = dfa.partition(3)
+  inspect(p, content="{DFAS({3}), DFAS({0, 1, 2})}")
+  let min_dfa = dfa.minimize(3)
+  let digraph = dfa_to_digraph(min_dfa)
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_minimize_choice_repeat.dot")
+}
+
+///|
+test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
+  let sym : Regex = Choice(Symbol(letter_to_symbol('a')),Symbol(letter_to_symbol('b')))
+  let regex : Regex = Repeat(sym)
+  let nfa = regex_to_nfa(regex)
+  let rdfa = nfa.powerset_construction(3)
+  let dfa = rdfa.to_dfa()
+  let digraph = dfa_to_digraph(dfa)
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_minimize_choice_repeat_raw.dot")
+}

@@ -1,0 +1,11 @@
+
+digraph {
+rankdir=LR;
+node [shape = circle; style = filled;];
+0->0[label="a"];
+0->0[label="b"];
+0->1[label="c"];
+0 [label="S";]
+1 [label="E";]
+}
+
