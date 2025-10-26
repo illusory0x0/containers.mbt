@@ -1,5 +1,3 @@
-
-
 ///|
 test "NFA/normal symbol" (t : @test.T) {
   let regex : Regex = Symbol(letter_to_symbol('a'))

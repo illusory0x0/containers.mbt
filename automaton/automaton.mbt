@@ -20,6 +20,51 @@ fn Regex::to_nfa_with_size(self : Regex) -> (NFA, Int) {
 }
 
 ///|
+fn Regex::to_transition(regex : Regex) -> NFAT {
+  let (nfa, size) = regex.to_nfa_with_size()
+  let transition = NFAT::new(size)
+  fn connect(from : Int, sym : Int, to : Int) {
+    transition.add_transition(from, sym, to)
+  }
+
+  let eps = 0
+  fn dfs(nfa : NFA) -> Edge {
+    match nfa {
+      Choice(initial~, top, bot, final~) => {
+        let edge_top = dfs(top)
+        let edge_bot = dfs(bot)
+        connect(initial, eps, edge_top.initial)
+        connect(initial, eps, edge_bot.initial)
+        connect(edge_top.final, eps, final)
+        connect(edge_bot.final, eps, final)
+        Edge::{ initial, final }
+      }
+      Concat(left, right) => {
+        let { initial, final: from } = dfs(left)
+        let { initial: to, final } = dfs(right)
+        connect(from, eps, to)
+        Edge::{ initial, final }
+      }
+      Symbol(initial~, sym, final~) => {
+        connect(initial, sym, final)
+        Edge::{ initial, final }
+      }
+      Repeat(initial~, nfa, final~) => {
+        let edge_nfa = dfs(nfa)
+        connect(initial, eps, edge_nfa.initial)
+        connect(edge_nfa.final, eps, edge_nfa.initial)
+        connect(edge_nfa.final, eps, final)
+        Edge::{ initial, final }
+      }
+    }
+  }
+
+  let { initial, .. } = dfs(nfa)
+  connect(ToplevelInitialState, eps, initial)
+  transition
+}
+
+///|
 fn NFAT::new(state_count : Int) -> NFAT {
   NFAT(FixedArray::makei(state_count, _ => Map::new()))
 }
@@ -33,24 +78,6 @@ fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
       Some(set) => Some(set..add(to))
     }
   })
-}
-
-///|
-fn symbol_to_letter(sym : Int) -> Char {
-  match sym {
-    0 => Epsilon
-    1..=26 => Int::unsafe_to_char('a'.to_int() + sym - 1)
-    _ => abort("invalid range")
-  }
-}
-
-///|
-fn letter_to_symbol(letter : Char) -> Int {
-  match letter {
-    'ε' => 0
-    'a'..='z' => letter.to_int() - 'a'.to_int() + 1
-    _ => abort("invalid range")
-  }
 }
 
 ///|
@@ -124,67 +151,6 @@ fn NFAT::move(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
   }
   result
 }
-
-///|
-fn Regex::to_transition(regex : Regex) -> NFAT {
-  let (nfa, size) = regex.to_nfa_with_size()
-  let transition = NFAT::new(size)
-  fn connect(from : Int, sym : Int, to : Int) {
-    transition.add_transition(from, sym, to)
-  }
-
-  let eps = 0
-  fn dfs(nfa : NFA) -> Edge {
-    match nfa {
-      Choice(initial~, top, bot, final~) => {
-        let edge_top = dfs(top)
-        let edge_bot = dfs(bot)
-        connect(initial, eps, edge_top.initial)
-        connect(initial, eps, edge_bot.initial)
-        connect(edge_top.final, eps, final)
-        connect(edge_bot.final, eps, final)
-        Edge::{ initial, final }
-      }
-      Concat(left, right) => {
-        let { initial, final: from } = dfs(left)
-        let { initial: to, final } = dfs(right)
-        connect(from, eps, to)
-        Edge::{ initial, final }
-      }
-      Symbol(initial~, sym, final~) => {
-        connect(initial, sym, final)
-        Edge::{ initial, final }
-      }
-      Repeat(initial~, nfa, final~) => {
-        let edge_nfa = dfs(nfa)
-        connect(initial, eps, edge_nfa.initial)
-        connect(edge_nfa.final, eps, edge_nfa.initial)
-        connect(edge_nfa.final, eps, final)
-        Edge::{ initial, final }
-      }
-    }
-  }
-
-  let { initial, .. } = dfs(nfa)
-  connect(ToplevelInitialState, eps, initial)
-  transition
-}
-
-///|
-struct DFAState(Set[Int]) derive(Eq, ToJson, Show)
-
-///|
-impl Hash for DFAState with hash_combine(self, hasher) {
-  for state in self.0 {
-    hasher.combine(state)
-  }
-}
-
-///|
-struct DFA {
-  initial : DFAState
-  transition : Map[DFAState, Map[Int, DFAState]]
-} derive(ToJson, Show)
 
 ///|
 fn DFA::new(initial~ : DFAState) -> DFA {
@@ -347,4 +313,22 @@ fn NFA::to_digraph(nfa : NFA) -> @graphviz.Digraph {
   connect(ToplevelInitialState, Epsilon, initial)
   edges.swap(0, edges.length() - 1)
   @graphviz.Digraph::{ nodes, edges, rankdir: LeftToRight }
+}
+
+///|
+fn symbol_to_letter(sym : Int) -> Char {
+  match sym {
+    0 => Epsilon
+    1..=26 => Int::unsafe_to_char('a'.to_int() + sym - 1)
+    _ => abort("invalid range")
+  }
+}
+
+///|
+fn letter_to_symbol(letter : Char) -> Int {
+  match letter {
+    'ε' => 0
+    'a'..='z' => letter.to_int() - 'a'.to_int() + 1
+    _ => abort("invalid range")
+  }
 }

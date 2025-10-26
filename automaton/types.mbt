@@ -6,7 +6,6 @@ enum Regex {
   Symbol(Int)
 } derive(Eq, Show, Compare, ToJson)
 
-
 ///|
 enum NFA {
   Symbol(initial~ : Int, Int, final~ : Int)
@@ -24,6 +23,21 @@ const Epsilon = 'ε'
 ///|
 const ToplevelInitialState = 0
 
+///|
+struct DFAState(Set[Int]) derive(Eq, ToJson, Show)
+
+///|
+impl Hash for DFAState with hash_combine(self, hasher) {
+  for state in self.0 {
+    hasher.combine(state)
+  }
+}
+
+///|
+struct DFA {
+  initial : DFAState
+  transition : Map[DFAState, Map[Int, DFAState]]
+} derive(ToJson, Show)
 
 ///|
 priv struct Edge {

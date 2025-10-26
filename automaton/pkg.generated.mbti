@@ -24,8 +24,6 @@ impl Eq for DFAState
 impl Show for DFAState
 impl ToJson for DFAState
 
-type Edge
-
 type NFA
 fn NFA::compare(Self, Self) -> Int // from trait `Compare`
 fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
