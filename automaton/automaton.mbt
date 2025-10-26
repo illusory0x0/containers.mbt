@@ -1,12 +1,13 @@
 ///|
-fn Regex::to_nfa_with_size(self : Regex) -> (NFA, Int) {
-  let mut state = ToplevelInitialState
+fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
+  let initial_count = initial - 1
+  let mut count = initial_count
   fn fresh() {
-    state += 1
-    state
+    count += 1
+    count
   }
 
-  fn dfs(self : Regex) -> NFA {
+  fn dfs(self : Regex) -> RNFA {
     match self {
       Symbol(sym) => Symbol(initial=fresh(), sym, final=fresh())
       Concat(left, right) => Concat(dfs(left), dfs(right))
@@ -16,19 +17,20 @@ fn Regex::to_nfa_with_size(self : Regex) -> (NFA, Int) {
     }
   }
 
-  (dfs(self), state + 1)
+  { nfa: dfs(self), count: count - initial_count }
 }
 
 ///|
-fn Regex::to_transition(regex : Regex) -> NFAT {
-  let (nfa, size) = regex.to_nfa_with_size()
-  let transition = NFAT::new(size)
+fn Regex::to_nfa(regex : Regex, initial~ : Int) -> NFA {
+  let toplevel_initial = initial
+  let { nfa, count } = regex.to_nfac(initial~)
+  let nfat = NFAT::new(count)
   fn connect(from : Int, sym : Int, to : Int) {
-    transition.add_transition(from, sym, to)
+    nfat.add_transition(from, sym, to)
   }
 
   let eps = 0
-  fn dfs(nfa : NFA) -> Edge {
+  fn dfs(nfa : RNFA) -> Edge {
     match nfa {
       Choice(initial~, top, bot, final~) => {
         let edge_top = dfs(top)
@@ -59,14 +61,13 @@ fn Regex::to_transition(regex : Regex) -> NFAT {
     }
   }
 
-  let { initial, .. } = dfs(nfa)
-  connect(ToplevelInitialState, eps, initial)
-  transition
+  let { initial, final } = dfs(nfa)
+  { initial, final, nfat }
 }
 
 ///|
-fn NFAT::new(state_count : Int) -> NFAT {
-  NFAT(FixedArray::makei(state_count, _ => Map::new()))
+fn NFAT::new(count : Int) -> NFAT {
+  NFAT(FixedArray::makei(count, _ => Map::new()))
 }
 
 ///|
@@ -91,7 +92,6 @@ fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
       }
     None => Set::new()
   }
-  // edges[sym]
 }
 
 ///|
@@ -221,8 +221,8 @@ fn DFA::to_digraph(
 }
 
 ///|
-fn NFA::to_digraph(
-  nfa : NFA,
+fn RNFA::to_digraph(
+  nfa : RNFA,
   symbol_to_letter~ : (Int) -> Char,
 ) -> @graphviz.Digraph {
   let nodes : Array[@graphviz.Node] = []
@@ -244,7 +244,7 @@ fn NFA::to_digraph(
     nodes.push(int_to_node(final))
   }
 
-  fn dfs(nfa : NFA) -> Edge {
+  fn dfs(nfa : RNFA) -> Edge {
     match nfa {
       Choice(initial~, top, bot, final~) => {
         add_fresh_state(initial, final)
@@ -279,9 +279,8 @@ fn NFA::to_digraph(
   }
 
   let { initial, .. } = dfs(nfa)
-  nodes.push(@graphviz.Node::{ id: ToplevelInitialState, label: Some("S") })
-  connect(ToplevelInitialState, Epsilon, initial)
-  edges.swap(0, edges.length() - 1)
+  let ipos = edges.search_by(edge => edge.from == initial).unwrap()
+  edges.swap(0, ipos)
   @graphviz.Digraph::{ nodes, edges, rankdir: LeftToRight }
 }
 

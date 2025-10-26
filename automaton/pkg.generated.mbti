@@ -32,23 +32,25 @@ impl Eq for DFAS
 impl Show for DFAS
 impl ToJson for DFAS
 
-pub(all) enum NFA {
-  Symbol(initial~ : Int, Int, final~ : Int)
-  Concat(NFA, NFA)
-  Choice(initial~ : Int, NFA, NFA, final~ : Int)
-  Repeat(initial~ : Int, NFA, final~ : Int)
+pub(all) struct NFA {
+  initial : Int
+  final : Int
+  nfat : NFAT
 }
-fn NFA::compare(Self, Self) -> Int // from trait `Compare`
 fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFA::to_json(Self) -> Json // from trait `ToJson`
 fn NFA::to_string(Self) -> String // from trait `Show`
-impl Compare for NFA
 impl Eq for NFA
 impl Show for NFA
 impl ToJson for NFA
+
+pub struct NFAC {
+  nfa : RNFA
+  count : Int
+}
 
 type NFAT
 fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
@@ -60,6 +62,24 @@ fn NFAT::to_string(Self) -> String // from trait `Show`
 impl Eq for NFAT
 impl Show for NFAT
 impl ToJson for NFAT
+
+pub(all) enum RNFA {
+  Symbol(initial~ : Int, Int, final~ : Int)
+  Concat(RNFA, RNFA)
+  Choice(initial~ : Int, RNFA, RNFA, final~ : Int)
+  Repeat(initial~ : Int, RNFA, final~ : Int)
+}
+fn RNFA::compare(Self, Self) -> Int // from trait `Compare`
+fn RNFA::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn RNFA::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn RNFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn RNFA::to_json(Self) -> Json // from trait `ToJson`
+fn RNFA::to_string(Self) -> String // from trait `Show`
+impl Compare for RNFA
+impl Eq for RNFA
+impl Show for RNFA
+impl ToJson for RNFA
 
 pub(all) enum Regex {
   Concat(Regex, Regex)
