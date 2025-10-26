@@ -245,17 +245,17 @@ test "DFA/repeat" (t : @test.T) {
   t.snapshot(filename="dfa_repeat.dot")
 }
 
-// ///|
-// test "DFA/complex" (t : @test.T) {
-//   let a : Regex = Symbol(letter_to_symbol('a'))
-//   let b : Regex = Symbol(letter_to_symbol('b'))
-//   let c : Regex = Symbol(letter_to_symbol('c'))
-//   let ab : Regex = Concat(a, b)
-//   let ab_choice : Regex = Choice(ab, c)
-//   let regex : Regex = Repeat(ab_choice)
-//   let nfat = regex.to_transition()
-//   let dfa = nfat.powerset_construction(1 + 3)
-//   let digraph = dfa.to_digraph()
-//   t.writeln(digraph)
-//   t.snapshot(filename="dfa_complex.dot")
-// }
+///|
+test "DFA/complex" (t : @test.T) {
+  let a : Regex = Symbol(letter_to_symbol('a'))
+  let b : Regex = Symbol(letter_to_symbol('b'))
+  let c : Regex = Symbol(letter_to_symbol('c'))
+  let ab : Regex = Concat(a, b)
+  let ab_choice : Regex = Choice(ab, c)
+  let regex : Regex = Repeat(ab_choice)
+  let nfat = regex.to_transition()
+  let dfa = nfat.powerset_construction(1 + 3)
+  let digraph = dfa.to_digraph()
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_complex.dot")
+}

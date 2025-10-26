@@ -234,6 +234,7 @@ fn DFA::add_transition(
       match dfa_state {
         None => Some(to)
         Some(dead) if dead.0.is_empty() => Some(dead)
+        Some(to_) if to_ == to => Some(to)
         Some(_) => abort("impossible")
       }
     })
