@@ -49,6 +49,7 @@ struct DFAT(Map[DFAS, Map[Int, DFAS]]) derive(Eq, Show, ToJson)
 ///|
 pub struct DFA {
   initial : DFAS
+  finals : Set[DFAS]
   dfat : DFAT
 } derive(ToJson, Show)
 

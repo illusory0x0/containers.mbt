@@ -121,13 +121,13 @@ fn NFAT::move(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
   result
 }
 
-///|
-fn DFA::new(initial~ : DFAS) -> DFA {
-  DFA::{ initial, dfat: Map::new() }
-}
+// ///|
+// fn DFA::new(initial~ : DFAS, finals~ : Set[DFAS]) -> DFA {
+//   DFA::{ initial, dfat: Map::new(), finals }
+// }
 
 ///|
-fn DFA::add_transition(self : DFA, from : DFAS, sym : Int, to : DFAS) -> Unit {
+fn DFAT::add_transition(dfat : DFAT, from : DFAS, sym : Int, to : DFAS) -> Unit {
   fn connect(edge : Map[Int, DFAS]) -> Map[Int, DFAS]? {
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
@@ -140,7 +140,7 @@ fn DFA::add_transition(self : DFA, from : DFAS, sym : Int, to : DFAS) -> Unit {
     Some(edge)
   }
 
-  self.dfat.0.update(from, fn(edge) {
+  dfat.0.update(from, fn(edge) {
     match edge {
       Some(edge) => connect(edge)
       None => connect({})
@@ -149,25 +149,30 @@ fn DFA::add_transition(self : DFA, from : DFAS, sym : Int, to : DFAS) -> Unit {
 }
 
 ///|
-fn NFAT::powerset_construction(nfat : NFAT, alphatbet_count : Int) -> DFA {
+fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
+  let nfat = nfa.nfat
   let pending = []
-  let dfa_initial : DFAS = nfat.epsilon_closure(Set::new()..add(0))
-  let dfa = DFA::new(initial=dfa_initial)
+  let dfa_initial : DFAS = nfat.epsilon_closure(Set::new()..add(nfa.initial))
+  let dfa_finals : Set[DFAS] = Set::new()
+  let dfat : DFAT = Map::new()
   pending.push(dfa_initial)
   fn connect(from : DFAS, sym : Int, to : DFAS) {
-    dfa.add_transition(from, sym, to)
+    dfat.add_transition(from, sym, to)
   }
 
   while pending.pop() is Some(dfs_state) {
     for sym in 1..<alphatbet_count {
       let new_dfa_state = nfat.epsilon_closure(nfat.move(dfs_state.0, sym))
+      if new_dfa_state.contains(nfa.final) {
+        dfa_finals.add(new_dfa_state)
+      }
       connect(dfs_state, sym, new_dfa_state)
-      if !dfa.dfat.0.contains(new_dfa_state) {
+      if !dfat.0.contains(new_dfa_state) {
         pending.push(new_dfa_state)
       }
     }
   }
-  dfa
+  DFA::{ initial: dfa_initial, finals: dfa_finals, dfat }
 }
 
 ///|

@@ -32,14 +32,14 @@ fn dfa_to_digraph(dfa : DFA) -> @graphviz.Digraph {
 }
 
 ///|
-fn regex_to_nfa(regex : Regex) -> RNFA {
+fn regex_to_rnfa(regex : Regex) -> RNFA {
   regex.to_nfac(initial=ToplevelInitialState).nfa
 }
 
 ///|
 test "NFA/normal symbol" (t : @test.T) {
   let regex : Regex = Symbol(letter_to_symbol('a'))
-  let nfa = regex_to_nfa(regex)
+  let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
   t.snapshot(filename="nfa_symbol_normal.dot")
@@ -48,7 +48,7 @@ test "NFA/normal symbol" (t : @test.T) {
 ///|
 test "NFA/epsilon symbol" (t : @test.T) {
   let regex : Regex = Symbol(letter_to_symbol(Epsilon))
-  let nfa = regex_to_nfa(regex)
+  let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
   t.snapshot(filename="nfa_symbol_epsilon.dot")
@@ -59,7 +59,7 @@ test "NFA/concat" (t : @test.T) {
   let left : Regex = Symbol(letter_to_symbol('a'))
   let right : Regex = Symbol(letter_to_symbol('b'))
   let regex = Regex::Concat(left, right)
-  let nfa = regex_to_nfa(regex)
+  let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
   t.snapshot(filename="nfa_concat.dot")
@@ -70,7 +70,7 @@ test "NFA/choice" (t : @test.T) {
   let left : Regex = Symbol(letter_to_symbol('a'))
   let right : Regex = Symbol(letter_to_symbol('b'))
   let regex = Regex::Choice(left, right)
-  let nfa = regex_to_nfa(regex)
+  let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
   t.snapshot(filename="nfa_choice.dot")
@@ -80,7 +80,7 @@ test "NFA/choice" (t : @test.T) {
 test "NFA/repeat" (t : @test.T) {
   let sym : Regex = Symbol(letter_to_symbol('a'))
   let regex : Regex = Repeat(sym)
-  let nfa = regex_to_nfa(regex)
+  let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
   t.snapshot(filename="nfa_repeat.dot")
@@ -94,7 +94,7 @@ test "NFA/complex" (t : @test.T) {
   let ab : Regex = Concat(a, b)
   let ab_choice : Regex = Choice(ab, c)
   let regex : Regex = Repeat(ab_choice)
-  let nfa = regex_to_nfa(regex)
+  let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
   t.snapshot(filename="nfa_complex.dot")
@@ -103,6 +103,10 @@ test "NFA/complex" (t : @test.T) {
 ///|
 fn regex_to_nfat(regex : Regex) -> NFAT {
   regex.to_nfa(initial=ToplevelInitialState).nfat
+}
+
+fn regex_to_nfa(regex : Regex) -> NFA {
+  regex.to_nfa(initial=ToplevelInitialState)
 }
 
 ///|
@@ -172,8 +176,8 @@ test "NFA Transition/complex" (t : @test.T) {
 ///|
 test "DFA/Normal symbol" (t : @test.T) {
   let regex : Regex = Symbol(letter_to_symbol('a'))
-  let nfat = regex_to_nfat(regex)
-  let dfa = nfat.powerset_construction(1 + 2)
+  let nfa = regex_to_nfa(regex)
+  let dfa = nfa.powerset_construction(1 + 2)
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_symbol_normal.dot")
@@ -182,9 +186,8 @@ test "DFA/Normal symbol" (t : @test.T) {
 ///|
 test "DFA/epsilon symbol" (t : @test.T) {
   let regex : Regex = Symbol(letter_to_symbol(Epsilon))
-  // let (nfa, size) = Regex::to_nfa_with_size(regex)
-  let nfat = regex_to_nfat(regex)
-  let dfa = nfat.powerset_construction(1 + 2)
+  let nfa = regex_to_nfa(regex)
+  let dfa = nfa.powerset_construction(1 + 2)
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_symbol_epsilon.dot")
@@ -195,8 +198,8 @@ test "DFA/concat" (t : @test.T) {
   let left : Regex = Symbol(letter_to_symbol('a'))
   let right : Regex = Symbol(letter_to_symbol('b'))
   let regex = Regex::Concat(left, right)
-  let nfat = regex_to_nfat(regex)
-  let dfa = nfat.powerset_construction(1 + 2)
+  let nfa = regex_to_nfa(regex)
+  let dfa = nfa.powerset_construction(1 + 2)
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_concat.dot")
@@ -207,8 +210,8 @@ test "DFA/choice" (t : @test.T) {
   let left : Regex = Symbol(letter_to_symbol('a'))
   let right : Regex = Symbol(letter_to_symbol('b'))
   let regex = Regex::Choice(left, right)
-  let nfat = regex_to_nfat(regex)
-  let dfa = nfat.powerset_construction(1 + 2)
+  let nfa = regex_to_nfa(regex)
+  let dfa = nfa.powerset_construction(1 + 2)
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_choice.dot")
@@ -218,8 +221,8 @@ test "DFA/choice" (t : @test.T) {
 test "DFA/repeat" (t : @test.T) {
   let sym : Regex = Symbol(letter_to_symbol('a'))
   let regex : Regex = Repeat(sym)
-  let nfat = regex_to_nfat(regex)
-  let dfa = nfat.powerset_construction(1 + 2)
+  let nfa = regex_to_nfa(regex)
+  let dfa = nfa.powerset_construction(1 + 2)
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_repeat.dot")
@@ -233,8 +236,8 @@ test "DFA/complex" (t : @test.T) {
   let ab : Regex = Concat(a, b)
   let ab_choice : Regex = Choice(ab, c)
   let regex : Regex = Repeat(ab_choice)
-  let nfat = regex_to_nfat(regex)
-  let dfa = nfat.powerset_construction(1 + 3)
+  let nfa = regex_to_nfa(regex)
+  let dfa = nfa.powerset_construction(1 + 3)
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_complex.dot")
