@@ -155,7 +155,7 @@ fn DFAT::add_transition(dfat : DFAT, from : DFAS, sym : Int, to : DFAS) -> Unit 
 }
 
 ///|
-pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
+pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
   let nfat = nfa.nfat
   let pending = []
   let dfa_initial : DFAS = nfat.epsilon_closure(set_singleton(nfa.initial))
@@ -178,12 +178,12 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
       }
     }
   }
-  DFA::{ initial: dfa_initial, finals: dfa_finals, dfat }
+  RDFA::{ initial: dfa_initial, finals: dfa_finals, dfat }
 }
 
 ///|
-pub fn DFA::to_digraph(
-  self : DFA,
+pub fn RDFA::to_digraph(
+  self : RDFA,
   symbol_to_letter~ : (Int) -> Char,
 ) -> @graphviz.Digraph {
   let map : Map[DFAS, Int] = {}
@@ -292,6 +292,47 @@ pub fn RNFA::to_digraph(
   let ipos = edges.search_by(edge => edge.from == initial).unwrap()
   edges.swap(0, ipos)
   @graphviz.Digraph::{ nodes, edges, rankdir: LeftToRight }
+}
+
+///|
+pub fn DFA::to_digraph(
+  self : DFA,
+  symbol_to_letter~ : (Int) -> Char,
+) -> @graphviz.Digraph {
+  let nodes = []
+  let edges = []
+  fn state_to_node(id : Int) {
+    let label = if id == 0 { "S" } else { id.to_string() }
+    @graphviz.Node::{ id, label: Some(label) }
+  }
+
+  fn mk_edge(from : Int, label : Char, to : Int) -> @graphviz.Edge {
+    { from, to, label: Some(String::make(1, label)) }
+  }
+
+  fn connect(from : Int, sym : Int, to : Int) {
+    // move to 1-based symbols for display
+    // 0 is epsilon
+    edges.push(mk_edge(from, symbol_to_letter(sym + 1), to))
+  }
+
+  fn add_fresh_state(id : Int) {
+    if id != self.edfat.length() - 1 {
+      nodes.push(state_to_node(id))
+    } else {
+      nodes.push(@graphviz.Node::{ id, label: Some("E") })
+    }
+  }
+
+  for initial, trans in self.edfat {
+    add_fresh_state(initial)
+    if initial != self.edfat.length() - 1 {
+      for sym, final_ in trans {
+        connect(initial, sym, final_)
+      }
+    }
+  }
+  { nodes, edges, rankdir: LeftToRight }
 }
 
 ///|

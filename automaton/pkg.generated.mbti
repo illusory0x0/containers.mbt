@@ -17,16 +17,11 @@ const ToplevelInitialState : Int = 0
 
 // Types and methods
 pub struct DFA {
-  initial : DFAS
-  finals : @set.Set[DFAS]
-  dfat : DFAT
+  initial : Int
+  finals : @set.Set[Int]
+  edfat : FixedArray[FixedArray[Int]]
 }
-fn DFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
-fn DFA::to_json(Self) -> Json // from trait `ToJson`
-fn DFA::to_string(Self) -> String // from trait `Show`
-impl Show for DFA
-impl ToJson for DFA
 
 type DFAS
 fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
@@ -59,7 +54,7 @@ fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
-fn NFA::powerset_construction(Self, Int) -> DFA
+fn NFA::powerset_construction(Self, Int) -> RDFA
 fn NFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn NFA::to_json(Self) -> Json // from trait `ToJson`
 fn NFA::to_string(Self) -> String // from trait `Show`
@@ -83,6 +78,19 @@ fn NFAT::to_string(Self) -> String // from trait `Show`
 impl Eq for NFAT
 impl Show for NFAT
 impl ToJson for NFAT
+
+pub struct RDFA {
+  initial : DFAS
+  finals : @set.Set[DFAS]
+  dfat : DFAT
+}
+fn RDFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn RDFA::to_dfa(Self) -> DFA
+fn RDFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
+fn RDFA::to_json(Self) -> Json // from trait `ToJson`
+fn RDFA::to_string(Self) -> String // from trait `Show`
+impl Show for RDFA
+impl ToJson for RDFA
 
 pub(all) enum RNFA {
   Symbol(initial~ : Int, Int, final_~ : Int)
