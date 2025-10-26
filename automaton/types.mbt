@@ -56,6 +56,7 @@ impl BitAnd for DFAS with land(x, y) {
   x.0 & y.0
 }
 
+///|
 impl Hash for DFAS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)
@@ -73,13 +74,13 @@ fn DFAS::length(set : DFAS) -> Int {
 }
 
 ///|
-struct DFAT(Map[NFAS, Map[Int, NFAS]]) derive(Eq, Show, ToJson)
+struct RDFAT(Map[NFAS, Map[Int, NFAS]]) derive(Eq, Show, ToJson)
 
 ///|
 pub struct RDFA {
   initial : NFAS
   finals : Set[NFAS]
-  dfat : DFAT
+  dfat : RDFAT
 } derive(ToJson, Show)
 
 ///|

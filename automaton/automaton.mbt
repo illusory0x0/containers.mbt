@@ -133,7 +133,12 @@ fn NFAT::move_(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
 }
 
 ///|
-fn DFAT::add_transition(dfat : DFAT, from : NFAS, sym : Int, to : NFAS) -> Unit {
+fn RDFAT::add_transition(
+  dfat : RDFAT,
+  from : NFAS,
+  sym : Int,
+  to : NFAS,
+) -> Unit {
   fn connect(edge : Map[Int, NFAS]) -> Map[Int, NFAS]? {
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
@@ -160,7 +165,7 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
   let pending = []
   let dfa_initial : NFAS = nfat.epsilon_closure(set_singleton(nfa.initial))
   let dfa_finals : Set[NFAS] = Set::new()
-  let dfat : DFAT = Map::new()
+  let dfat : RDFAT = Map::new()
   pending.push(dfa_initial)
   fn connect(from : NFAS, sym : Int, to : NFAS) {
     dfat.add_transition(from, sym, to)

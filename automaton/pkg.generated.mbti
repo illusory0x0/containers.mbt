@@ -3,7 +3,6 @@ package "illusory0x0/automaton"
 
 import(
   "illusory0x0/graphviz"
-  "moonbitlang/core/immut/sorted_set"
   "moonbitlang/core/set"
 )
 
@@ -23,30 +22,17 @@ pub struct DFA {
   edfat : FixedArray[FixedArray[Int]]
 }
 fn DFA::dead_state(Self) -> Int
-fn DFA::partition(Self, Int) -> @sorted_set.SortedSet[DFAS]
+fn DFA::partition(Self, Int) -> @set.Set[DFAS]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS
-fn DFAS::compare(Self, Self) -> Int // from trait `Compare`
 fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFAS::to_string(Self) -> String // from trait `Show`
-impl Compare for DFAS
 impl Eq for DFAS
 impl Show for DFAS
-
-type DFAT
-fn DFAT::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn DFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn DFAT::output(Self, &Logger) -> Unit // from trait `Show`
-fn DFAT::to_json(Self) -> Json // from trait `ToJson`
-fn DFAT::to_string(Self) -> String // from trait `Show`
-impl Eq for DFAT
-impl Show for DFAT
-impl ToJson for DFAT
 
 pub(all) struct NFA {
   initial : Int
@@ -96,7 +82,7 @@ impl ToJson for NFAT
 pub struct RDFA {
   initial : NFAS
   finals : @set.Set[NFAS]
-  dfat : DFAT
+  dfat : RDFAT
 }
 fn RDFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFA::to_dfa(Self) -> DFA
@@ -105,6 +91,17 @@ fn RDFA::to_json(Self) -> Json // from trait `ToJson`
 fn RDFA::to_string(Self) -> String // from trait `Show`
 impl Show for RDFA
 impl ToJson for RDFA
+
+type RDFAT
+fn RDFAT::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn RDFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn RDFAT::output(Self, &Logger) -> Unit // from trait `Show`
+fn RDFAT::to_json(Self) -> Json // from trait `ToJson`
+fn RDFAT::to_string(Self) -> String // from trait `Show`
+impl Eq for RDFAT
+impl Show for RDFAT
+impl ToJson for RDFAT
 
 pub(all) enum RNFA {
   Symbol(initial~ : Int, Int, final_~ : Int)
