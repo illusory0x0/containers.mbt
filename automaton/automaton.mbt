@@ -229,27 +229,21 @@ fn DFA::add_transition(
   sym : Int,
   to : DFAState,
 ) -> Unit {
+  fn connect(edge : Map[Int, DFAState]) -> Map[Int, DFAState]? {
+    edge.update(sym, fn(dfa_state) {
+      match dfa_state {
+        None => Some(to)
+        Some(dead) if dead.0.is_empty() => Some(dead)
+        Some(_) => abort("impossible")
+      }
+    })
+    Some(edge)
+  }
+
   self.transition.update(from, fn(edge) {
     match edge {
-      Some(edge) => {
-        edge.update(sym, fn(dfa_state) {
-          match dfa_state {
-            None => Some(to)
-            Some(_) => abort("impossible")
-          }
-        })
-        Some(edge)
-      }
-      None => {
-        let edge = {}
-        edge.update(sym, fn(dfa_state) {
-          match dfa_state {
-            None => Some(to)
-            Some(_) => abort("impossible")
-          }
-        })
-        Some(edge)
-      }
+      Some(edge) => connect(edge)
+      None => connect({})
     }
   })
 }

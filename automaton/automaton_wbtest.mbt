@@ -198,3 +198,64 @@ test "DFA/Normal symbol" (t : @test.T) {
   t.writeln(digraph)
   t.snapshot(filename="dfa_symbol_normal.dot")
 }
+
+///|
+test "DFA/epsilon symbol" (t : @test.T) {
+  let regex : Regex = Symbol(letter_to_symbol(Epsilon))
+  // let (nfa, size) = Regex::to_nfa_with_size(regex)
+  let nfat = regex.to_transition()
+  let dfa = nfat.powerset_construction(1 + 2)
+  let digraph = dfa.to_digraph()
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_symbol_epsilon.dot")
+}
+
+///|
+test "DFA/concat" (t : @test.T) {
+  let left : Regex = Symbol(letter_to_symbol('a'))
+  let right : Regex = Symbol(letter_to_symbol('b'))
+  let regex = Regex::Concat(left, right)
+  let nfat = regex.to_transition()
+  let dfa = nfat.powerset_construction(1 + 2)
+  let digraph = dfa.to_digraph()
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_concat.dot")
+}
+
+///|
+test "DFA/choice" (t : @test.T) {
+  let left : Regex = Symbol(letter_to_symbol('a'))
+  let right : Regex = Symbol(letter_to_symbol('b'))
+  let regex = Regex::Choice(left, right)
+  let nfat = regex.to_transition()
+  let dfa = nfat.powerset_construction(1 + 2)
+  let digraph = dfa.to_digraph()
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_choice.dot")
+}
+
+///|
+test "DFA/repeat" (t : @test.T) {
+  let sym : Regex = Symbol(letter_to_symbol('a'))
+  let regex : Regex = Repeat(sym)
+  let nfat = regex.to_transition()
+  let dfa = nfat.powerset_construction(1 + 2)
+  let digraph = dfa.to_digraph()
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_repeat.dot")
+}
+
+// ///|
+// test "DFA/complex" (t : @test.T) {
+//   let a : Regex = Symbol(letter_to_symbol('a'))
+//   let b : Regex = Symbol(letter_to_symbol('b'))
+//   let c : Regex = Symbol(letter_to_symbol('c'))
+//   let ab : Regex = Concat(a, b)
+//   let ab_choice : Regex = Choice(ab, c)
+//   let regex : Regex = Repeat(ab_choice)
+//   let nfat = regex.to_transition()
+//   let dfa = nfat.powerset_construction(1 + 3)
+//   let digraph = dfa.to_digraph()
+//   t.writeln(digraph)
+//   t.snapshot(filename="dfa_complex.dot")
+// }

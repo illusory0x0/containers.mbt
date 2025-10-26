@@ -6,7 +6,23 @@ package "illusory0x0/automaton"
 // Errors
 
 // Types and methods
-type DFAT
+type DFA
+fn DFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFA::to_json(Self) -> Json // from trait `ToJson`
+fn DFA::to_string(Self) -> String // from trait `Show`
+impl Show for DFA
+impl ToJson for DFA
+
+type DFAState
+fn DFAState::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn DFAState::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAState::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFAState::to_json(Self) -> Json // from trait `ToJson`
+fn DFAState::to_string(Self) -> String // from trait `Show`
+impl Eq for DFAState
+impl Show for DFAState
+impl ToJson for DFAState
 
 type Edge
 
