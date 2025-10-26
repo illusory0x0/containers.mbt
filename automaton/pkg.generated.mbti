@@ -2,6 +2,7 @@
 package "illusory0x0/automaton"
 
 import(
+  "illusory0x0/graphviz"
   "moonbitlang/core/set"
 )
 
@@ -21,6 +22,7 @@ pub struct DFA {
   dfat : DFAT
 }
 fn DFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn DFA::to_json(Self) -> Json // from trait `ToJson`
 fn DFA::to_string(Self) -> String // from trait `Show`
 impl Show for DFA
@@ -50,13 +52,15 @@ impl ToJson for DFAT
 
 pub(all) struct NFA {
   initial : Int
-  final : Int
+  final_ : Int
   nfat : NFAT
 }
 fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFA::powerset_construction(Self, Int) -> DFA
+fn NFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn NFA::to_json(Self) -> Json // from trait `ToJson`
 fn NFA::to_string(Self) -> String // from trait `Show`
 impl Eq for NFA
@@ -73,6 +77,7 @@ fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn NFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAT::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFAT::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn NFAT::to_json(Self) -> Json // from trait `ToJson`
 fn NFAT::to_string(Self) -> String // from trait `Show`
 impl Eq for NFAT
@@ -80,16 +85,17 @@ impl Show for NFAT
 impl ToJson for NFAT
 
 pub(all) enum RNFA {
-  Symbol(initial~ : Int, Int, final~ : Int)
+  Symbol(initial~ : Int, Int, final_~ : Int)
   Concat(RNFA, RNFA)
-  Choice(initial~ : Int, RNFA, RNFA, final~ : Int)
-  Repeat(initial~ : Int, RNFA, final~ : Int)
+  Choice(initial~ : Int, RNFA, RNFA, final_~ : Int)
+  Repeat(initial~ : Int, RNFA, final_~ : Int)
 }
 fn RNFA::compare(Self, Self) -> Int // from trait `Compare`
 fn RNFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn RNFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn RNFA::output(Self, &Logger) -> Unit // from trait `Show`
+fn RNFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn RNFA::to_json(Self) -> Json // from trait `ToJson`
 fn RNFA::to_string(Self) -> String // from trait `Show`
 impl Compare for RNFA
@@ -109,6 +115,8 @@ fn Regex::equal(Self, Self) -> Bool // from trait `Eq`
 fn Regex::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn Regex::output(Self, &Logger) -> Unit // from trait `Show`
 fn Regex::to_json(Self) -> Json // from trait `ToJson`
+fn Regex::to_nfa(Self, initial~ : Int) -> NFA
+fn Regex::to_nfac(Self, initial~ : Int) -> NFAC
 fn Regex::to_string(Self) -> String // from trait `Show`
 impl Compare for Regex
 impl Eq for Regex

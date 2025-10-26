@@ -8,16 +8,16 @@ pub(all) enum Regex {
 
 ///|
 pub(all) enum RNFA {
-  Symbol(initial~ : Int, Int, final~ : Int)
+  Symbol(initial~ : Int, Int, final_~ : Int)
   Concat(RNFA, RNFA)
-  Choice(initial~ : Int, RNFA, RNFA, final~ : Int)
-  Repeat(initial~ : Int, RNFA, final~ : Int)
+  Choice(initial~ : Int, RNFA, RNFA, final_~ : Int)
+  Repeat(initial~ : Int, RNFA, final_~ : Int)
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
 pub(all) struct NFA {
   initial : Int
-  final : Int
+  final_ : Int
   nfat : NFAT
 } derive(Eq, Show, ToJson)
 
@@ -56,7 +56,7 @@ pub struct DFA {
 ///|
 priv struct Edge {
   initial : Int
-  final : Int
+  final_ : Int
 }
 
 ///|

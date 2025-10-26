@@ -1,5 +1,4 @@
 {
-  "warn-list": "-A",
   "wbtest-import": ["illusory0x0/graphviz"],
   "import": ["illusory0x0/graphviz"]
 }

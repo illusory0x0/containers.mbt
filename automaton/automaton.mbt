@@ -1,5 +1,18 @@
 ///|
-fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
+fn set_singleton(val : Int) -> Set[Int] {
+  let s = Set::new()
+  s.add(val)
+  s
+}
+
+///|
+fn set_add(set : Set[Int], val : Int) -> Set[Int] {
+  set.add(val)
+  set
+}
+
+///|
+pub fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
   let initial_count = initial - 1
   let mut count = initial_count
   fn fresh() {
@@ -9,11 +22,11 @@ fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
 
   fn dfs(self : Regex) -> RNFA {
     match self {
-      Symbol(sym) => Symbol(initial=fresh(), sym, final=fresh())
+      Symbol(sym) => Symbol(initial=fresh(), sym, final_=fresh())
       Concat(left, right) => Concat(dfs(left), dfs(right))
       Choice(top, bot) =>
-        Choice(initial=fresh(), dfs(top), dfs(bot), final=fresh())
-      Repeat(regex) => Repeat(initial=fresh(), dfs(regex), final=fresh())
+        Choice(initial=fresh(), dfs(top), dfs(bot), final_=fresh())
+      Repeat(regex) => Repeat(initial=fresh(), dfs(regex), final_=fresh())
     }
   }
 
@@ -21,8 +34,7 @@ fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
 }
 
 ///|
-fn Regex::to_nfa(regex : Regex, initial~ : Int) -> NFA {
-  let toplevel_initial = initial
+pub fn Regex::to_nfa(regex : Regex, initial~ : Int) -> NFA {
   let { nfa, count } = regex.to_nfac(initial~)
   let nfat = NFAT::new(count)
   fn connect(from : Int, sym : Int, to : Int) {
@@ -32,37 +44,37 @@ fn Regex::to_nfa(regex : Regex, initial~ : Int) -> NFA {
   let eps = 0
   fn dfs(nfa : RNFA) -> Edge {
     match nfa {
-      Choice(initial~, top, bot, final~) => {
+      Choice(initial~, top, bot, final_~) => {
         let edge_top = dfs(top)
         let edge_bot = dfs(bot)
         connect(initial, eps, edge_top.initial)
         connect(initial, eps, edge_bot.initial)
-        connect(edge_top.final, eps, final)
-        connect(edge_bot.final, eps, final)
-        Edge::{ initial, final }
+        connect(edge_top.final_, eps, final_)
+        connect(edge_bot.final_, eps, final_)
+        Edge::{ initial, final_ }
       }
       Concat(left, right) => {
-        let { initial, final: from } = dfs(left)
-        let { initial: to, final } = dfs(right)
+        let { initial, final_: from } = dfs(left)
+        let { initial: to, final_ } = dfs(right)
         connect(from, eps, to)
-        Edge::{ initial, final }
+        Edge::{ initial, final_ }
       }
-      Symbol(initial~, sym, final~) => {
-        connect(initial, sym, final)
-        Edge::{ initial, final }
+      Symbol(initial~, sym, final_~) => {
+        connect(initial, sym, final_)
+        Edge::{ initial, final_ }
       }
-      Repeat(initial~, nfa, final~) => {
+      Repeat(initial~, nfa, final_~) => {
         let edge_nfa = dfs(nfa)
         connect(initial, eps, edge_nfa.initial)
-        connect(edge_nfa.final, eps, edge_nfa.initial)
-        connect(edge_nfa.final, eps, final)
-        Edge::{ initial, final }
+        connect(edge_nfa.final_, eps, edge_nfa.initial)
+        connect(edge_nfa.final_, eps, final_)
+        Edge::{ initial, final_ }
       }
     }
   }
 
-  let { initial, final } = dfs(nfa)
-  { initial, final, nfat }
+  let { initial, final_ } = dfs(nfa)
+  { initial, final_, nfat }
 }
 
 ///|
@@ -75,8 +87,8 @@ fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
   let edge = self.0[from]
   edge.update(sym, fn(set) {
     match set {
-      None => Some(Set::new()..add(to))
-      Some(set) => Some(set..add(to))
+      None => Some(set_singleton(to))
+      Some(set) => Some(set_add(set, to))
     }
   })
 }
@@ -85,7 +97,7 @@ fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
 fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
   let edges = self.0[from]
   match self.0.get(from) {
-    Some(from) =>
+    Some(_) =>
       match edges.get(sym) {
         Some(to) => to
         None => Set::new()
@@ -98,12 +110,11 @@ fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
 fn NFAT::epsilon_closure(nfat : NFAT, initials : Set[Int]) -> Set[Int] {
   let result = initials.copy()
   let pending = initials.to_array()
-  let eps = 0
   while pending.pop() is Some(initial) {
-    for final in nfat.trans(initial, 0) {
-      if !result.contains(final) {
-        result.add(final)
-        pending.push(final)
+    for final_ in nfat.trans(initial, EpsilonSymbol) {
+      if !result.contains(final_) {
+        result.add(final_)
+        pending.push(final_)
       }
     }
   }
@@ -111,20 +122,15 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : Set[Int]) -> Set[Int] {
 }
 
 ///|
-fn NFAT::move(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
+fn NFAT::move_(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
   let result = Set::new()
   for initial in initials {
-    for final in nfat.trans(initial, sym) {
-      result.add(final)
+    for final_ in nfat.trans(initial, sym) {
+      result.add(final_)
     }
   }
   result
 }
-
-// ///|
-// fn DFA::new(initial~ : DFAS, finals~ : Set[DFAS]) -> DFA {
-//   DFA::{ initial, dfat: Map::new(), finals }
-// }
 
 ///|
 fn DFAT::add_transition(dfat : DFAT, from : DFAS, sym : Int, to : DFAS) -> Unit {
@@ -149,10 +155,10 @@ fn DFAT::add_transition(dfat : DFAT, from : DFAS, sym : Int, to : DFAS) -> Unit 
 }
 
 ///|
-fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
+pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
   let nfat = nfa.nfat
   let pending = []
-  let dfa_initial : DFAS = nfat.epsilon_closure(Set::new()..add(nfa.initial))
+  let dfa_initial : DFAS = nfat.epsilon_closure(set_singleton(nfa.initial))
   let dfa_finals : Set[DFAS] = Set::new()
   let dfat : DFAT = Map::new()
   pending.push(dfa_initial)
@@ -162,8 +168,8 @@ fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
 
   while pending.pop() is Some(dfs_state) {
     for sym in 1..<alphatbet_count {
-      let new_dfa_state = nfat.epsilon_closure(nfat.move(dfs_state.0, sym))
-      if new_dfa_state.contains(nfa.final) {
+      let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state.0, sym))
+      if new_dfa_state.contains(nfa.final_) {
         dfa_finals.add(new_dfa_state)
       }
       connect(dfs_state, sym, new_dfa_state)
@@ -176,7 +182,7 @@ fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> DFA {
 }
 
 ///|
-fn DFA::to_digraph(
+pub fn DFA::to_digraph(
   self : DFA,
   symbol_to_letter~ : (Int) -> Char,
 ) -> @graphviz.Digraph {
@@ -191,7 +197,6 @@ fn DFA::to_digraph(
   let edges = []
   fn state_to_node(s : DFAS) {
     let id = map[s]
-    // let label = s.0.iter().to_string()
     let label = if id == 0 { "S" } else { id.to_string() }
     @graphviz.Node::{ id, label: Some(label) }
   }
@@ -217,8 +222,8 @@ fn DFA::to_digraph(
   for initial, trans in self.dfat.0 {
     add_fresh_state(initial)
     if !initial.0.is_empty() {
-      for sym, final in trans {
-        connect(initial, sym, final)
+      for sym, final_ in trans {
+        connect(initial, sym, final_)
       }
     }
   }
@@ -226,7 +231,7 @@ fn DFA::to_digraph(
 }
 
 ///|
-fn RNFA::to_digraph(
+pub fn RNFA::to_digraph(
   nfa : RNFA,
   symbol_to_letter~ : (Int) -> Char,
 ) -> @graphviz.Digraph {
@@ -244,41 +249,41 @@ fn RNFA::to_digraph(
     edges.push(mk_edge(from, label, to))
   }
 
-  fn add_fresh_state(initial : Int, final : Int) {
+  fn add_fresh_state(initial : Int, final_ : Int) {
     nodes.push(int_to_node(initial))
-    nodes.push(int_to_node(final))
+    nodes.push(int_to_node(final_))
   }
 
   fn dfs(nfa : RNFA) -> Edge {
     match nfa {
-      Choice(initial~, top, bot, final~) => {
-        add_fresh_state(initial, final)
+      Choice(initial~, top, bot, final_~) => {
+        add_fresh_state(initial, final_)
         let edge_top = dfs(top)
         let edge_bot = dfs(bot)
         connect(initial, Epsilon, edge_top.initial)
         connect(initial, Epsilon, edge_bot.initial)
-        connect(edge_top.final, Epsilon, final)
-        connect(edge_bot.final, Epsilon, final)
-        Edge::{ initial, final }
+        connect(edge_top.final_, Epsilon, final_)
+        connect(edge_bot.final_, Epsilon, final_)
+        Edge::{ initial, final_ }
       }
       Concat(left, right) => {
-        let { initial, final: from } = dfs(left)
-        let { initial: to, final } = dfs(right)
+        let { initial, final_: from } = dfs(left)
+        let { initial: to, final_ } = dfs(right)
         connect(from, Epsilon, to)
-        Edge::{ initial, final }
+        Edge::{ initial, final_ }
       }
-      Symbol(initial~, sym, final~) => {
-        add_fresh_state(initial, final)
-        connect(initial, symbol_to_letter(sym), final)
-        Edge::{ initial, final }
+      Symbol(initial~, sym, final_~) => {
+        add_fresh_state(initial, final_)
+        connect(initial, symbol_to_letter(sym), final_)
+        Edge::{ initial, final_ }
       }
-      Repeat(initial~, nfa, final~) => {
-        add_fresh_state(initial, final)
+      Repeat(initial~, nfa, final_~) => {
+        add_fresh_state(initial, final_)
         let edge_nfa = dfs(nfa)
         connect(initial, Epsilon, edge_nfa.initial)
-        connect(edge_nfa.final, Epsilon, edge_nfa.initial)
-        connect(edge_nfa.final, Epsilon, final)
-        Edge::{ initial, final }
+        connect(edge_nfa.final_, Epsilon, edge_nfa.initial)
+        connect(edge_nfa.final_, Epsilon, final_)
+        Edge::{ initial, final_ }
       }
     }
   }
@@ -290,7 +295,7 @@ fn RNFA::to_digraph(
 }
 
 ///|
-fn NFAT::to_digraph(
+pub fn NFAT::to_digraph(
   self : NFAT,
   symbol_to_letter~ : (Int) -> Char,
 ) -> @graphviz.Digraph {
@@ -315,10 +320,18 @@ fn NFAT::to_digraph(
   for initial, trans in self.0 {
     add_fresh_state(initial)
     for sym, finals in trans {
-      for final in finals {
-        connect(initial, sym, final)
+      for final_ in finals {
+        connect(initial, sym, final_)
       }
     }
   }
   { nodes, edges, rankdir: LeftToRight }
+}
+
+///|
+pub fn NFA::to_digraph(
+  nfa : NFA,
+  symbol_to_letter~ : (Int) -> Char,
+) -> @graphviz.Digraph {
+  nfa.nfat.to_digraph(symbol_to_letter~)
 }
