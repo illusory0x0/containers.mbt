@@ -133,8 +133,8 @@ fn NFAT::move_(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
 }
 
 ///|
-fn DFAT::add_transition(dfat : DFAT, from : DFAS, sym : Int, to : DFAS) -> Unit {
-  fn connect(edge : Map[Int, DFAS]) -> Map[Int, DFAS]? {
+fn DFAT::add_transition(dfat : DFAT, from : NFAS, sym : Int, to : NFAS) -> Unit {
+  fn connect(edge : Map[Int, NFAS]) -> Map[Int, NFAS]? {
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
         None => Some(to)
@@ -158,11 +158,11 @@ fn DFAT::add_transition(dfat : DFAT, from : DFAS, sym : Int, to : DFAS) -> Unit 
 pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
   let nfat = nfa.nfat
   let pending = []
-  let dfa_initial : DFAS = nfat.epsilon_closure(set_singleton(nfa.initial))
-  let dfa_finals : Set[DFAS] = Set::new()
+  let dfa_initial : NFAS = nfat.epsilon_closure(set_singleton(nfa.initial))
+  let dfa_finals : Set[NFAS] = Set::new()
   let dfat : DFAT = Map::new()
   pending.push(dfa_initial)
-  fn connect(from : DFAS, sym : Int, to : DFAS) {
+  fn connect(from : NFAS, sym : Int, to : NFAS) {
     dfat.add_transition(from, sym, to)
   }
 
@@ -186,7 +186,7 @@ pub fn RDFA::to_digraph(
   self : RDFA,
   symbol_to_letter~ : (Int) -> Char,
 ) -> @graphviz.Digraph {
-  let map : Map[DFAS, Int] = {}
+  let map : Map[NFAS, Int] = {}
   let mut count = 0
   for dfs_state, _ in self.dfat.0 {
     map[dfs_state] = count
@@ -195,23 +195,23 @@ pub fn RDFA::to_digraph(
   map[self.initial] = 0
   let nodes = []
   let edges = []
-  fn state_to_node(s : DFAS) {
+  fn state_to_node(s : NFAS) {
     let id = map[s]
     let label = if id == 0 { "S" } else { id.to_string() }
     @graphviz.Node::{ id, label: Some(label) }
   }
 
-  fn mk_edge(from : DFAS, label : Char, to : DFAS) -> @graphviz.Edge {
+  fn mk_edge(from : NFAS, label : Char, to : NFAS) -> @graphviz.Edge {
     let from = map[from]
     let to = map[to]
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : DFAS, sym : Int, to : DFAS) {
+  fn connect(from : NFAS, sym : Int, to : NFAS) {
     edges.push(mk_edge(from, symbol_to_letter(sym), to))
   }
 
-  fn add_fresh_state(s : DFAS) {
+  fn add_fresh_state(s : NFAS) {
     if !s.0.is_empty() {
       nodes.push(state_to_node(s))
     } else {
@@ -383,8 +383,8 @@ pub fn NFA::to_digraph(
 }
 
 ///|
-fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[DFAS, Int] {
-  let result : Map[DFAS, Int] = Map::new()
+fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFAS, Int] {
+  let result : Map[NFAS, Int] = Map::new()
   let mut count = 1
   for dfas in dfa.dfat.0.keys() {
     if dfas == dfa.initial {
@@ -422,4 +422,51 @@ pub fn RDFA::to_dfa(dfa : RDFA) -> DFA {
   let initial = map[dfa.initial]
   let finals = dfa.finals.iter().map(s => map[s]) |> Set::from_iter
   DFA::{ initial, finals, edfat }
+}
+
+///|
+pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
+  let result : Set[DFAS] = Set::new()
+  let pending : Array[DFAS] = []
+  let states = Set::from_iter(Int::until(0, dfa.edfat.length(), inclusive=true))
+  let finals : DFAS = dfa.finals
+  let non_finals : DFAS = Set::difference(states, finals.0)
+  result.add(finals)
+  result.add(non_finals)
+  fn add_min_set(x : DFAS, y : DFAS) {
+    if x.0.length() < y.0.length() {
+      pending.push(x)
+    } else {
+      pending.push(y)
+    }
+  }
+
+  fn from_states(sym : Int, to_set : DFAS) -> DFAS {
+    let result = Set::new()
+    for from in 0..<dfa.edfat.length() {
+      if to_set.0.contains(dfa.edfat[from][sym]) {
+        result.add(from)
+      }
+    }
+    result
+  }
+
+  add_min_set(finals, non_finals)
+  while pending.pop() is Some(to_set) {
+    for sym in 0..<(alphatbet_count - 1) {
+      let x = from_states(sym, to_set)
+      for y in result {
+        let y1 = Set::intersection(x.0, y.0)
+        let y2 = Set::difference(y.0, x.0)
+        if !y1.is_empty() && !y2.is_empty() {
+          result.remove(y)
+          result.add(y1)
+          result.add(y2)
+        } else {
+          add_min_set(y1, y2)
+        }
+      }
+    }
+  }
+  result
 }

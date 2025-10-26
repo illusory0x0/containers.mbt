@@ -34,6 +34,16 @@ pub const EpsilonSymbol : Int = 0
 pub const ToplevelInitialState = 0
 
 ///|
+struct NFAS(Set[Int]) derive(Eq, ToJson, Show)
+
+///|
+impl Hash for NFAS with hash_combine(self, hasher) {
+  for state in self.0 {
+    hasher.combine(state)
+  }
+}
+
+///|
 struct DFAS(Set[Int]) derive(Eq, ToJson, Show)
 
 ///|
@@ -44,12 +54,12 @@ impl Hash for DFAS with hash_combine(self, hasher) {
 }
 
 ///|
-struct DFAT(Map[DFAS, Map[Int, DFAS]]) derive(Eq, Show, ToJson)
+struct DFAT(Map[NFAS, Map[Int, NFAS]]) derive(Eq, Show, ToJson)
 
 ///|
 pub struct RDFA {
-  initial : DFAS
-  finals : Set[DFAS]
+  initial : NFAS
+  finals : Set[NFAS]
   dfat : DFAT
 } derive(ToJson, Show)
 
