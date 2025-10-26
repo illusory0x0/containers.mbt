@@ -83,7 +83,7 @@ fn DFA::to_dfa_state_map(dfa : DFA) -> Map[DFAS, Int] {
 }
 
 ///|
-fn DFA::to_edfa(dfa : DFA) -> EDFA {
+pub fn DFA::to_edfa(dfa : DFA) -> EDFA {
   let state_count = dfa.dfat.0.length()
   let alphatbet_count = dfa.dfat.0[dfa.initial].length()
   let edfat = FixedArray::makei(state_count, _ => FixedArray::make(
