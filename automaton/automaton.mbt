@@ -454,7 +454,8 @@ pub fn DFA::reverse_transition(
 pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   let result : Set[DFAS] = Set::new()
   let all : DFAS = Set::from_iter(Int::until(0, dfa.dead_state()))
-  let finals : DFAS = Set::from_iter(dfa.finals.iter())
+  let finals : DFAS = Set::new()
+  finals.0.add(dfa.dead_state())
   let non_finals : DFAS = all - finals
   let refiners : Set[DFAS] = Set::new()
   let reverse_trans = dfa.reverse_transition(alphatbet_count)
@@ -475,19 +476,27 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
     result
   }
 
-  fn peek(set : Set[DFAS]) -> DFAS? {
-    set.iter().head()
+  fn pop(set : Set[DFAS]) -> DFAS? {
+    match set.iter().head() {
+      Some(value) => {
+        set.remove(value)
+        Some(value)
+      }
+      None => None
+    }
   }
 
-  while peek(refiners) is Some(to_set) {
+  while pop(refiners) is Some(to_set) {
     refiners.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
-      while peek(result) is Some(partition) {
+      let temp = result.to_array()
+      // FIXME:
+      for partition in temp {
         let intersection = from_set & partition
         let difference = partition - from_set
         if !intersection.is_empty() && !difference.is_empty() {
-          refine(result, old=partition, new=(intersection, partition))
+          refine(result, old=partition, new=(intersection, difference))
           if refiners.contains(partition) {
             refine(refiners, old=partition, new=(intersection, difference))
           } else if intersection.length() < difference.length() {
@@ -500,6 +509,54 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
     }
   }
   result
+}
+
+///|
+pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
+  let partitions = dfa.partition(alphatbet_count)
+  let map : Map[Int, Int] = Map::new()
+  let mut count = 0
+  for part in partitions {
+    if part.0.contains(dfa.dead_state()) {
+      for state in part.0 {
+        map[state] = partitions.length() - 1
+      }
+    } else if part.0.contains(dfa.initial) {
+      for state in part.0 {
+        map[state] = 0
+      }
+    } else {
+      for state in part.0 {
+        map[state] = count
+      }
+      count += 1
+    }
+  }
+  let state_count = partitions.length()
+  let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
+    alphatbet_count, 0,
+  ))
+  for part in partitions {
+    let rfrom = part.0.iter().head().unwrap()
+    let from = map[rfrom]
+    for sym in 0..<alphatbet_count {
+      let rto = if dfa.dead_state() == rfrom {
+        dfa.dead_state()
+      } else {
+        dfa.edfat[rfrom][sym]
+      }
+      let to = map[rto]
+      if from != partitions.length() - 1 {
+        edfat[from][sym] = to
+      }
+    }
+  }
+  let initial = map[dfa.initial]
+  let finals : Set[Int] = Set::new()
+  for final_ in dfa.finals {
+    finals.add(map[final_])
+  }
+  DFA::{ initial, finals, edfat }
 }
 
 ///|

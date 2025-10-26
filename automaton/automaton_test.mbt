@@ -324,3 +324,18 @@ test "DFA/complex" (t : @test.T) {
   t.writeln(digraph)
   t.snapshot(filename="dfa_complex.dot")
 }
+
+///|
+test "DFA/minimize/repeat" (t : @test.T) {
+  let sym : Regex = Symbol(letter_to_symbol('a'))
+  let regex : Regex = Repeat(sym)
+  let nfa = regex_to_nfa(regex)
+  let rdfa = nfa.powerset_construction(2)
+  let dfa = rdfa.to_dfa()
+  let p = dfa.partition(2)
+  inspect(p, content="{DFAS({2}), DFAS({0, 1})}")
+  let min_dfa = dfa.minimize(2)
+  let digraph = dfa_to_digraph(min_dfa)
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_minimize_repeat.dot")
+}
