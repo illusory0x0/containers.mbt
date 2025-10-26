@@ -457,6 +457,7 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   let finals : DFAS = Set::from_iter(dfa.finals.iter())
   let non_finals : DFAS = all - finals
   let refiners : Set[DFAS] = Set::new()
+  let reverse_trans = dfa.reverse_transition(alphatbet_count)
   if finals.length() < non_finals.length() {
     refiners.add(finals)
   } else {
@@ -465,10 +466,9 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   result.add(finals)
   result.add(non_finals)
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
-    // TODO: here we need build the reverse DFA graph to improve performance 
     let result = Set::new()
-    for from in 0..<dfa.dead_state() {
-      if to_set.0.contains(dfa.edfat[from][sym]) {
+    for to in to_set.0 {
+      for from in reverse_trans[to][sym] {
         result.add(from)
       }
     }
