@@ -64,3 +64,42 @@ pub struct NFAC {
   nfa : RNFA
   count : Int
 }
+
+///|
+pub struct EDFA {
+  initial : Int
+  finals : Set[Int]
+  edfat : FixedArray[FixedArray[Int]]
+}
+
+///|
+fn DFA::to_dfa_state_map(dfa : DFA) -> Map[DFAS, Int] {
+  let result : Map[DFAS, Int] = Map::new()
+  for i, dfas in dfa.dfat.0.keys() {
+    result[dfas] = i
+  }
+  result[dfa.initial] = 0
+  result
+}
+
+///|
+fn DFA::to_edfa(dfa : DFA) -> EDFA {
+  let state_count = dfa.dfat.0.length()
+  let alphatbet_count = dfa.dfat.0[dfa.initial].length()
+  let edfat = FixedArray::makei(state_count, _ => FixedArray::make(
+    alphatbet_count, 0,
+  ))
+  let map = dfa.to_dfa_state_map()
+  for initial, trans in dfa.dfat.0 {
+    if !initial.0.is_empty() {
+      for sym, final_ in trans {
+        let initial = map[initial]
+        let final_ = map[final_]
+        edfat[initial][sym] = final_
+      }
+    }
+  }
+  let initial = map[dfa.initial]
+  let finals = dfa.finals.iter().map(s => map[s]) |> Set::from_iter
+  EDFA::{ initial, finals, edfat }
+}
