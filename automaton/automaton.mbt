@@ -317,7 +317,7 @@ pub fn DFA::to_digraph(
   }
 
   fn add_fresh_state(id : Int) {
-    if id != self.edfat.length() - 1 {
+    if id != self.edfat.length() {
       nodes.push(state_to_node(id))
     } else {
       nodes.push(@graphviz.Node::{ id, label: Some("E") })
@@ -326,12 +326,12 @@ pub fn DFA::to_digraph(
 
   for initial, trans in self.edfat {
     add_fresh_state(initial)
-    if initial != self.edfat.length() - 1 {
-      for sym, final_ in trans {
-        connect(initial, sym, final_)
-      }
+    for sym, final_ in trans {
+      connect(initial, sym, final_)
     }
   }
+  // add dead state
+  add_fresh_state(self.edfat.length())
   { nodes, edges, rankdir: LeftToRight }
 }
 
@@ -398,11 +398,13 @@ fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[DFAS, Int] {
 pub fn RDFA::to_dfa(dfa : RDFA) -> DFA {
   let state_count = dfa.dfat.0.length()
   let alphatbet_count = dfa.dfat.0[dfa.initial].length()
-  let edfat = FixedArray::makei(state_count, _ => FixedArray::make(
+  // exclude the dead state 
+  let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
     alphatbet_count, 0,
   ))
   let map = dfa.to_dfa_state_map()
   for initial, trans in dfa.dfat.0 {
+    // exclude dead state
     if !initial.0.is_empty() {
       for sym, final_ in trans {
         let initial = map[initial]
