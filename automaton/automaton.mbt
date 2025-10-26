@@ -167,7 +167,8 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
   }
 
   while pending.pop() is Some(dfs_state) {
-    for sym in 1..<alphatbet_count {
+    // epsilon is 0, so start from 1
+    for sym in 1..<(alphatbet_count + 1) {
       let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state.0, sym))
       if new_dfa_state.contains(nfa.final_) {
         dfa_finals.add(new_dfa_state)
@@ -400,15 +401,15 @@ fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFAS, Int] {
 }
 
 ///|
-pub fn RDFA::to_dfa(dfa : RDFA) -> DFA {
-  let state_count = dfa.dfat.0.length()
-  let alphatbet_count = dfa.dfat.0[dfa.initial].length()
+pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
+  let state_count = rdfa.dfat.0.length()
+  let alphatbet_count = rdfa.dfat.0[rdfa.initial].length()
   // exclude the dead state 
   let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
     alphatbet_count, 0,
   ))
-  let map = dfa.to_dfa_state_map()
-  for initial, trans in dfa.dfat.0 {
+  let map = rdfa.to_dfa_state_map()
+  for initial, trans in rdfa.dfat.0 {
     // exclude dead state
     if !initial.0.is_empty() {
       for sym, final_ in trans {
@@ -419,56 +420,67 @@ pub fn RDFA::to_dfa(dfa : RDFA) -> DFA {
       }
     }
   }
-  let initial = map[dfa.initial]
-  let finals = dfa.finals.iter().map(s => map[s]) |> Set::from_iter
+  let initial = map[rdfa.initial]
+  let finals = rdfa.finals.iter().map(s => map[s]) |> Set::from_iter
   DFA::{ initial, finals, edfat }
 }
 
 ///|
-pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
-  let result : Set[DFAS] = Set::new()
-  let pending : Array[DFAS] = []
-  let all : DFAS = Set::from_iter(
-    Int::until(0, dfa.edfat.length(), inclusive=true),
+pub fn DFA::partition(
+  dfa : DFA,
+  alphatbet_count : Int,
+) -> @immut/sorted_set.SortedSet[DFAS] {
+  let mut result : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::new()
+  let mut pending : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::new()
+  let all : DFAS = @immut/sorted_set.SortedSet::from_iter(
+    Int::until(0, dfa.dead_state()),
   )
-  let finals : DFAS = dfa.finals
+  let finals : DFAS = @immut/sorted_set.SortedSet::from_array(
+    dfa.finals.to_array(),
+  )
   let non_finals : DFAS = all - finals
-  result.add(finals)
-  result.add(non_finals)
+  result = result.add(finals)
+  result = result.add(non_finals)
   fn add_min_set(x : DFAS, y : DFAS) {
     if x.0.length() < y.0.length() {
-      pending.push(x)
+      pending = pending.add(x)
     } else {
-      pending.push(y)
+      pending = pending.add(y)
     }
   }
 
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
-    let result = Set::new()
-    for from in 0..<dfa.edfat.length() {
+    let mut result = @immut/sorted_set.SortedSet::new()
+    for from in 0..<dfa.dead_state() {
       if to_set.0.contains(dfa.edfat[from][sym]) {
-        result.add(from)
+        result = result.add(from)
       }
     }
     result
   }
 
   add_min_set(finals, non_finals)
-  while pending.pop() is Some(to_set) {
-    for sym in 0..<(alphatbet_count - 1) {
-      let x = from_states(sym, to_set)
-      for y in result {
-        let y1 = x & y
-        let y2 = y - x
-        if !y1.is_empty() && !y2.is_empty() {
-          result.remove(y)
-          result.add(y1)
-          result.add(y2)
-        } else {
-          add_min_set(y1, y2)
+  while pending.min_option() is Some(to_set) {
+    for sym in 0..<alphatbet_count {
+      let from_set = from_states(sym, to_set)
+      for partition in result {
+        let intersection = from_set & partition
+        let difference = partition - from_set
+        if !intersection.is_empty() && !difference.is_empty() {
+          result = result.remove(partition)
+          result = result.add(intersection)
+          result = result.add(difference)
+          if pending.contains(partition) {
+            pending = pending.remove(partition)
+            pending = pending.add(intersection)
+            pending = pending.add(difference)
+          } else {
+            add_min_set(intersection, difference)
+          }
         }
       }
     }
+    pending = pending.remove(to_set)
   }
   result
 }
