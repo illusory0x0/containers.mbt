@@ -23,6 +23,7 @@ pub struct DFA {
 }
 fn DFA::dead_state(Self) -> Int
 fn DFA::partition(Self, Int) -> @set.Set[DFAS]
+fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[@set.Set[Int]]]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS

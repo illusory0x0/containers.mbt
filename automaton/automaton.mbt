@@ -431,6 +431,26 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
 }
 
 ///|
+pub fn DFA::reverse_transition(
+  dfa : DFA,
+  alphatbet_count : Int,
+) -> FixedArray[FixedArray[Set[Int]]] {
+  let dead_state = dfa.dead_state()
+  // include dead state 
+  let result = FixedArray::makei(dead_state + 1, _ => FixedArray::makei(
+    alphatbet_count,
+    _ => Set::new(),
+  ))
+  for from, trans in dfa.edfat {
+    for sym in 0..<alphatbet_count {
+      let to = trans[sym]
+      result[to][sym].add(from)
+    }
+  }
+  result
+}
+
+///|
 pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   let result : Set[DFAS] = Set::new()
   let all : DFAS = Set::from_iter(Int::until(0, dfa.dead_state()))
