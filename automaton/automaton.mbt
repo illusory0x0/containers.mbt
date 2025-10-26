@@ -427,57 +427,55 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
 
 ///|
 pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
-  let mut result : Set[DFAS] = Set::new()
+  let result : Set[DFAS] = Set::new()
   let all : DFAS = Set::from_iter(Int::until(0, dfa.dead_state()))
   let finals : DFAS = Set::from_iter(dfa.finals.iter())
   let non_finals : DFAS = all - finals
-  let mut pending : Set[DFAS] = Set::new() 
-  
-  (
-    if finals.length() < non_finals.length() {
-      pending.add(finals)
-    } else {
-      pending.add(non_finals)
-    },
-  )
-   result.add(finals)
+  let refiners : Set[DFAS] = Set::new()
+  if finals.length() < non_finals.length() {
+    refiners.add(finals)
+  } else {
+    refiners.add(non_finals)
+  }
+  result.add(finals)
   result.add(non_finals)
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
-    let  result = Set::new()
+    // TODO: here we need build the reverse DFA graph to improve performance 
+    let result = Set::new()
     for from in 0..<dfa.dead_state() {
       if to_set.0.contains(dfa.edfat[from][sym]) {
-         result.add(from)
+        result.add(from)
       }
     }
     result
   }
-  // here using while-loop instead of for-loop to avoid modifying the collection while iterating
-  while pending.min_option() is Some(to_set) {
+
+  fn peek(set : Set[DFAS]) -> DFAS? {
+    set.iter().head()
+  }
+
+  fn refine(set : Set[_], partition, x, y) {
+    set.remove(partition)
+    set.add(x)
+    set.add(y)
+  }
+
+  while peek(refiners) is Some(to_set) {
     // pop a partition from pending
-    pending = pending.remove(to_set)
+    refiners.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
-      // here using while-loop instead of for-loop to avoid modifying the collection while iterating
-      while result.min_option() is Some(partition) {
-        // Warnings: here we need not pop from the result set.
+      while peek(result) is Some(partition) {
         let intersection = from_set & partition
         let difference = partition - from_set
         if !intersection.is_empty() && !difference.is_empty() {
-          // replace partition with the two new partitions
-          result = result.remove(partition)
-          result = result.add(intersection)
-          result = result.add(difference)
-          if pending.contains(partition) {
-            // replace partition in pending with the two new partitions
-            pending = pending.remove(partition)
-            pending = pending.add(intersection)
-            pending = pending.add(difference)
+          refine(result, partition, intersection, partition)
+          if refiners.contains(partition) {
+            refine(refiners, partition, intersection, difference)
           } else if intersection.length() < difference.length() {
-            // add the smaller partition to pending
-            pending = pending.add(intersection)
+            refiners.add(intersection)
           } else {
-            // add the smaller partition to pending
-            pending = pending.add(difference)
+            refiners.add(difference)
           }
         }
       }
