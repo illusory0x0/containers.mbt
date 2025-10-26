@@ -491,6 +491,7 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   while pop(refiners) is Some(to_set) {
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
+      // pop the result, if not refine, then re-add it from unrefined
       while pop(result) is Some(partition) {
         let intersection = from_set & partition
         let difference = partition - from_set
