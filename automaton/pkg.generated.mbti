@@ -94,12 +94,19 @@ impl Show for RDFA
 impl ToJson for RDFA
 
 type RDFAT
+fn RDFAT::contains(Self, NFAS) -> Bool
 fn RDFAT::equal(Self, Self) -> Bool // from trait `Eq`
+fn RDFAT::iter2(Self) -> Iter2[NFAS, Map[Int, NFAS]]
+fn RDFAT::keys(Self) -> Iter[NFAS]
+fn RDFAT::length(Self) -> Int
 #deprecated
 fn RDFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn RDFAT::op_get(Self, NFAS) -> Map[Int, NFAS]
+fn RDFAT::op_set(Self, NFAS, Map[Int, NFAS]) -> Unit
 fn RDFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFAT::to_json(Self) -> Json // from trait `ToJson`
 fn RDFAT::to_string(Self) -> String // from trait `Show`
+fn RDFAT::update(Self, NFAS, (Map[Int, NFAS]?) -> Map[Int, NFAS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
 impl ToJson for RDFAT

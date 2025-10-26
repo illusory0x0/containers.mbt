@@ -151,7 +151,7 @@ fn RDFAT::add_transition(
     Some(edge)
   }
 
-  dfat.0.update(from, fn(edge) {
+  dfat.update(from, fn(edge) {
     match edge {
       Some(edge) => connect(edge)
       None => connect({})
@@ -179,7 +179,7 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
         dfa_finals.add(new_dfa_state)
       }
       connect(dfs_state, sym, new_dfa_state)
-      if !dfat.0.contains(new_dfa_state) {
+      if !dfat.contains(new_dfa_state) {
         pending.push(new_dfa_state)
       }
     }
@@ -194,7 +194,7 @@ pub fn RDFA::to_digraph(
 ) -> @graphviz.Digraph {
   let map : Map[NFAS, Int] = {}
   let mut count = 0
-  for dfs_state, _ in self.dfat.0 {
+  for dfs_state, _ in self.dfat {
     map[dfs_state] = count
     count += 1
   }
@@ -225,7 +225,7 @@ pub fn RDFA::to_digraph(
     }
   }
 
-  for initial, trans in self.dfat.0 {
+  for initial, trans in self.dfat {
     add_fresh_state(initial)
     if !initial.0.is_empty() {
       for sym, final_ in trans {
@@ -392,11 +392,11 @@ pub fn NFA::to_digraph(
 fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFAS, Int] {
   let result : Map[NFAS, Int] = Map::new()
   let mut count = 1
-  for dfas in dfa.dfat.0.keys() {
+  for dfas in dfa.dfat.keys() {
     if dfas == dfa.initial {
       result[dfas] = 0
     } else if dfas.0.is_empty() {
-      result[dfas] = dfa.dfat.0.length() - 1
+      result[dfas] = dfa.dfat.length() - 1
     } else {
       result[dfas] = count
       count += 1
@@ -407,14 +407,14 @@ fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFAS, Int] {
 
 ///|
 pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
-  let state_count = rdfa.dfat.0.length()
-  let alphatbet_count = rdfa.dfat.0[rdfa.initial].length()
+  let state_count = rdfa.dfat.length()
+  let alphatbet_count = rdfa.dfat[rdfa.initial].length()
   // exclude the dead state 
   let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
     alphatbet_count, 0,
   ))
   let map = rdfa.to_dfa_state_map()
-  for initial, trans in rdfa.dfat.0 {
+  for initial, trans in rdfa.dfat {
     // exclude dead state
     if !initial.0.is_empty() {
       for sym, final_ in trans {

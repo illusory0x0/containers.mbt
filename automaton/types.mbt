@@ -77,6 +77,45 @@ fn DFAS::length(set : DFAS) -> Int {
 struct RDFAT(Map[NFAS, Map[Int, NFAS]]) derive(Eq, Show, ToJson)
 
 ///|
+pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFAS, Map[Int, NFAS]] {
+  self.0.iter2()
+}
+
+///|
+pub fn RDFAT::keys(self : RDFAT) -> Iter[NFAS] {
+  self.0.keys()
+}
+
+///|
+pub fn RDFAT::length(self : RDFAT) -> Int {
+  self.0.length()
+}
+
+///|
+pub fn RDFAT::contains(self : RDFAT, val : NFAS) -> Bool {
+  self.0.contains(val)
+}
+
+///|
+pub fn RDFAT::update(
+  self : RDFAT,
+  key : NFAS,
+  f : (Map[Int, NFAS]?) -> Map[Int, NFAS]?,
+) -> Unit {
+  self.0.update(key, f)
+}
+
+///|
+pub fn RDFAT::op_set(self : RDFAT, key : NFAS, val : Map[Int, NFAS]) -> Unit {
+  self.0[key] = val
+}
+
+///|
+pub fn RDFAT::op_get(self : RDFAT, key : NFAS) -> Map[Int, NFAS] {
+  self.0[key]
+}
+
+///|
 pub struct RDFA {
   initial : NFAS
   finals : Set[NFAS]
