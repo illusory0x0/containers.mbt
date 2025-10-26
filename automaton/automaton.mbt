@@ -461,7 +461,6 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   }
 
   while peek(refiners) is Some(to_set) {
-    // pop a partition from pending
     refiners.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
