@@ -460,7 +460,7 @@ pub fn DFA::partition(
   while pending.min_option() is Some(to_set) {
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
-      // result is immutable set, so we modify the result in inner loop this guarantees correctness
+      // this has bug, don't use for-loop to implement this part, because result is changing during iteration
       for partition in result {
         let intersection = from_set & partition
         let difference = partition - from_set
