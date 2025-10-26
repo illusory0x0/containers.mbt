@@ -461,6 +461,7 @@ pub fn DFA::partition(
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
       // this has bug, don't use for-loop to implement this part, because result is changing during iteration
+      // use while-loop instead
       for partition in result {
         let intersection = from_set & partition
         let difference = partition - from_set
