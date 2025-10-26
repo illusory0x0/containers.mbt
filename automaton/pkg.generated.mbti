@@ -21,6 +21,7 @@ pub struct DFA {
   finals : @set.Set[Int]
   edfat : FixedArray[FixedArray[Int]]
 }
+fn DFA::dead_state(Self) -> Int
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS

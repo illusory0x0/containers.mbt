@@ -317,7 +317,7 @@ pub fn DFA::to_digraph(
   }
 
   fn add_fresh_state(id : Int) {
-    if id != self.edfat.length() {
+    if id != self.dead_state() {
       nodes.push(state_to_node(id))
     } else {
       nodes.push(@graphviz.Node::{ id, label: Some("E") })
@@ -331,8 +331,13 @@ pub fn DFA::to_digraph(
     }
   }
   // add dead state
-  add_fresh_state(self.edfat.length())
+  add_fresh_state(self.dead_state())
   { nodes, edges, rankdir: LeftToRight }
+}
+
+///|
+pub fn DFA::dead_state(self : DFA) -> Int {
+  self.edfat.length()
 }
 
 ///|
