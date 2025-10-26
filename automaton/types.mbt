@@ -1,5 +1,5 @@
 ///|
-enum Regex {
+pub(all) enum Regex {
   Concat(Regex, Regex)
   Choice(Regex, Regex)
   Repeat(Regex)
@@ -7,7 +7,7 @@ enum Regex {
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
-enum NFA {
+pub(all) enum NFA {
   Symbol(initial~ : Int, Int, final~ : Int)
   Concat(NFA, NFA)
   Choice(initial~ : Int, NFA, NFA, final~ : Int)
@@ -18,25 +18,28 @@ enum NFA {
 struct NFAT(FixedArray[Map[Int, Set[Int]]]) derive(Eq, Show, ToJson)
 
 ///|
-const Epsilon = 'ε'
+pub const Epsilon = 'ε'
 
 ///|
-const ToplevelInitialState = 0
+pub const EpsilonSymbol : Int = 0
 
 ///|
-struct DFAState(Set[Int]) derive(Eq, ToJson, Show)
+pub const ToplevelInitialState = 0
 
 ///|
-impl Hash for DFAState with hash_combine(self, hasher) {
+struct DFAS(Set[Int]) derive(Eq, ToJson, Show)
+
+///|
+impl Hash for DFAS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)
   }
 }
 
 ///|
-struct DFA {
-  initial : DFAState
-  transition : Map[DFAState, Map[Int, DFAState]]
+pub struct DFA {
+  initial : DFAS
+  transition : Map[DFAS, Map[Int, DFAS]]
 } derive(ToJson, Show)
 
 ///|

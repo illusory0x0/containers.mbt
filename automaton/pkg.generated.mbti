@@ -2,29 +2,42 @@
 package "illusory0x0/automaton"
 
 // Values
+const Epsilon : Char = 'ε'
+
+const EpsilonSymbol : Int = 0
+
+const ToplevelInitialState : Int = 0
 
 // Errors
 
 // Types and methods
-type DFA
+pub struct DFA {
+  initial : DFAS
+  transition : Map[DFAS, Map[Int, DFAS]]
+}
 fn DFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFA::to_json(Self) -> Json // from trait `ToJson`
 fn DFA::to_string(Self) -> String // from trait `Show`
 impl Show for DFA
 impl ToJson for DFA
 
-type DFAState
-fn DFAState::equal(Self, Self) -> Bool // from trait `Eq`
+type DFAS
+fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
-fn DFAState::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn DFAState::output(Self, &Logger) -> Unit // from trait `Show`
-fn DFAState::to_json(Self) -> Json // from trait `ToJson`
-fn DFAState::to_string(Self) -> String // from trait `Show`
-impl Eq for DFAState
-impl Show for DFAState
-impl ToJson for DFAState
+fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFAS::to_json(Self) -> Json // from trait `ToJson`
+fn DFAS::to_string(Self) -> String // from trait `Show`
+impl Eq for DFAS
+impl Show for DFAS
+impl ToJson for DFAS
 
-type NFA
+pub(all) enum NFA {
+  Symbol(initial~ : Int, Int, final~ : Int)
+  Concat(NFA, NFA)
+  Choice(initial~ : Int, NFA, NFA, final~ : Int)
+  Repeat(initial~ : Int, NFA, final~ : Int)
+}
 fn NFA::compare(Self, Self) -> Int // from trait `Compare`
 fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
@@ -48,7 +61,12 @@ impl Eq for NFAT
 impl Show for NFAT
 impl ToJson for NFAT
 
-type Regex
+pub(all) enum Regex {
+  Concat(Regex, Regex)
+  Choice(Regex, Regex)
+  Repeat(Regex)
+  Symbol(Int)
+}
 fn Regex::compare(Self, Self) -> Int // from trait `Compare`
 fn Regex::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated

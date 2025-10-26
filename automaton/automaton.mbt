@@ -81,37 +81,6 @@ fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
 }
 
 ///|
-fn NFAT::to_digraph(self : NFAT) -> @graphviz.Digraph {
-  let nodes = []
-  let edges = []
-  fn int_to_node(id : Int) {
-    @graphviz.Node::{ id, label: Some(id.to_string()) }
-  }
-
-  fn mk_edge(from : Int, label : Char, to : Int) -> @graphviz.Edge {
-    { from, to, label: Some(String::make(1, label)) }
-  }
-
-  fn connect(from : Int, sym : Int, to : Int) {
-    edges.push(mk_edge(from, symbol_to_letter(sym), to))
-  }
-
-  fn add_fresh_state(s : Int) {
-    nodes.push(int_to_node(s))
-  }
-
-  for initial, trans in self.0 {
-    add_fresh_state(initial)
-    for sym, finals in trans {
-      for final in finals {
-        connect(initial, sym, final)
-      }
-    }
-  }
-  { nodes, edges, rankdir: LeftToRight }
-}
-
-///|
 fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
   let edges = self.0[from]
   match self.0.get(from) {
@@ -153,18 +122,13 @@ fn NFAT::move(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
 }
 
 ///|
-fn DFA::new(initial~ : DFAState) -> DFA {
+fn DFA::new(initial~ : DFAS) -> DFA {
   DFA::{ initial, transition: Map::new() }
 }
 
 ///|
-fn DFA::add_transition(
-  self : DFA,
-  from : DFAState,
-  sym : Int,
-  to : DFAState,
-) -> Unit {
-  fn connect(edge : Map[Int, DFAState]) -> Map[Int, DFAState]? {
+fn DFA::add_transition(self : DFA, from : DFAS, sym : Int, to : DFAS) -> Unit {
+  fn connect(edge : Map[Int, DFAS]) -> Map[Int, DFAS]? {
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
         None => Some(to)
@@ -187,10 +151,10 @@ fn DFA::add_transition(
 ///|
 fn NFAT::powerset_construction(nfat : NFAT, alphatbet_count : Int) -> DFA {
   let pending = []
-  let dfa_initial : DFAState = nfat.epsilon_closure(Set::new()..add(0))
+  let dfa_initial : DFAS = nfat.epsilon_closure(Set::new()..add(0))
   let dfa = DFA::new(initial=dfa_initial)
   pending.push(dfa_initial)
-  fn connect(from : DFAState, sym : Int, to : DFAState) {
+  fn connect(from : DFAS, sym : Int, to : DFAS) {
     dfa.add_transition(from, sym, to)
   }
 
@@ -207,8 +171,11 @@ fn NFAT::powerset_construction(nfat : NFAT, alphatbet_count : Int) -> DFA {
 }
 
 ///|
-fn DFA::to_digraph(self : DFA) -> @graphviz.Digraph {
-  let map : Map[DFAState, Int] = {}
+fn DFA::to_digraph(
+  self : DFA,
+  symbol_to_letter~ : (Int) -> Char,
+) -> @graphviz.Digraph {
+  let map : Map[DFAS, Int] = {}
   let mut count = 0
   for dfs_state, _ in self.transition {
     map[dfs_state] = count
@@ -217,24 +184,24 @@ fn DFA::to_digraph(self : DFA) -> @graphviz.Digraph {
   map[self.initial] = 0
   let nodes = []
   let edges = []
-  fn state_to_node(s : DFAState) {
+  fn state_to_node(s : DFAS) {
     let id = map[s]
     // let label = s.0.iter().to_string()
     let label = if id == 0 { "S" } else { id.to_string() }
     @graphviz.Node::{ id, label: Some(label) }
   }
 
-  fn mk_edge(from : DFAState, label : Char, to : DFAState) -> @graphviz.Edge {
+  fn mk_edge(from : DFAS, label : Char, to : DFAS) -> @graphviz.Edge {
     let from = map[from]
     let to = map[to]
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : DFAState, sym : Int, to : DFAState) {
+  fn connect(from : DFAS, sym : Int, to : DFAS) {
     edges.push(mk_edge(from, symbol_to_letter(sym), to))
   }
 
-  fn add_fresh_state(s : DFAState) {
+  fn add_fresh_state(s : DFAS) {
     if !s.0.is_empty() {
       nodes.push(state_to_node(s))
     } else {
@@ -254,7 +221,10 @@ fn DFA::to_digraph(self : DFA) -> @graphviz.Digraph {
 }
 
 ///|
-fn NFA::to_digraph(nfa : NFA) -> @graphviz.Digraph {
+fn NFA::to_digraph(
+  nfa : NFA,
+  symbol_to_letter~ : (Int) -> Char,
+) -> @graphviz.Digraph {
   let nodes : Array[@graphviz.Node] = []
   let edges : Array[@graphviz.Edge] = []
   fn int_to_node(id : Int) {
@@ -316,19 +286,35 @@ fn NFA::to_digraph(nfa : NFA) -> @graphviz.Digraph {
 }
 
 ///|
-fn symbol_to_letter(sym : Int) -> Char {
-  match sym {
-    0 => Epsilon
-    1..=26 => Int::unsafe_to_char('a'.to_int() + sym - 1)
-    _ => abort("invalid range")
+fn NFAT::to_digraph(
+  self : NFAT,
+  symbol_to_letter~ : (Int) -> Char,
+) -> @graphviz.Digraph {
+  let nodes = []
+  let edges = []
+  fn int_to_node(id : Int) {
+    @graphviz.Node::{ id, label: Some(id.to_string()) }
   }
-}
 
-///|
-fn letter_to_symbol(letter : Char) -> Int {
-  match letter {
-    'ε' => 0
-    'a'..='z' => letter.to_int() - 'a'.to_int() + 1
-    _ => abort("invalid range")
+  fn mk_edge(from : Int, label : Char, to : Int) -> @graphviz.Edge {
+    { from, to, label: Some(String::make(1, label)) }
   }
+
+  fn connect(from : Int, sym : Int, to : Int) {
+    edges.push(mk_edge(from, symbol_to_letter(sym), to))
+  }
+
+  fn add_fresh_state(s : Int) {
+    nodes.push(int_to_node(s))
+  }
+
+  for initial, trans in self.0 {
+    add_fresh_state(initial)
+    for sym, finals in trans {
+      for final in finals {
+        connect(initial, sym, final)
+      }
+    }
+  }
+  { nodes, edges, rankdir: LeftToRight }
 }
