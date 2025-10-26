@@ -453,18 +453,19 @@ pub fn DFA::reverse_transition(
 ///|
 pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   let result : Set[DFAS] = Set::new()
-  let all : DFAS = Set::from_iter(Int::until(0, dfa.dead_state()))
-  let finals : DFAS = Set::new()
-  finals.0.add(dfa.dead_state())
-  let non_finals : DFAS = all - finals
+  let all : DFAS = Set::from_iter(
+    Int::until(0, dfa.dead_state(), inclusive=true),
+  )
+  let dead_state : DFAS = set_singleton(dfa.dead_state())
+  let non_finals : DFAS = all - dead_state
   let refiners : Set[DFAS] = Set::new()
   let reverse_trans = dfa.reverse_transition(alphatbet_count)
-  if finals.length() < non_finals.length() {
-    refiners.add(finals)
+  if dead_state.length() < non_finals.length() {
+    refiners.add(dead_state)
   } else {
     refiners.add(non_finals)
   }
-  result.add(finals)
+  result.add(dead_state)
   result.add(non_finals)
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
     let result = Set::new()
@@ -488,7 +489,6 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
 
   let unrefined = []
   while pop(refiners) is Some(to_set) {
-    refiners.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
       while pop(result) is Some(partition) {
