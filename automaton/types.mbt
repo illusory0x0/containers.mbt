@@ -47,6 +47,21 @@ impl Hash for NFAS with hash_combine(self, hasher) {
 struct DFAS(Set[Int]) derive(Eq, ToJson, Show)
 
 ///|
+impl Sub for DFAS with sub(x, y) {
+  x.0 - y.0
+}
+
+///|
+impl BitAnd for DFAS with land(x, y) {
+  x.0 & y.0
+}
+
+///|
+fn DFAS::is_empty(set : DFAS) -> Bool {
+  set.0.is_empty()
+}
+
+///|
 impl Hash for DFAS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)

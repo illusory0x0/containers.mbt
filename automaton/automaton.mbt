@@ -428,9 +428,11 @@ pub fn RDFA::to_dfa(dfa : RDFA) -> DFA {
 pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   let result : Set[DFAS] = Set::new()
   let pending : Array[DFAS] = []
-  let states = Set::from_iter(Int::until(0, dfa.edfat.length(), inclusive=true))
+  let all : DFAS = Set::from_iter(
+    Int::until(0, dfa.edfat.length(), inclusive=true),
+  )
   let finals : DFAS = dfa.finals
-  let non_finals : DFAS = Set::difference(states, finals.0)
+  let non_finals : DFAS = all - finals
   result.add(finals)
   result.add(non_finals)
   fn add_min_set(x : DFAS, y : DFAS) {
@@ -456,8 +458,8 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
     for sym in 0..<(alphatbet_count - 1) {
       let x = from_states(sym, to_set)
       for y in result {
-        let y1 = Set::intersection(x.0, y.0)
-        let y2 = Set::difference(y.0, x.0)
+        let y1 = x & y
+        let y2 = y - x
         if !y1.is_empty() && !y2.is_empty() {
           result.remove(y)
           result.add(y1)
