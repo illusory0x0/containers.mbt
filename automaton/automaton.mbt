@@ -490,13 +490,13 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
     refiners.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
-      let temp = result.to_array()
-      // FIXME:
-      for partition in temp {
+      let finished = []
+      while pop(result) is Some(partition) {
         let intersection = from_set & partition
         let difference = partition - from_set
         if !intersection.is_empty() && !difference.is_empty() {
-          refine(result, old=partition, new=(intersection, difference))
+          result.add(intersection)
+          result.add(difference)
           if refiners.contains(partition) {
             refine(refiners, old=partition, new=(intersection, difference))
           } else if intersection.length() < difference.length() {
@@ -504,7 +504,12 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
           } else {
             refiners.add(difference)
           }
+        } else {
+          finished.push(partition)
         }
+      }
+      for part in finished {
+        result.add(part)
       }
     }
   }
