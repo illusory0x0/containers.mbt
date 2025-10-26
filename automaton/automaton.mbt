@@ -456,32 +456,37 @@ pub fn DFA::partition(
     }
     result
   }
-
+  // here using while-loop instead of for-loop to avoid modifying the collection while iterating
   while pending.min_option() is Some(to_set) {
+    // pop a partition from pending
+    pending = pending.remove(to_set)
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
-      // this has bug, don't use for-loop to implement this part, because result is changing during iteration
-      // use while-loop instead
-      for partition in result {
+      // here using while-loop instead of for-loop to avoid modifying the collection while iterating
+      while result.min_option() is Some(partition) {
+        // Warnings: here we need not pop from the result set.
         let intersection = from_set & partition
         let difference = partition - from_set
         if !intersection.is_empty() && !difference.is_empty() {
+          // replace partition with the two new partitions
           result = result.remove(partition)
           result = result.add(intersection)
           result = result.add(difference)
           if pending.contains(partition) {
+            // replace partition in pending with the two new partitions
             pending = pending.remove(partition)
             pending = pending.add(intersection)
             pending = pending.add(difference)
           } else if intersection.length() < difference.length() {
+            // add the smaller partition to pending
             pending = pending.add(intersection)
           } else {
+            // add the smaller partition to pending
             pending = pending.add(difference)
           }
         }
       }
     }
-    pending = pending.remove(to_set)
   }
   result
 }
