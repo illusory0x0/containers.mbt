@@ -431,7 +431,6 @@ pub fn DFA::partition(
   alphatbet_count : Int,
 ) -> @immut/sorted_set.SortedSet[DFAS] {
   let mut result : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::new()
-  let mut pending : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::new()
   let all : DFAS = @immut/sorted_set.SortedSet::from_iter(
     Int::until(0, dfa.dead_state()),
   )
@@ -439,16 +438,15 @@ pub fn DFA::partition(
     dfa.finals.to_array(),
   )
   let non_finals : DFAS = all - finals
+  let mut pending : @immut/sorted_set.SortedSet[DFAS] = @immut/sorted_set.SortedSet::singleton(
+    if finals.length() < non_finals.length() {
+      finals
+    } else {
+      non_finals
+    },
+  )
   result = result.add(finals)
   result = result.add(non_finals)
-  fn add_min_set(x : DFAS, y : DFAS) {
-    if x.0.length() < y.0.length() {
-      pending = pending.add(x)
-    } else {
-      pending = pending.add(y)
-    }
-  }
-
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
     let mut result = @immut/sorted_set.SortedSet::new()
     for from in 0..<dfa.dead_state() {
@@ -459,10 +457,10 @@ pub fn DFA::partition(
     result
   }
 
-  add_min_set(finals, non_finals)
   while pending.min_option() is Some(to_set) {
     for sym in 0..<alphatbet_count {
       let from_set = from_states(sym, to_set)
+      // result is immutable set, so we modify the result in inner loop this guarantees correctness
       for partition in result {
         let intersection = from_set & partition
         let difference = partition - from_set
@@ -474,8 +472,10 @@ pub fn DFA::partition(
             pending = pending.remove(partition)
             pending = pending.add(intersection)
             pending = pending.add(difference)
+          } else if intersection.length() < difference.length() {
+            pending = pending.add(intersection)
           } else {
-            add_min_set(intersection, difference)
+            pending = pending.add(difference)
           }
         }
       }

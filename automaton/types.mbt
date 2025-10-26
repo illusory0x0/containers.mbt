@@ -44,21 +44,26 @@ impl Hash for NFAS with hash_combine(self, hasher) {
 }
 
 ///|
-struct DFAS(@immut/sorted_set.SortedSet[Int]) derive(Eq, Show,Compare)
+struct DFAS(@immut/sorted_set.SortedSet[Int]) derive(Eq, Show, Compare)
 
 ///|
 impl Sub for DFAS with sub(x, y) {
-  @immut/sorted_set.SortedSet::difference(x.0,y.0)
+  @immut/sorted_set.SortedSet::difference(x.0, y.0)
 }
 
 ///|
 impl BitAnd for DFAS with land(x, y) {
-  @immut/sorted_set.SortedSet::intersection(x.0,y.0)
+  @immut/sorted_set.SortedSet::intersection(x.0, y.0)
 }
 
 ///|
 fn DFAS::is_empty(set : DFAS) -> Bool {
   set.0.is_empty()
+}
+
+///|
+fn DFAS::length(set : DFAS) -> Int {
+  set.0.length()
 }
 
 ///|

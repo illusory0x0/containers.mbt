@@ -3,6 +3,7 @@ package "illusory0x0/automaton"
 
 import(
   "illusory0x0/graphviz"
+  "moonbitlang/core/immut/sorted_set"
   "moonbitlang/core/set"
 )
 
@@ -22,19 +23,19 @@ pub struct DFA {
   edfat : FixedArray[FixedArray[Int]]
 }
 fn DFA::dead_state(Self) -> Int
-fn DFA::partition(Self, Int) -> @set.Set[DFAS]
+fn DFA::partition(Self, Int) -> @sorted_set.SortedSet[DFAS]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS
+fn DFAS::compare(Self, Self) -> Int // from trait `Compare`
 fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
-fn DFAS::to_json(Self) -> Json // from trait `ToJson`
 fn DFAS::to_string(Self) -> String // from trait `Show`
+impl Compare for DFAS
 impl Eq for DFAS
 impl Show for DFAS
-impl ToJson for DFAS
 
 type DFAT
 fn DFAT::equal(Self, Self) -> Bool // from trait `Eq`
