@@ -41,12 +41,12 @@ pub fn Regex::to_nfa(
 ) -> NFA {
   let { nfa, count } = regex.to_nfac(initial~)
   let nfat = NFAT::new(count)
-  fn connect(from : Int, sym : Symbol, to : Int) {
+  fn connect(from : NFAS, sym : Symbol, to : NFAS) {
     nfat.add_transition(from, sym.0, to)
   }
 
   let eps = 0
-  fn dfs(nfa : RNFA) -> Edge {
+  fn dfs(nfa : RNFA) -> Edge[NFAS] {
     match nfa {
       Choice(initial~, top, bot, final_~) => {
         let edge_top = dfs(top)
@@ -89,15 +89,15 @@ fn NFAT::new(count : Int) -> NFAT {
 ///|
 fn NFAT::add_transition(
   self : NFAT,
-  from : Int,
+  from : NFAS,
   sym : Symbol,
-  to : Int,
+  to : NFAS,
 ) -> Unit {
-  let edge = self[from]
+  let edge = self[from.to_int()]
   edge.update(sym.0, fn(set) {
     match set {
-      None => Some(set_singleton(to))
-      Some(set) => Some(set_add(set, to))
+      None => Some(set_singleton(to.to_int()))
+      Some(set) => Some(set_add(set, to.to_int()))
     }
   })
 }
@@ -172,7 +172,7 @@ fn RDFAT::add_transition(
 pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   let nfat = nfa.nfat
   let pending = []
-  let dfa_initial : NFASS = nfat.epsilon_closure(set_singleton(nfa.initial))
+  let dfa_initial : NFASS = nfat.epsilon_closure(set_singleton(nfa.initial.0))
   let dfa_finals : Set[NFASS] = Set::new()
   let dfat : RDFAT = Map::new()
   pending.push(dfa_initial)
@@ -184,7 +184,7 @@ pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
     // epsilon is 0, so start from 1
     for sym in 1..<(nfa.alphabet_count + 1) {
       let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state, sym))
-      if new_dfa_state.contains(nfa.final_) {
+      if new_dfa_state.contains(nfa.final_.0) {
         dfa_finals.add(new_dfa_state)
       }
       connect(dfs_state, sym, new_dfa_state)
@@ -265,16 +265,16 @@ pub fn RNFA::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : Int, label : Char, to : Int) {
-    edges.push(mk_edge(from, label, to))
+  fn connect(from : NFAS, label : Char, to : NFAS) {
+    edges.push(mk_edge(from.to_int(), label, to.to_int()))
   }
 
-  fn add_fresh_state(initial : Int, final_ : Int) {
-    nodes.push(int_to_node(initial))
-    nodes.push(int_to_node(final_))
+  fn add_fresh_state(initial : NFAS, final_ : NFAS) {
+    nodes.push(int_to_node(initial.to_int()))
+    nodes.push(int_to_node(final_.to_int()))
   }
 
-  fn dfs(nfa : RNFA) -> Edge {
+  fn dfs(nfa : RNFA) -> Edge[NFAS] {
     match nfa {
       Choice(initial~, top, bot, final_~) => {
         add_fresh_state(initial, final_)
@@ -309,7 +309,7 @@ pub fn RNFA::to_digraph(
   }
 
   let { initial, .. } = dfs(nfa)
-  let ipos = edges.search_by(edge => edge.from == initial).unwrap()
+  let ipos = edges.search_by(edge => edge.from == initial.to_int()).unwrap()
   edges.swap(0, ipos)
   @graphviz.Digraph::{ nodes, edges, rankdir: LeftToRight }
 }

@@ -10,17 +10,17 @@ pub(all) enum Regex {
 ///|
 /// regular expression NFA syntax
 pub(all) enum RNFA {
-  Symbol(initial~ : Int, Symbol, final_~ : Int)
+  Symbol(initial~ : NFAS, Symbol, final_~ : NFAS)
   Concat(RNFA, RNFA)
-  Choice(initial~ : Int, RNFA, RNFA, final_~ : Int)
-  Repeat(initial~ : Int, RNFA, final_~ : Int)
+  Choice(initial~ : NFAS, RNFA, RNFA, final_~ : NFAS)
+  Repeat(initial~ : NFAS, RNFA, final_~ : NFAS)
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
 /// non-deterministic finite automaton
 pub(all) struct NFA {
-  initial : Int
-  final_ : Int
+  initial : NFAS
+  final_ : NFAS
   alphabet_count : Int
   nfat : NFAT
 } derive(Eq, Show, ToJson)
@@ -64,9 +64,9 @@ pub struct RDFA {
 } derive(ToJson, Show)
 
 ///|
-priv struct Edge {
-  initial : Int
-  final_ : Int
+priv struct Edge[A] {
+  initial : A
+  final_ : A
 }
 
 ///|
@@ -100,7 +100,7 @@ pub fn Symbol::to_int(self : Symbol) -> Int {
 
 ///|
 /// NFA state is represented by integer indices
-struct NFAS(Int) derive(Eq, Show, ToJson, Hash)
+struct NFAS(Int) derive(Eq, Show, ToJson, Hash, Compare)
 
 ///|
 /// DFA state is represented by integer indices
