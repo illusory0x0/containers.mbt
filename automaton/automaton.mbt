@@ -452,7 +452,7 @@ pub fn DFA::reverse_transition(
   for from, trans in dfa.edfat {
     for sym in 0..<alphabet_count {
       let to = trans[sym]
-      result[to][sym].0.add(from)
+      result[to][sym].add(from)
     }
   }
   result
@@ -463,7 +463,7 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
   let all : DFASS = Set::new()
   for s in 0..<dfa.dead_state() {
-    all.0.add(DFAS(s))
+    all.add(DFAS(s))
   }
   let dead_states : DFASS = set_singleton(DFAS(dfa.dead_state()))
   let live_states : DFASS = all - dead_states
@@ -480,7 +480,7 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
     let result = DFASS::empty()
     for to in to_set {
       for from in reverse_trans[to.to_int()][sym] {
-        result.0.add(from)
+        result.add(from)
       }
     }
     result
@@ -577,7 +577,7 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
   let initial = map[dfa.initial]
   let finals : DFASS = Set::new()
   for final_ in dfa.finals {
-    finals.0.add(map[final_])
+    finals.add(map[final_])
   }
   DFA::{ initial, finals, edfat }
 }

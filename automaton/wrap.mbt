@@ -179,3 +179,8 @@ pub fn NFAT::get(self : NFAT, from : NFAS) -> Map[Symbol, NFASS]? {
 pub fn DFASS::empty() -> DFASS {
   DFASS(Set::new())
 }
+
+///|
+pub fn DFASS::add(set : DFASS, val : DFAS) -> Unit {
+  set.0.add(val)
+}

@@ -44,6 +44,7 @@ impl Show for DFAS
 impl ToJson for DFAS
 
 type DFASS
+fn DFASS::add(Self, DFAS) -> Unit
 fn DFASS::contains(Self, DFAS) -> Bool
 fn DFASS::empty() -> Self
 fn DFASS::equal(Self, Self) -> Bool // from trait `Eq`
