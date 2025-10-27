@@ -98,15 +98,15 @@ fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
 }
 
 ///|
-fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
+fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> NFAS {
   let edges = self[from]
   match self.get(from) {
     Some(_) =>
       match edges.get(sym) {
         Some(to) => to
-        None => Set::new()
+        None => NFAS::empty()
       }
-    None => Set::new()
+    None => NFAS::empty()
   }
 }
 
@@ -443,12 +443,12 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
 pub fn DFA::reverse_transition(
   dfa : DFA,
   alphabet_count : Int,
-) -> FixedArray[FixedArray[Set[Int]]] {
+) -> FixedArray[FixedArray[NFAS]] {
   let dead_state = dfa.dead_state()
   // include dead state 
   let result = FixedArray::makei(dead_state + 1, _ => FixedArray::makei(
     alphabet_count,
-    _ => Set::new(),
+    _ => NFAS::empty(),
   ))
   for from, trans in dfa.edfat {
     for sym in 0..<alphabet_count {

@@ -24,7 +24,7 @@ pub struct DFA {
 fn DFA::dead_state(Self) -> Int
 fn DFA::minimize(Self, Int) -> Self
 fn DFA::partition(Self, Int) -> @set.Set[DFAS]
-fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[@set.Set[Int]]]
+fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[NFAS]]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS
@@ -73,6 +73,10 @@ pub struct NFAC {
 }
 
 type NFAS
+fn NFAS::add(Self, Int) -> Unit
+fn NFAS::contains(Self, Int) -> Bool
+fn NFAS::copy(Self) -> Self
+fn NFAS::empty() -> Self
 fn NFAS::equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAS::hash(Self) -> Int // from trait `Hash`
 fn NFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
