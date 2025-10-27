@@ -18,6 +18,7 @@ pub(all) enum RNFA {
 pub(all) struct NFA {
   initial : Int
   final_ : Int
+  alphabet_count : Int
   nfat : NFAT
 } derive(Eq, Show, ToJson)
 
@@ -47,6 +48,7 @@ pub struct RDFA {
   initial : NFAS
   finals : Set[NFAS]
   dfat : RDFAT
+  alphabet_count : Int
 } derive(ToJson, Show)
 
 ///|

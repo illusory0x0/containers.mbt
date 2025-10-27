@@ -52,13 +52,14 @@ impl Sub for DFAS
 pub(all) struct NFA {
   initial : Int
   final_ : Int
+  alphabet_count : Int
   nfat : NFAT
 }
 fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
-fn NFA::powerset_construction(Self, Int) -> RDFA
+fn NFA::powerset_construction(Self) -> RDFA
 fn NFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn NFA::to_json(Self) -> Json // from trait `ToJson`
 fn NFA::to_string(Self) -> String // from trait `Show`
@@ -109,6 +110,7 @@ pub struct RDFA {
   initial : NFAS
   finals : @set.Set[NFAS]
   dfat : RDFAT
+  alphabet_count : Int
 }
 fn RDFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFA::to_dfa(Self) -> DFA
@@ -167,7 +169,7 @@ fn Regex::equal(Self, Self) -> Bool // from trait `Eq`
 fn Regex::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn Regex::output(Self, &Logger) -> Unit // from trait `Show`
 fn Regex::to_json(Self) -> Json // from trait `ToJson`
-fn Regex::to_nfa(Self, initial~ : Int) -> NFA
+fn Regex::to_nfa(Self, initial~ : Int, alphabet_count~ : Int) -> NFA
 fn Regex::to_nfac(Self, initial~ : Int) -> NFAC
 fn Regex::to_string(Self) -> String // from trait `Show`
 impl Compare for Regex

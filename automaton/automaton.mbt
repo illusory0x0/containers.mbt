@@ -34,7 +34,11 @@ pub fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
 }
 
 ///|
-pub fn Regex::to_nfa(regex : Regex, initial~ : Int) -> NFA {
+pub fn Regex::to_nfa(
+  regex : Regex,
+  initial~ : Int,
+  alphabet_count~ : Int,
+) -> NFA {
   let { nfa, count } = regex.to_nfac(initial~)
   let nfat = NFAT::new(count)
   fn connect(from : Int, sym : Int, to : Int) {
@@ -74,7 +78,7 @@ pub fn Regex::to_nfa(regex : Regex, initial~ : Int) -> NFA {
   }
 
   let { initial, final_ } = dfs(nfa)
-  { initial, final_, nfat }
+  { initial, final_, nfat, alphabet_count }
 }
 
 ///|
@@ -160,7 +164,7 @@ fn RDFAT::add_transition(
 }
 
 ///|
-pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
+pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   let nfat = nfa.nfat
   let pending = []
   let dfa_initial : NFAS = nfat.epsilon_closure(set_singleton(nfa.initial))
@@ -173,7 +177,7 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
 
   while pending.pop() is Some(dfs_state) {
     // epsilon is 0, so start from 1
-    for sym in 1..<(alphatbet_count + 1) {
+    for sym in 1..<(nfa.alphabet_count + 1) {
       let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state, sym))
       if new_dfa_state.contains(nfa.final_) {
         dfa_finals.add(new_dfa_state)
@@ -184,7 +188,12 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
       }
     }
   }
-  RDFA::{ initial: dfa_initial, finals: dfa_finals, dfat }
+  RDFA::{
+    initial: dfa_initial,
+    finals: dfa_finals,
+    dfat,
+    alphabet_count: nfa.alphabet_count,
+  }
 }
 
 ///|
@@ -408,10 +417,10 @@ fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFAS, Int] {
 ///|
 pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
   let state_count = rdfa.dfat.length()
-  let alphatbet_count = rdfa.dfat[rdfa.initial].length()
+  let alphabet_count = rdfa.dfat[rdfa.initial].length()
   // exclude the dead state 
   let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
-    alphatbet_count, 0,
+    alphabet_count, 0,
   ))
   let map = rdfa.to_dfa_state_map()
   for initial, trans in rdfa.dfat {
@@ -433,16 +442,16 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
 ///|
 pub fn DFA::reverse_transition(
   dfa : DFA,
-  alphatbet_count : Int,
+  alphabet_count : Int,
 ) -> FixedArray[FixedArray[Set[Int]]] {
   let dead_state = dfa.dead_state()
   // include dead state 
   let result = FixedArray::makei(dead_state + 1, _ => FixedArray::makei(
-    alphatbet_count,
+    alphabet_count,
     _ => Set::new(),
   ))
   for from, trans in dfa.edfat {
-    for sym in 0..<alphatbet_count {
+    for sym in 0..<alphabet_count {
       let to = trans[sym]
       result[to][sym].add(from)
     }
@@ -451,7 +460,7 @@ pub fn DFA::reverse_transition(
 }
 
 ///|
-pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
+pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFAS] {
   let result : Set[DFAS] = Set::new()
   let all : DFAS = Set::from_iter(
     Int::until(0, dfa.dead_state(), inclusive=true),
@@ -459,7 +468,7 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   let dead_state : DFAS = set_singleton(dfa.dead_state())
   let non_finals : DFAS = all - dead_state
   let refiners : Set[DFAS] = Set::new()
-  let reverse_trans = dfa.reverse_transition(alphatbet_count)
+  let reverse_trans = dfa.reverse_transition(alphabet_count)
   if dead_state.length() < non_finals.length() {
     refiners.add(dead_state)
   } else {
@@ -489,7 +498,7 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
 
   let unrefined = []
   while pop(refiners) is Some(to_set) {
-    for sym in 0..<alphatbet_count {
+    for sym in 0..<alphabet_count {
       let from_set = from_states(sym, to_set)
       // pop the result, if not refine, then re-add it from unrefined
       while pop(result) is Some(partition) {
@@ -526,8 +535,8 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
 }
 
 ///|
-pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
-  let partitions = dfa.partition(alphatbet_count)
+pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
+  let partitions = dfa.partition(alphabet_count)
   let map : Map[Int, Int] = Map::new()
   let mut count = 0
   for part in partitions {
@@ -548,12 +557,12 @@ pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
   }
   let state_count = partitions.length()
   let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
-    alphatbet_count, 0,
+    alphabet_count, 0,
   ))
   for part in partitions {
     let prev_from = part.iter().head().unwrap()
     let from = map[prev_from]
-    for sym in 0..<alphatbet_count {
+    for sym in 0..<alphabet_count {
       let prev_to = if dfa.dead_state() == prev_from {
         dfa.dead_state()
       } else {
