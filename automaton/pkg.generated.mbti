@@ -107,7 +107,7 @@ impl Show for NFAS
 impl ToJson for NFAS
 
 type NFASS
-fn NFASS::add(Self, Int) -> Unit
+fn NFASS::add(Self, NFAS) -> Unit
 fn NFASS::contains(Self, Int) -> Bool
 fn NFASS::copy(Self) -> Self
 fn NFASS::empty() -> Self
@@ -122,6 +122,7 @@ fn NFASS::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFASS::to_array(Self) -> Array[Int]
 fn NFASS::to_json(Self) -> Json // from trait `ToJson`
 fn NFASS::to_string(Self) -> String // from trait `Show`
+fn NFASS::update_with_add(Self, NFAS) -> Self
 impl Eq for NFASS
 impl Hash for NFASS
 impl Show for NFASS
@@ -129,14 +130,14 @@ impl ToJson for NFASS
 
 type NFAT
 fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
-fn NFAT::get(Self, Int) -> Map[Int, @set.Set[Int]]?
-fn NFAT::iter(Self) -> Iter[Map[Int, @set.Set[Int]]]
-fn NFAT::iter2(Self) -> Iter2[Int, Map[Int, @set.Set[Int]]]
+fn NFAT::get(Self, Symbol) -> Map[Symbol, NFASS]?
+fn NFAT::iter(Self) -> Iter[Map[Symbol, NFASS]]
+fn NFAT::iter2(Self) -> Iter2[NFAS, Map[Symbol, NFASS]]
 fn NFAT::length(Self) -> Int
 #deprecated
 fn NFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn NFAT::op_get(Self, Int) -> Map[Int, @set.Set[Int]]
-fn NFAT::op_set(Self, Int, Map[Int, @set.Set[Int]]) -> Unit
+fn NFAT::op_get(Self, NFAS) -> Map[Symbol, NFASS]
+fn NFAT::op_set(Self, NFAS, Map[Symbol, NFASS]) -> Unit
 fn NFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFAT::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 fn NFAT::to_json(Self) -> Json // from trait `ToJson`
@@ -220,6 +221,8 @@ type Symbol
 fn Symbol::compare(Self, Self) -> Int // from trait `Compare`
 fn Symbol::equal(Self, Self) -> Bool // from trait `Eq`
 fn Symbol::from(Int) -> Self
+fn Symbol::hash(Self) -> Int // from trait `Hash`
+fn Symbol::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 #deprecated
 fn Symbol::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn Symbol::output(Self, &Logger) -> Unit // from trait `Show`
@@ -228,6 +231,7 @@ fn Symbol::to_json(Self) -> Json // from trait `ToJson`
 fn Symbol::to_string(Self) -> String // from trait `Show`
 impl Compare for Symbol
 impl Eq for Symbol
+impl Hash for Symbol
 impl Show for Symbol
 impl ToJson for Symbol
 

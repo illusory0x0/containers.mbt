@@ -27,7 +27,7 @@ pub(all) struct NFA {
 
 ///|
 /// NFA transition table
-struct NFAT(FixedArray[Map[Int, Set[Int]]]) derive(Eq, Show, ToJson)
+struct NFAT(FixedArray[Map[Symbol, NFASS]]) derive(Eq, Show, ToJson)
 
 ///|
 pub const Epsilon = 'ε'
@@ -86,7 +86,7 @@ pub struct DFA {
 }
 
 ///|
-struct Symbol(Int) derive(Eq, Show, ToJson, Compare)
+struct Symbol(Int) derive(Eq, Show, ToJson, Compare, Hash)
 
 ///|
 pub fn Symbol::from(val : Int) -> Symbol {

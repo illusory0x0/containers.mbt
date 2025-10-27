@@ -5,11 +5,11 @@ fn[A : Eq + Hash] set_singleton(val : A) -> Set[A] {
   s
 }
 
-///|
-fn[A : Eq + Hash] set_add(set : Set[A], val : A) -> Set[A] {
-  set.add(val)
-  set
-}
+// ///|
+// fn[A : Eq + Hash] set_add(set : Set[A], val : A) -> Set[A] {
+//   set.add(val)
+//   set
+// }
 
 ///|
 pub fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
@@ -97,7 +97,7 @@ fn NFAT::add_transition(
   edge.update(sym.0, fn(set) {
     match set {
       None => Some(set_singleton(to.to_int()))
-      Some(set) => Some(set_add(set, to.to_int()))
+      Some(set) => Some(set.update_with_add(to))
     }
   })
 }
@@ -375,12 +375,12 @@ pub fn NFAT::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : Int, sym : Int, to : Int) {
-    edges.push(mk_edge(from, symbol_to_letter(sym), to))
+  fn connect(from : NFAS, sym : Symbol, to : NFAS) {
+    edges.push(mk_edge(from.to_int(), symbol_to_letter(sym), to.to_int()))
   }
 
-  fn add_fresh_state(s : Int) {
-    nodes.push(int_to_node(s))
+  fn add_fresh_state(s : NFAS) {
+    nodes.push(int_to_node(s.to_int()))
   }
 
   for initial, trans in self {

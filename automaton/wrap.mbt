@@ -5,6 +5,11 @@ pub impl Hash for NFASS with hash_combine(self, hasher) {
   }
 }
 
+// pub fn NFASS::add(set : NFASS, val : NFAS) -> NFASS {
+//   set.0.add(val.0)
+//   set 
+// }
+
 ///|
 pub fn NFASS::is_empty(set : NFASS) -> Bool {
   set.0.is_empty()
@@ -26,8 +31,14 @@ pub fn NFASS::copy(set : NFASS) -> NFASS {
 }
 
 ///|
-pub fn NFASS::add(set : NFASS, val : Int) -> Unit {
-  set.0.add(val)
+pub fn NFASS::add(set : NFASS, val : NFAS) -> Unit {
+  set.0.add(val.0)
+}
+
+///|
+pub fn NFASS::update_with_add(set : NFASS, val : NFAS) -> NFASS {
+  set.0.add(val.0)
+  set
 }
 
 ///|
@@ -122,26 +133,36 @@ pub fn NFAT::length(self : NFAT) -> Int {
 }
 
 ///|
-pub fn NFAT::op_get(self : NFAT, index : Int) -> Map[Int, Set[Int]] {
-  self.0[index]
+pub fn NFAT::op_get(self : NFAT, from : NFAS) -> Map[Symbol, NFASS] {
+  self.0[from.to_int()]
 }
 
 ///|
-pub fn NFAT::op_set(self : NFAT, index : Int, val : Map[Int, Set[Int]]) -> Unit {
-  self.0[index] = val
+pub fn NFAT::op_set(
+  self : NFAT,
+  from : NFAS,
+  trans : Map[Symbol, NFASS],
+) -> Unit {
+  self.0[from.to_int()] = trans
 }
 
 ///|
-pub fn NFAT::iter(self : NFAT) -> Iter[Map[Int, Set[Int]]] {
+pub fn NFAT::iter(self : NFAT) -> Iter[Map[Symbol, NFASS]] {
   self.0.iter()
 }
 
 ///|
-pub fn NFAT::iter2(self : NFAT) -> Iter2[Int, Map[Int, Set[Int]]] {
-  self.0.iter2()
+pub fn NFAT::iter2(self : NFAT) -> Iter2[NFAS, Map[Symbol, NFASS]] {
+  Iter2::new(fn(k) {
+    for i, v in self.0.iter2() {
+      guard k(NFAS::from(i), v) is IterContinue else { break IterEnd }
+    } else {
+      IterContinue
+    }
+  })
 }
 
 ///|
-pub fn NFAT::get(self : NFAT, from : Int) -> Map[Int, Set[Int]]? {
-  self.0.get(from)
+pub fn NFAT::get(self : NFAT, from : Symbol) -> Map[Symbol, NFASS]? {
+  self.0.get(from.to_int())
 }
