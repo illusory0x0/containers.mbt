@@ -16,6 +16,21 @@ pub fn NFAS::iter(set : NFAS) -> Iter[Int] {
 }
 
 ///|
+pub fn NFAS::copy(set : NFAS) -> NFAS {
+  NFAS(set.0.copy())
+}
+
+///|
+pub fn NFAS::add(set : NFAS, val : Int) -> Unit {
+  set.0.add(val)
+}
+
+///|
+pub fn NFAS::contains(set : NFAS, val : Int) -> Bool {
+  set.0.contains(val)
+}
+
+///|
 pub impl Sub for DFAS with sub(x, y) {
   x.0 - y.0
 }
