@@ -40,25 +40,25 @@ pub const ToplevelInitialState = 0
 
 ///|
 /// NFA state set
-struct NFAS(Set[Int]) derive(Eq, ToJson, Show)
+struct NFASS(Set[Int]) derive(Eq, ToJson, Show)
 
 ///|
 /// DFA state set
-struct DFAS(Set[Int]) derive(Eq, Show)
+struct DFASS(Set[Int]) derive(Eq, Show)
 
 ///|
 /// DFA transition table 
 /// 
 /// DFA state is represented by NFA state sets
-struct RDFAT(Map[NFAS, Map[Int, NFAS]]) derive(Eq, Show, ToJson)
+struct RDFAT(Map[NFASS, Map[Int, NFASS]]) derive(Eq, Show, ToJson)
 
 ///|
 /// deterministic finite automaton
 /// 
 /// DFA state is represented by NFA state sets
 pub struct RDFA {
-  initial : NFAS
-  finals : Set[NFAS]
+  initial : NFASS
+  finals : Set[NFASS]
   dfat : RDFAT
   alphabet_count : Int
 } derive(ToJson, Show)

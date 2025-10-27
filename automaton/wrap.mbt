@@ -1,89 +1,89 @@
 ///|
-pub impl Hash for NFAS with hash_combine(self, hasher) {
+pub impl Hash for NFASS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)
   }
 }
 
 ///|
-pub fn NFAS::is_empty(set : NFAS) -> Bool {
+pub fn NFASS::is_empty(set : NFASS) -> Bool {
   set.0.is_empty()
 }
 
 ///|
-pub fn NFAS::to_array(set : NFAS) -> Array[Int] {
+pub fn NFASS::to_array(set : NFASS) -> Array[Int] {
   set.0.to_array()
 }
 
 ///|
-pub fn NFAS::iter(set : NFAS) -> Iter[Int] {
+pub fn NFASS::iter(set : NFASS) -> Iter[Int] {
   set.0.iter()
 }
 
 ///|
-pub fn NFAS::copy(set : NFAS) -> NFAS {
-  NFAS(set.0.copy())
+pub fn NFASS::copy(set : NFASS) -> NFASS {
+  NFASS(set.0.copy())
 }
 
 ///|
-pub fn NFAS::add(set : NFAS, val : Int) -> Unit {
+pub fn NFASS::add(set : NFASS, val : Int) -> Unit {
   set.0.add(val)
 }
 
 ///|
-pub fn NFAS::contains(set : NFAS, val : Int) -> Bool {
+pub fn NFASS::contains(set : NFASS, val : Int) -> Bool {
   set.0.contains(val)
 }
 
 ///|
-pub fn NFAS::empty() -> NFAS {
-  NFAS(Set::new())
+pub fn NFASS::empty() -> NFASS {
+  NFASS(Set::new())
 }
 
 ///|
-pub impl Sub for DFAS with sub(x, y) {
+pub impl Sub for DFASS with sub(x, y) {
   x.0 - y.0
 }
 
 ///|
-pub impl BitAnd for DFAS with land(x, y) {
+pub impl BitAnd for DFASS with land(x, y) {
   x.0 & y.0
 }
 
 ///|
-pub impl Hash for DFAS with hash_combine(self, hasher) {
+pub impl Hash for DFASS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)
   }
 }
 
 ///|
-pub fn DFAS::is_empty(set : DFAS) -> Bool {
+pub fn DFASS::is_empty(set : DFASS) -> Bool {
   set.0.is_empty()
 }
 
 ///|
-pub fn DFAS::length(set : DFAS) -> Int {
+pub fn DFASS::length(set : DFASS) -> Int {
   set.0.length()
 }
 
 ///|
-pub fn DFAS::iter(set : DFAS) -> Iter[Int] {
+pub fn DFASS::iter(set : DFASS) -> Iter[Int] {
   set.0.iter()
 }
 
 ///|
-pub fn DFAS::contains(set : DFAS, val : Int) -> Bool {
+pub fn DFASS::contains(set : DFASS, val : Int) -> Bool {
   set.0.contains(val)
 }
 
 ///|
-pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFAS, Map[Int, NFAS]] {
+pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFASS, Map[Int, NFASS]] {
   self.0.iter2()
 }
 
 ///|
-pub fn RDFAT::keys(self : RDFAT) -> Iter[NFAS] {
+pub fn RDFAT::keys(self : RDFAT) -> Iter[NFASS] {
   self.0.keys()
 }
 
@@ -93,26 +93,26 @@ pub fn RDFAT::length(self : RDFAT) -> Int {
 }
 
 ///|
-pub fn RDFAT::contains(self : RDFAT, val : NFAS) -> Bool {
+pub fn RDFAT::contains(self : RDFAT, val : NFASS) -> Bool {
   self.0.contains(val)
 }
 
 ///|
 pub fn RDFAT::update(
   self : RDFAT,
-  key : NFAS,
-  f : (Map[Int, NFAS]?) -> Map[Int, NFAS]?,
+  key : NFASS,
+  f : (Map[Int, NFASS]?) -> Map[Int, NFASS]?,
 ) -> Unit {
   self.0.update(key, f)
 }
 
 ///|
-pub fn RDFAT::op_set(self : RDFAT, key : NFAS, val : Map[Int, NFAS]) -> Unit {
+pub fn RDFAT::op_set(self : RDFAT, key : NFASS, val : Map[Int, NFASS]) -> Unit {
   self.0[key] = val
 }
 
 ///|
-pub fn RDFAT::op_get(self : RDFAT, key : NFAS) -> Map[Int, NFAS] {
+pub fn RDFAT::op_get(self : RDFAT, key : NFASS) -> Map[Int, NFASS] {
   self.0[key]
 }
 
