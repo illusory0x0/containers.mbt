@@ -104,6 +104,15 @@ pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
   self.0[from.to_int()][sym.to_int()]
 }
 
+pub fn DFAT::set_trans(
+  self : DFAT,
+  from : DFAS,
+  sym : Symbol,
+  to : DFAS,
+) -> Unit {
+  self.0[from.to_int()][sym.to_int()] = to
+}
+
 ///|
 pub fn DFAT::length(self : DFAT) -> Int {
   self.0.length()

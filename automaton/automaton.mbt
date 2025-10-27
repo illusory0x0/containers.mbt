@@ -430,7 +430,7 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
         let initial = map[initial]
         let final_ = map[final_]
         // exclude epsilon transitions
-        edfat.0[initial.to_int()][sym - 1] = final_.to_int()
+        edfat.set_trans(initial, sym - 1, final_)
       }
     }
   }
@@ -572,7 +572,7 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
       }
       let to = map[prev_to]
       if from != partitions.length() - 1 {
-        edfat.0[from.to_int()][sym] = to.to_int()
+        edfat.set_trans(from, sym, to)
       }
     }
   }
