@@ -28,13 +28,26 @@ fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[@set.Set[Int]]]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 
 type DFAS
+fn DFAS::contains(Self, Int) -> Bool
 fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAS::hash(Self) -> Int // from trait `Hash`
+fn DFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+fn DFAS::is_empty(Self) -> Bool
+fn DFAS::iter(Self) -> Iter[Int]
+fn DFAS::land(Self, Self) -> Self // from trait `BitAnd`
+fn DFAS::length(Self) -> Int
 #deprecated
 fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn DFAS::op_sub(Self, Self) -> Self // from trait `Sub`
 fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFAS::sub(Self, Self) -> Self // from trait `Sub`
 fn DFAS::to_string(Self) -> String // from trait `Show`
+impl BitAnd for DFAS
 impl Eq for DFAS
+impl Hash for DFAS
 impl Show for DFAS
+impl Sub for DFAS
 
 pub(all) struct NFA {
   initial : Int
@@ -60,19 +73,30 @@ pub struct NFAC {
 
 type NFAS
 fn NFAS::equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAS::hash(Self) -> Int // from trait `Hash`
+fn NFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+fn NFAS::is_empty(Self) -> Bool
+fn NFAS::iter(Self) -> Iter[Int]
 #deprecated
 fn NFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAS::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFAS::to_json(Self) -> Json // from trait `ToJson`
 fn NFAS::to_string(Self) -> String // from trait `Show`
 impl Eq for NFAS
+impl Hash for NFAS
 impl Show for NFAS
 impl ToJson for NFAS
 
 type NFAT
 fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAT::get(Self, Int) -> Map[Int, @set.Set[Int]]?
+fn NFAT::iter(Self) -> Iter[Map[Int, @set.Set[Int]]]
+fn NFAT::iter2(Self) -> Iter2[Int, Map[Int, @set.Set[Int]]]
+fn NFAT::length(Self) -> Int
 #deprecated
 fn NFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAT::op_get(Self, Int) -> Map[Int, @set.Set[Int]]
+fn NFAT::op_set(Self, Int, Map[Int, @set.Set[Int]]) -> Unit
 fn NFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFAT::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
 fn NFAT::to_json(Self) -> Json // from trait `ToJson`

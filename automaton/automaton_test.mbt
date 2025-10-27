@@ -342,7 +342,10 @@ test "DFA/minimize/repeat" (t : @test.T) {
 
 ///|
 test "DFA/minimize/choice and repeat" (t : @test.T) {
-  let sym : Regex = Choice(Symbol(letter_to_symbol('a')),Symbol(letter_to_symbol('b')))
+  let sym : Regex = Choice(
+    Symbol(letter_to_symbol('a')),
+    Symbol(letter_to_symbol('b')),
+  )
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex)
   let rdfa = nfa.powerset_construction(3)
@@ -357,7 +360,10 @@ test "DFA/minimize/choice and repeat" (t : @test.T) {
 
 ///|
 test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
-  let sym : Regex = Choice(Symbol(letter_to_symbol('a')),Symbol(letter_to_symbol('b')))
+  let sym : Regex = Choice(
+    Symbol(letter_to_symbol('a')),
+    Symbol(letter_to_symbol('b')),
+  )
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex)
   let rdfa = nfa.powerset_construction(3)

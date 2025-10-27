@@ -84,7 +84,7 @@ fn NFAT::new(count : Int) -> NFAT {
 
 ///|
 fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
-  let edge = self.0[from]
+  let edge = self[from]
   edge.update(sym, fn(set) {
     match set {
       None => Some(set_singleton(to))
@@ -95,8 +95,8 @@ fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
 
 ///|
 fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> Set[Int] {
-  let edges = self.0[from]
-  match self.0.get(from) {
+  let edges = self[from]
+  match self.get(from) {
     Some(_) =>
       match edges.get(sym) {
         Some(to) => to
@@ -122,7 +122,7 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : Set[Int]) -> Set[Int] {
 }
 
 ///|
-fn NFAT::move_(nfat : NFAT, initials : Set[Int], sym : Int) -> Set[Int] {
+fn NFAT::move_(nfat : NFAT, initials : NFAS, sym : Int) -> Set[Int] {
   let result = Set::new()
   for initial in initials {
     for final_ in nfat.trans(initial, sym) {
@@ -143,7 +143,7 @@ fn RDFAT::add_transition(
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
         None => Some(to)
-        Some(dead) if dead.0.is_empty() => Some(dead)
+        Some(dead) if dead.is_empty() => Some(dead)
         Some(to_) if to_ == to => Some(to)
         Some(_) => abort("impossible")
       }
@@ -174,7 +174,7 @@ pub fn NFA::powerset_construction(nfa : NFA, alphatbet_count : Int) -> RDFA {
   while pending.pop() is Some(dfs_state) {
     // epsilon is 0, so start from 1
     for sym in 1..<(alphatbet_count + 1) {
-      let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state.0, sym))
+      let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state, sym))
       if new_dfa_state.contains(nfa.final_) {
         dfa_finals.add(new_dfa_state)
       }
@@ -218,7 +218,7 @@ pub fn RDFA::to_digraph(
   }
 
   fn add_fresh_state(s : NFAS) {
-    if !s.0.is_empty() {
+    if !s.is_empty() {
       nodes.push(state_to_node(s))
     } else {
       nodes.push(@graphviz.Node::{ id: map[s], label: Some("E") })
@@ -227,7 +227,7 @@ pub fn RDFA::to_digraph(
 
   for initial, trans in self.dfat {
     add_fresh_state(initial)
-    if !initial.0.is_empty() {
+    if !initial.is_empty() {
       for sym, final_ in trans {
         connect(initial, sym, final_)
       }
@@ -369,7 +369,7 @@ pub fn NFAT::to_digraph(
     nodes.push(int_to_node(s))
   }
 
-  for initial, trans in self.0 {
+  for initial, trans in self {
     add_fresh_state(initial)
     for sym, finals in trans {
       for final_ in finals {
@@ -395,7 +395,7 @@ fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFAS, Int] {
   for dfas in dfa.dfat.keys() {
     if dfas == dfa.initial {
       result[dfas] = 0
-    } else if dfas.0.is_empty() {
+    } else if dfas.is_empty() {
       result[dfas] = dfa.dfat.length() - 1
     } else {
       result[dfas] = count
@@ -416,7 +416,7 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
   let map = rdfa.to_dfa_state_map()
   for initial, trans in rdfa.dfat {
     // exclude dead state
-    if !initial.0.is_empty() {
+    if !initial.is_empty() {
       for sym, final_ in trans {
         let initial = map[initial]
         let final_ = map[final_]
@@ -469,7 +469,7 @@ pub fn DFA::partition(dfa : DFA, alphatbet_count : Int) -> Set[DFAS] {
   result.add(non_finals)
   fn from_states(sym : Int, to_set : DFAS) -> DFAS {
     let result = Set::new()
-    for to in to_set.0 {
+    for to in to_set {
       for from in reverse_trans[to][sym] {
         result.add(from)
       }
@@ -531,16 +531,16 @@ pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
   let map : Map[Int, Int] = Map::new()
   let mut count = 0
   for part in partitions {
-    if part.0.contains(dfa.dead_state()) {
-      for state in part.0 {
+    if part.contains(dfa.dead_state()) {
+      for state in part {
         map[state] = partitions.length() - 1
       }
-    } else if part.0.contains(dfa.initial) {
-      for state in part.0 {
+    } else if part.contains(dfa.initial) {
+      for state in part {
         map[state] = 0
       }
     } else {
-      for state in part.0 {
+      for state in part {
         map[state] = count
       }
       count += 1
@@ -551,7 +551,7 @@ pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
     alphatbet_count, 0,
   ))
   for part in partitions {
-    let prev_from = part.0.iter().head().unwrap()
+    let prev_from = part.iter().head().unwrap()
     let from = map[prev_from]
     for sym in 0..<alphatbet_count {
       let prev_to = if dfa.dead_state() == prev_from {

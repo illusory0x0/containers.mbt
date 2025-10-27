@@ -25,6 +25,36 @@ pub(all) struct NFA {
 struct NFAT(FixedArray[Map[Int, Set[Int]]]) derive(Eq, Show, ToJson)
 
 ///|
+pub fn NFAT::length(self : NFAT) -> Int {
+  self.0.length()
+}
+
+///|
+pub fn NFAT::op_get(self : NFAT, index : Int) -> Map[Int, Set[Int]] {
+  self.0[index]
+}
+
+///|
+pub fn NFAT::op_set(self : NFAT, index : Int, val : Map[Int, Set[Int]]) -> Unit {
+  self.0[index] = val
+}
+
+///|
+pub fn NFAT::iter(self : NFAT) -> Iter[Map[Int, Set[Int]]] {
+  self.0.iter()
+}
+
+///|
+pub fn NFAT::iter2(self : NFAT) -> Iter2[Int, Map[Int, Set[Int]]] {
+  self.0.iter2()
+}
+
+///|
+pub fn NFAT::get(self : NFAT, from : Int) -> Map[Int, Set[Int]]? {
+  self.0.get(from)
+}
+
+///|
 pub const Epsilon = 'ε'
 
 ///|
@@ -37,40 +67,60 @@ pub const ToplevelInitialState = 0
 struct NFAS(Set[Int]) derive(Eq, ToJson, Show)
 
 ///|
-impl Hash for NFAS with hash_combine(self, hasher) {
+pub impl Hash for NFAS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)
   }
+}
+
+///|
+pub fn NFAS::is_empty(set : NFAS) -> Bool {
+  set.0.is_empty()
+}
+
+///|
+pub fn NFAS::iter(set : NFAS) -> Iter[Int] {
+  set.0.iter()
 }
 
 ///|
 struct DFAS(Set[Int]) derive(Eq, Show)
 
 ///|
-impl Sub for DFAS with sub(x, y) {
+pub impl Sub for DFAS with sub(x, y) {
   x.0 - y.0
 }
 
 ///|
-impl BitAnd for DFAS with land(x, y) {
+pub impl BitAnd for DFAS with land(x, y) {
   x.0 & y.0
 }
 
 ///|
-impl Hash for DFAS with hash_combine(self, hasher) {
+pub impl Hash for DFAS with hash_combine(self, hasher) {
   for state in self.0 {
     hasher.combine(state)
   }
 }
 
 ///|
-fn DFAS::is_empty(set : DFAS) -> Bool {
+pub fn DFAS::is_empty(set : DFAS) -> Bool {
   set.0.is_empty()
 }
 
 ///|
-fn DFAS::length(set : DFAS) -> Int {
+pub fn DFAS::length(set : DFAS) -> Int {
   set.0.length()
+}
+
+///|
+pub fn DFAS::iter(set : DFAS) -> Iter[Int] {
+  set.0.iter()
+}
+
+///|
+pub fn DFAS::contains(set : DFAS, val : Int) -> Bool {
+  set.0.contains(val)
 }
 
 ///|
