@@ -5,10 +5,11 @@ pub impl Hash for NFASS with hash_combine(self, hasher) {
   }
 }
 
-// pub fn NFASS::add(set : NFASS, val : NFAS) -> NFASS {
-//   set.0.add(val.0)
-//   set 
-// }
+///|
+pub fn NFASS::singleton(val : NFAS) -> NFASS {
+  let set = NFASS::empty()
+  set.update_with_add(val)
+}
 
 ///|
 pub fn NFASS::is_empty(set : NFASS) -> Bool {
@@ -16,12 +17,12 @@ pub fn NFASS::is_empty(set : NFASS) -> Bool {
 }
 
 ///|
-pub fn NFASS::to_array(set : NFASS) -> Array[Int] {
+pub fn NFASS::to_array(set : NFASS) -> Array[NFAS] {
   set.0.to_array()
 }
 
 ///|
-pub fn NFASS::iter(set : NFASS) -> Iter[Int] {
+pub fn NFASS::iter(set : NFASS) -> Iter[NFAS] {
   set.0.iter()
 }
 
@@ -42,7 +43,7 @@ pub fn NFASS::update_with_add(set : NFASS, val : NFAS) -> NFASS {
 }
 
 ///|
-pub fn NFASS::contains(set : NFASS, val : Int) -> Bool {
+pub fn NFASS::contains(set : NFASS, val : NFAS) -> Bool {
   set.0.contains(val)
 }
 
@@ -69,6 +70,13 @@ pub impl Hash for DFASS with hash_combine(self, hasher) {
 }
 
 ///|
+pub fn DFASS::singleton(val : DFAS) -> DFASS {
+  let set = Set::new()
+  set.add(val)
+  set
+}
+
+///|
 pub fn DFASS::is_empty(set : DFASS) -> Bool {
   set.0.is_empty()
 }
@@ -79,13 +87,13 @@ pub fn DFASS::length(set : DFASS) -> Int {
 }
 
 ///|
-pub fn DFASS::iter(set : DFASS) -> Iter[Int] {
+pub fn DFASS::iter(set : DFASS) -> Iter[DFAS] {
   set.0.iter()
 }
 
 ///|
-pub fn DFASS::contains(set : DFASS, val : Int) -> Bool {
-  set.0.contains(val)
+pub fn DFASS::contains(set : DFASS, val : DFAS) -> Bool {
+  set.0.contains(val.0)
 }
 
 ///|
@@ -163,6 +171,11 @@ pub fn NFAT::iter2(self : NFAT) -> Iter2[NFAS, Map[Symbol, NFASS]] {
 }
 
 ///|
-pub fn NFAT::get(self : NFAT, from : Symbol) -> Map[Symbol, NFASS]? {
+pub fn NFAT::get(self : NFAT, from : NFAS) -> Map[Symbol, NFASS]? {
   self.0.get(from.to_int())
+}
+
+///|
+pub fn DFASS::empty() -> DFASS {
+  DFASS(Set::new())
 }

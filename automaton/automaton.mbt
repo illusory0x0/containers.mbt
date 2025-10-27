@@ -90,14 +90,14 @@ fn NFAT::add_transition(
   let edge = self[from.to_int()]
   edge.update(sym.0, fn(set) {
     match set {
-      None => Some(set_singleton(to.to_int()))
+      None => Some(NFASS::singleton(to))
       Some(set) => Some(set.update_with_add(to))
     }
   })
 }
 
 ///|
-fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> NFASS {
+fn NFAT::trans(self : NFAT, from : NFAS, sym : Symbol) -> NFASS {
   let edges = self[from]
   match self.get(from) {
     Some(_) =>
@@ -166,7 +166,7 @@ fn RDFAT::add_transition(
 pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   let nfat = nfa.nfat
   let pending = []
-  let dfa_initial : NFASS = nfat.epsilon_closure(set_singleton(nfa.initial.0))
+  let dfa_initial : NFASS = nfat.epsilon_closure(NFASS::singleton(nfa.initial))
   let dfa_finals : Set[NFASS] = Set::new()
   let dfat : RDFAT = Map::new()
   pending.push(dfa_initial)
@@ -397,8 +397,8 @@ pub fn NFA::to_digraph(
 }
 
 ///|
-fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFASS, Int] {
-  let result : Map[NFASS, Int] = Map::new()
+fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFASS, DFAS] {
+  let result : Map[NFASS, DFAS] = Map::new()
   let mut count = 1
   for dfas in dfa.dfat.keys() {
     if dfas == dfa.initial {
@@ -429,7 +429,7 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
         let initial = map[initial]
         let final_ = map[final_]
         // exclude epsilon transitions
-        edfat[initial][sym - 1] = final_
+        edfat[initial.to_int()][sym - 1] = final_.to_int()
       }
     }
   }
@@ -442,17 +442,17 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
 pub fn DFA::reverse_transition(
   dfa : DFA,
   alphabet_count : Int,
-) -> FixedArray[FixedArray[NFASS]] {
+) -> FixedArray[FixedArray[DFASS]] {
   let dead_state = dfa.dead_state()
   // include dead state 
   let result = FixedArray::makei(dead_state + 1, _ => FixedArray::makei(
     alphabet_count,
-    _ => NFASS::empty(),
+    _ => DFASS::empty(),
   ))
   for from, trans in dfa.edfat {
     for sym in 0..<alphabet_count {
       let to = trans[sym]
-      result[to][sym].add(from)
+      result[to][sym].0.add(from)
     }
   }
   result
@@ -461,10 +461,11 @@ pub fn DFA::reverse_transition(
 ///|
 pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
-  let all : DFASS = Set::from_iter(
-    Int::until(0, dfa.dead_state(), inclusive=true),
-  )
-  let dead_states : DFASS = set_singleton(dfa.dead_state())
+  let all : DFASS = Set::new()
+  for s in 0..<dfa.dead_state() {
+    all.0.add(DFAS(s))
+  }
+  let dead_states : DFASS = set_singleton(DFAS(dfa.dead_state()))
   let live_states : DFASS = all - dead_states
   let refiners : Set[DFASS] = Set::new()
   let reverse_trans = dfa.reverse_transition(alphabet_count)
@@ -476,10 +477,10 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   result.add(dead_states)
   result.add(live_states)
   fn from_states(sym : Int, to_set : DFASS) -> DFASS {
-    let result = Set::new()
+    let result = DFASS::empty()
     for to in to_set {
-      for from in reverse_trans[to][sym] {
-        result.add(from)
+      for from in reverse_trans[to.to_int()][sym] {
+        result.0.add(from)
       }
     }
     result
@@ -536,7 +537,7 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
 ///|
 pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
   let partitions = dfa.partition(alphabet_count)
-  let map : Map[Int, Int] = Map::new()
+  let map : Map[DFAS, DFAS] = Map::new()
   let mut count = 0
   for part in partitions {
     if part.contains(dfa.dead_state()) {
@@ -562,21 +563,21 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
     let prev_from = part.iter().head().unwrap()
     let from = map[prev_from]
     for sym in 0..<alphabet_count {
-      let prev_to = if dfa.dead_state() == prev_from {
+      let prev_to = if dfa.dead_state() == prev_from.to_int() {
         dfa.dead_state()
       } else {
-        dfa.edfat[prev_from][sym]
+        dfa.edfat[prev_from.to_int()][sym]
       }
       let to = map[prev_to]
       if from != partitions.length() - 1 {
-        edfat[from][sym] = to
+        edfat[from.to_int()][sym] = to.to_int()
       }
     }
   }
   let initial = map[dfa.initial]
-  let finals : Set[Int] = Set::new()
+  let finals : DFASS = Set::new()
   for final_ in dfa.finals {
-    finals.add(map[final_])
+    finals.0.add(map[final_])
   }
   DFA::{ initial, finals, edfat }
 }

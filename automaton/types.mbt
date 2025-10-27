@@ -40,11 +40,11 @@ pub const ToplevelInitialState = 0
 
 ///|
 /// NFA state set
-struct NFASS(Set[Int]) derive(Eq, ToJson, Show)
+struct NFASS(Set[NFAS]) derive(Eq, ToJson, Show)
 
 ///|
 /// DFA state set
-struct DFASS(Set[Int]) derive(Eq, Show)
+struct DFASS(Set[DFAS]) derive(Eq, Show)
 
 ///|
 /// DFA transition table 
@@ -80,8 +80,8 @@ pub struct NFAC {
 /// 
 /// DFA state is represented by integer indices
 pub struct DFA {
-  initial : Int
-  finals : Set[Int]
+  initial : DFAS
+  finals : DFASS
   edfat : FixedArray[FixedArray[Int]]
 }
 
