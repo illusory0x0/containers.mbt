@@ -1,4 +1,5 @@
 ///|
+/// regular expression syntax 
 pub(all) enum Regex {
   Concat(Regex, Regex)
   Choice(Regex, Regex)
@@ -7,6 +8,7 @@ pub(all) enum Regex {
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
+/// regular expression NFA syntax
 pub(all) enum RNFA {
   Symbol(initial~ : Int, Symbol, final_~ : Int)
   Concat(RNFA, RNFA)
@@ -15,6 +17,7 @@ pub(all) enum RNFA {
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
+/// non-deterministic finite automaton
 pub(all) struct NFA {
   initial : Int
   final_ : Int
@@ -23,6 +26,7 @@ pub(all) struct NFA {
 } derive(Eq, Show, ToJson)
 
 ///|
+/// NFA transition table
 struct NFAT(FixedArray[Map[Int, Set[Int]]]) derive(Eq, Show, ToJson)
 
 ///|
@@ -35,15 +39,23 @@ pub const EpsilonSymbol : Int = 0
 pub const ToplevelInitialState = 0
 
 ///|
+/// NFA state set
 struct NFAS(Set[Int]) derive(Eq, ToJson, Show)
 
 ///|
+/// DFA state set
 struct DFAS(Set[Int]) derive(Eq, Show)
 
 ///|
+/// DFA transition table 
+/// 
+/// DFA state is represented by NFA state sets
 struct RDFAT(Map[NFAS, Map[Int, NFAS]]) derive(Eq, Show, ToJson)
 
 ///|
+/// deterministic finite automaton
+/// 
+/// DFA state is represented by NFA state sets
 pub struct RDFA {
   initial : NFAS
   finals : Set[NFAS]
@@ -64,6 +76,9 @@ pub struct NFAC {
 }
 
 ///|
+/// deterministic finite automaton
+/// 
+/// DFA state is represented by integer indices
 pub struct DFA {
   initial : Int
   finals : Set[Int]
