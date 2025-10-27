@@ -464,17 +464,17 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   let all : DFASS = Set::from_iter(
     Int::until(0, dfa.dead_state(), inclusive=true),
   )
-  let dead_state : DFASS = set_singleton(dfa.dead_state())
-  let non_finals : DFASS = all - dead_state
+  let dead_states : DFASS = set_singleton(dfa.dead_state())
+  let live_states : DFASS = all - dead_states
   let refiners : Set[DFASS] = Set::new()
   let reverse_trans = dfa.reverse_transition(alphabet_count)
-  if dead_state.length() < non_finals.length() {
-    refiners.add(dead_state)
+  if dead_states.length() < live_states.length() {
+    refiners.add(dead_states)
   } else {
-    refiners.add(non_finals)
+    refiners.add(live_states)
   }
-  result.add(dead_state)
-  result.add(non_finals)
+  result.add(dead_states)
+  result.add(live_states)
   fn from_states(sym : Int, to_set : DFASS) -> DFASS {
     let result = Set::new()
     for to in to_set {
