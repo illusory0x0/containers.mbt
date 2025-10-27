@@ -551,15 +551,15 @@ pub fn DFA::minimize(dfa : DFA, alphatbet_count : Int) -> DFA {
     alphatbet_count, 0,
   ))
   for part in partitions {
-    let rfrom = part.0.iter().head().unwrap()
-    let from = map[rfrom]
+    let prev_from = part.0.iter().head().unwrap()
+    let from = map[prev_from]
     for sym in 0..<alphatbet_count {
-      let rto = if dfa.dead_state() == rfrom {
+      let prev_to = if dfa.dead_state() == prev_from {
         dfa.dead_state()
       } else {
-        dfa.edfat[rfrom][sym]
+        dfa.edfat[prev_from][sym]
       }
-      let to = map[rto]
+      let to = map[prev_to]
       if from != partitions.length() - 1 {
         edfat[from][sym] = to
       }
