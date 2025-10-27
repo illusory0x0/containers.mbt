@@ -5,12 +5,6 @@ fn[A : Eq + Hash] set_singleton(val : A) -> Set[A] {
   s
 }
 
-// ///|
-// fn[A : Eq + Hash] set_add(set : Set[A], val : A) -> Set[A] {
-//   set.add(val)
-//   set
-// }
-
 ///|
 pub fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
   let initial_count = initial - 1
