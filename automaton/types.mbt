@@ -3,12 +3,12 @@ pub(all) enum Regex {
   Concat(Regex, Regex)
   Choice(Regex, Regex)
   Repeat(Regex)
-  Symbol(Int)
+  Symbol(Symbol)
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
 pub(all) enum RNFA {
-  Symbol(initial~ : Int, Int, final_~ : Int)
+  Symbol(initial~ : Int, Symbol, final_~ : Int)
   Concat(RNFA, RNFA)
   Choice(initial~ : Int, RNFA, RNFA, final_~ : Int)
   Repeat(initial~ : Int, RNFA, final_~ : Int)
@@ -68,4 +68,17 @@ pub struct DFA {
   initial : Int
   finals : Set[Int]
   edfat : FixedArray[FixedArray[Int]]
+}
+
+///|
+struct Symbol(Int) derive(Eq, Show, ToJson, Compare)
+
+///|
+pub fn Symbol::from(val : Int) -> Symbol {
+  Symbol(val)
+}
+
+///|
+pub fn Symbol::to_int(self : Symbol) -> Int {
+  self.0
 }

@@ -1,17 +1,19 @@
 ///|
-fn letter_to_symbol(letter : Char) -> Int {
-  match letter {
-    'ε' => 0
-    'a'..='z' => letter.to_int() - 'a'.to_int() + 1
-    _ => abort("invalid range")
-  }
+fn letter_to_symbol(letter : Char) -> Symbol {
+  Symbol::from(
+    match letter {
+      'ε' => 0
+      'a'..='z' => letter.to_int() - 'a'.to_int() + 1
+      _ => abort("invalid range")
+    },
+  )
 }
 
 ///|
-fn symbol_to_letter(sym : Int) -> Char {
-  match sym {
+fn symbol_to_letter(sym : Symbol) -> Char {
+  match sym.to_int() {
     0 => Epsilon
-    1..=26 => Int::unsafe_to_char('a'.to_int() + sym - 1)
+    1..=26 => Int::unsafe_to_char('a'.to_int() + sym.to_int() - 1)
     _ => abort("invalid range")
   }
 }

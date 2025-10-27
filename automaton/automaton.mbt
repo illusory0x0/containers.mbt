@@ -41,8 +41,8 @@ pub fn Regex::to_nfa(
 ) -> NFA {
   let { nfa, count } = regex.to_nfac(initial~)
   let nfat = NFAT::new(count)
-  fn connect(from : Int, sym : Int, to : Int) {
-    nfat.add_transition(from, sym, to)
+  fn connect(from : Int, sym : Symbol, to : Int) {
+    nfat.add_transition(from, sym.0, to)
   }
 
   let eps = 0
@@ -87,9 +87,14 @@ fn NFAT::new(count : Int) -> NFAT {
 }
 
 ///|
-fn NFAT::add_transition(self : NFAT, from : Int, sym : Int, to : Int) -> Unit {
+fn NFAT::add_transition(
+  self : NFAT,
+  from : Int,
+  sym : Symbol,
+  to : Int,
+) -> Unit {
   let edge = self[from]
-  edge.update(sym, fn(set) {
+  edge.update(sym.0, fn(set) {
     match set {
       None => Some(set_singleton(to))
       Some(set) => Some(set_add(set, to))
@@ -199,7 +204,7 @@ pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
 ///|
 pub fn RDFA::to_digraph(
   self : RDFA,
-  symbol_to_letter~ : (Int) -> Char,
+  symbol_to_letter~ : (Symbol) -> Char,
 ) -> @graphviz.Digraph {
   let map : Map[NFAS, Int] = {}
   let mut count = 0
@@ -248,7 +253,7 @@ pub fn RDFA::to_digraph(
 ///|
 pub fn RNFA::to_digraph(
   nfa : RNFA,
-  symbol_to_letter~ : (Int) -> Char,
+  symbol_to_letter~ : (Symbol) -> Char,
 ) -> @graphviz.Digraph {
   let nodes : Array[@graphviz.Node] = []
   let edges : Array[@graphviz.Edge] = []
@@ -312,7 +317,7 @@ pub fn RNFA::to_digraph(
 ///|
 pub fn DFA::to_digraph(
   self : DFA,
-  symbol_to_letter~ : (Int) -> Char,
+  symbol_to_letter~ : (Symbol) -> Char,
 ) -> @graphviz.Digraph {
   let nodes = []
   let edges = []
@@ -358,7 +363,7 @@ pub fn DFA::dead_state(self : DFA) -> Int {
 ///|
 pub fn NFAT::to_digraph(
   self : NFAT,
-  symbol_to_letter~ : (Int) -> Char,
+  symbol_to_letter~ : (Symbol) -> Char,
 ) -> @graphviz.Digraph {
   let nodes = []
   let edges = []
@@ -392,7 +397,7 @@ pub fn NFAT::to_digraph(
 ///|
 pub fn NFA::to_digraph(
   nfa : NFA,
-  symbol_to_letter~ : (Int) -> Char,
+  symbol_to_letter~ : (Symbol) -> Char,
 ) -> @graphviz.Digraph {
   nfa.nfat.to_digraph(symbol_to_letter~)
 }
