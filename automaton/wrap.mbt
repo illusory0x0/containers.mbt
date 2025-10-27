@@ -31,6 +31,11 @@ pub fn NFAS::contains(set : NFAS, val : Int) -> Bool {
 }
 
 ///|
+pub fn NFAS::empty() -> NFAS {
+  NFAS(Set::new())
+}
+
+///|
 pub impl Sub for DFAS with sub(x, y) {
   x.0 - y.0
 }

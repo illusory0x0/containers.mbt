@@ -126,8 +126,8 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : NFAS) -> NFAS {
 }
 
 ///|
-fn NFAT::move_(nfat : NFAT, initials : NFAS, sym : Int) -> Set[Int] {
-  let result = Set::new()
+fn NFAT::move_(nfat : NFAT, initials : NFAS, sym : Int) -> NFAS {
+  let result = NFAS::empty()
   for initial in initials {
     for final_ in nfat.trans(initial, sym) {
       result.add(final_)
