@@ -27,6 +27,22 @@ fn DFA::partition(Self, Int) -> @set.Set[DFASS]
 fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[NFASS]]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 
+type DFAS
+fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAS::from(Int) -> Self
+fn DFAS::hash(Self) -> Int // from trait `Hash`
+fn DFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+#deprecated
+fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFAS::to_int(Self) -> Int
+fn DFAS::to_json(Self) -> Json // from trait `ToJson`
+fn DFAS::to_string(Self) -> String // from trait `Show`
+impl Eq for DFAS
+impl Hash for DFAS
+impl Show for DFAS
+impl ToJson for DFAS
+
 type DFASS
 fn DFASS::contains(Self, Int) -> Bool
 fn DFASS::equal(Self, Self) -> Bool // from trait `Eq`
@@ -50,8 +66,8 @@ impl Show for DFASS
 impl Sub for DFASS
 
 pub(all) struct NFA {
-  initial : Int
-  final_ : Int
+  initial : NFAS
+  final_ : NFAS
   alphabet_count : Int
   nfat : NFAT
 }
@@ -71,6 +87,24 @@ pub struct NFAC {
   nfa : RNFA
   count : Int
 }
+
+type NFAS
+fn NFAS::compare(Self, Self) -> Int // from trait `Compare`
+fn NFAS::equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAS::from(Int) -> Self
+fn NFAS::hash(Self) -> Int // from trait `Hash`
+fn NFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+#deprecated
+fn NFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn NFAS::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFAS::to_int(Self) -> Int
+fn NFAS::to_json(Self) -> Json // from trait `ToJson`
+fn NFAS::to_string(Self) -> String // from trait `Show`
+impl Compare for NFAS
+impl Eq for NFAS
+impl Hash for NFAS
+impl Show for NFAS
+impl ToJson for NFAS
 
 type NFASS
 fn NFASS::add(Self, Int) -> Unit
@@ -144,10 +178,10 @@ impl Show for RDFAT
 impl ToJson for RDFAT
 
 pub(all) enum RNFA {
-  Symbol(initial~ : Int, Symbol, final_~ : Int)
+  Symbol(initial~ : NFAS, Symbol, final_~ : NFAS)
   Concat(RNFA, RNFA)
-  Choice(initial~ : Int, RNFA, RNFA, final_~ : Int)
-  Repeat(initial~ : Int, RNFA, final_~ : Int)
+  Choice(initial~ : NFAS, RNFA, RNFA, final_~ : NFAS)
+  Repeat(initial~ : NFAS, RNFA, final_~ : NFAS)
 }
 fn RNFA::compare(Self, Self) -> Int // from trait `Compare`
 fn RNFA::equal(Self, Self) -> Bool // from trait `Eq`
