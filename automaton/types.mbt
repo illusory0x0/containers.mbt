@@ -82,7 +82,31 @@ pub struct NFAC {
 pub struct DFA {
   initial : DFAS
   finals : DFASS
-  edfat : FixedArray[FixedArray[Int]]
+  edfat : DFAT
+}
+
+///|
+struct DFAT(FixedArray[FixedArray[DFAS]]) derive(Eq, Show, ToJson)
+
+///|
+pub fn DFAT::iter2(self : DFAT) -> Iter2[DFAS, FixedArray[DFAS]] {
+  Iter2::new(fn(k) {
+    for i, v in self.0.iter2() {
+      guard k(DFAS::from(i), v) is IterContinue else { break IterEnd }
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
+pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
+  self.0[from.to_int()][sym.to_int()]
+}
+
+///|
+pub fn DFAT::length(self : DFAT) -> Int {
+  self.0.length()
 }
 
 ///|

@@ -19,9 +19,9 @@ const ToplevelInitialState : Int = 0
 pub struct DFA {
   initial : DFAS
   finals : DFASS
-  edfat : FixedArray[FixedArray[Int]]
+  edfat : DFAT
 }
-fn DFA::dead_state(Self) -> Int
+fn DFA::dead_state(Self) -> DFAS
 fn DFA::minimize(Self, Int) -> Self
 fn DFA::partition(Self, Int) -> @set.Set[DFASS]
 fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[DFASS]]
@@ -67,6 +67,20 @@ impl Eq for DFASS
 impl Hash for DFASS
 impl Show for DFASS
 impl Sub for DFASS
+
+type DFAT
+fn DFAT::equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAT::iter2(Self) -> Iter2[DFAS, FixedArray[DFAS]]
+fn DFAT::length(Self) -> Int
+#deprecated
+fn DFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAT::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFAT::to_json(Self) -> Json // from trait `ToJson`
+fn DFAT::to_string(Self) -> String // from trait `Show`
+fn DFAT::trans(Self, DFAS, Symbol) -> DFAS
+impl Eq for DFAT
+impl Show for DFAT
+impl ToJson for DFAT
 
 pub(all) struct NFA {
   initial : NFAS

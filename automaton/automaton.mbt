@@ -324,17 +324,17 @@ pub fn DFA::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : Int, sym : Int, to : Int) {
+  fn connect(from : DFAS, sym : Int, to : DFAS) {
     // move to 1-based symbols for display
     // 0 is epsilon
-    edges.push(mk_edge(from, symbol_to_letter(sym + 1), to))
+    edges.push(mk_edge(from.to_int(), symbol_to_letter(sym + 1), to.to_int()))
   }
 
-  fn add_fresh_state(id : Int) {
+  fn add_fresh_state(id : DFAS) {
     if id != self.dead_state() {
-      nodes.push(state_to_node(id))
+      nodes.push(state_to_node(id.to_int()))
     } else {
-      nodes.push(@graphviz.Node::{ id, label: Some("E") })
+      nodes.push(@graphviz.Node::{ id: id.to_int(), label: Some("E") })
     }
   }
 
@@ -350,7 +350,7 @@ pub fn DFA::to_digraph(
 }
 
 ///|
-pub fn DFA::dead_state(self : DFA) -> Int {
+pub fn DFA::dead_state(self : DFA) -> DFAS {
   self.edfat.length()
 }
 
@@ -418,8 +418,9 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
   let state_count = rdfa.dfat.length()
   let alphabet_count = rdfa.dfat[rdfa.initial].length()
   // exclude the dead state 
-  let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
-    alphabet_count, 0,
+  let edfat : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
+    alphabet_count,
+    DFAS(0),
   ))
   let map = rdfa.to_dfa_state_map()
   for initial, trans in rdfa.dfat {
@@ -429,7 +430,7 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
         let initial = map[initial]
         let final_ = map[final_]
         // exclude epsilon transitions
-        edfat[initial.to_int()][sym - 1] = final_.to_int()
+        edfat.0[initial.to_int()][sym - 1] = final_.to_int()
       }
     }
   }
@@ -445,14 +446,14 @@ pub fn DFA::reverse_transition(
 ) -> FixedArray[FixedArray[DFASS]] {
   let dead_state = dfa.dead_state()
   // include dead state 
-  let result = FixedArray::makei(dead_state + 1, _ => FixedArray::makei(
+  let result = FixedArray::makei(dead_state.to_int() + 1, _ => FixedArray::makei(
     alphabet_count,
     _ => DFASS::empty(),
   ))
   for from, trans in dfa.edfat {
     for sym in 0..<alphabet_count {
       let to = trans[sym]
-      result[to][sym].add(from)
+      result[to.to_int()][sym].add(from)
     }
   }
   result
@@ -462,10 +463,10 @@ pub fn DFA::reverse_transition(
 pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
   let all : DFASS = Set::new()
-  for s in 0..<dfa.dead_state() {
+  for s in 0..<dfa.dead_state().to_int() {
     all.add(DFAS(s))
   }
-  let dead_states : DFASS = set_singleton(DFAS(dfa.dead_state()))
+  let dead_states : DFASS = set_singleton(DFAS(dfa.dead_state().to_int()))
   let live_states : DFASS = all - dead_states
   let refiners : Set[DFASS] = Set::new()
   let reverse_trans = dfa.reverse_transition(alphabet_count)
@@ -556,8 +557,9 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
     }
   }
   let state_count = partitions.length()
-  let edfat = FixedArray::makei(state_count - 1, _ => FixedArray::make(
-    alphabet_count, 0,
+  let edfat : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
+    alphabet_count,
+    DFAS(0),
   ))
   for part in partitions {
     let prev_from = part.iter().head().unwrap()
@@ -566,11 +568,11 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
       let prev_to = if dfa.dead_state() == prev_from.to_int() {
         dfa.dead_state()
       } else {
-        dfa.edfat[prev_from.to_int()][sym]
+        dfa.edfat.trans(prev_from, sym)
       }
       let to = map[prev_to]
       if from != partitions.length() - 1 {
-        edfat[from.to_int()][sym] = to.to_int()
+        edfat.0[from.to_int()][sym] = to.to_int()
       }
     }
   }
