@@ -118,7 +118,7 @@ fn NFAT::trans(self : NFAT, from : Int, sym : Int) -> NFAS {
 ///|
 fn NFAT::epsilon_closure(nfat : NFAT, initials : NFAS) -> NFAS {
   let result = initials.copy()
-  let pending = initials.0.to_array()
+  let pending = initials.to_array()
   while pending.pop() is Some(initial) {
     for final_ in nfat.trans(initial, EpsilonSymbol) {
       if !result.contains(final_) {

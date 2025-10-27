@@ -11,6 +11,11 @@ pub fn NFAS::is_empty(set : NFAS) -> Bool {
 }
 
 ///|
+pub fn NFAS::to_array(set : NFAS) -> Array[Int] {
+  set.0.to_array()
+}
+
+///|
 pub fn NFAS::iter(set : NFAS) -> Iter[Int] {
   set.0.iter()
 }
