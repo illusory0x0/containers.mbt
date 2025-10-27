@@ -97,3 +97,31 @@ pub fn Symbol::from(val : Int) -> Symbol {
 pub fn Symbol::to_int(self : Symbol) -> Int {
   self.0
 }
+
+///|
+/// NFA state is represented by integer indices
+struct NFAS(Int) derive(Eq, Show, ToJson, Hash)
+
+///|
+/// DFA state is represented by integer indices
+struct DFAS(Int) derive(Eq, Show, ToJson, Hash)
+
+///|
+pub fn NFAS::from(val : Int) -> NFAS {
+  NFAS(val)
+}
+
+///|
+pub fn DFAS::from(val : Int) -> DFAS {
+  DFAS(val)
+}
+
+///|
+pub fn NFAS::to_int(self : NFAS) -> Int {
+  self.0
+}
+
+///|
+pub fn DFAS::to_int(self : DFAS) -> Int {
+  self.0
+}

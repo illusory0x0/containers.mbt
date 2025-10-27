@@ -23,31 +23,31 @@ pub struct DFA {
 }
 fn DFA::dead_state(Self) -> Int
 fn DFA::minimize(Self, Int) -> Self
-fn DFA::partition(Self, Int) -> @set.Set[DFAS]
-fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[NFAS]]
-fn DFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
+fn DFA::partition(Self, Int) -> @set.Set[DFASS]
+fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[NFASS]]
+fn DFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 
-type DFAS
-fn DFAS::contains(Self, Int) -> Bool
-fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
-fn DFAS::hash(Self) -> Int // from trait `Hash`
-fn DFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
-fn DFAS::is_empty(Self) -> Bool
-fn DFAS::iter(Self) -> Iter[Int]
-fn DFAS::land(Self, Self) -> Self // from trait `BitAnd`
-fn DFAS::length(Self) -> Int
+type DFASS
+fn DFASS::contains(Self, Int) -> Bool
+fn DFASS::equal(Self, Self) -> Bool // from trait `Eq`
+fn DFASS::hash(Self) -> Int // from trait `Hash`
+fn DFASS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+fn DFASS::is_empty(Self) -> Bool
+fn DFASS::iter(Self) -> Iter[Int]
+fn DFASS::land(Self, Self) -> Self // from trait `BitAnd`
+fn DFASS::length(Self) -> Int
 #deprecated
-fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn DFASS::op_equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
-fn DFAS::op_sub(Self, Self) -> Self // from trait `Sub`
-fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
-fn DFAS::sub(Self, Self) -> Self // from trait `Sub`
-fn DFAS::to_string(Self) -> String // from trait `Show`
-impl BitAnd for DFAS
-impl Eq for DFAS
-impl Hash for DFAS
-impl Show for DFAS
-impl Sub for DFAS
+fn DFASS::op_sub(Self, Self) -> Self // from trait `Sub`
+fn DFASS::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFASS::sub(Self, Self) -> Self // from trait `Sub`
+fn DFASS::to_string(Self) -> String // from trait `Show`
+impl BitAnd for DFASS
+impl Eq for DFASS
+impl Hash for DFASS
+impl Show for DFASS
+impl Sub for DFASS
 
 pub(all) struct NFA {
   initial : Int
@@ -60,7 +60,7 @@ fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
 fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFA::powerset_construction(Self) -> RDFA
-fn NFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
+fn NFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 fn NFA::to_json(Self) -> Json // from trait `ToJson`
 fn NFA::to_string(Self) -> String // from trait `Show`
 impl Eq for NFA
@@ -72,25 +72,26 @@ pub struct NFAC {
   count : Int
 }
 
-type NFAS
-fn NFAS::add(Self, Int) -> Unit
-fn NFAS::contains(Self, Int) -> Bool
-fn NFAS::copy(Self) -> Self
-fn NFAS::empty() -> Self
-fn NFAS::equal(Self, Self) -> Bool // from trait `Eq`
-fn NFAS::hash(Self) -> Int // from trait `Hash`
-fn NFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
-fn NFAS::is_empty(Self) -> Bool
-fn NFAS::iter(Self) -> Iter[Int]
+type NFASS
+fn NFASS::add(Self, Int) -> Unit
+fn NFASS::contains(Self, Int) -> Bool
+fn NFASS::copy(Self) -> Self
+fn NFASS::empty() -> Self
+fn NFASS::equal(Self, Self) -> Bool // from trait `Eq`
+fn NFASS::hash(Self) -> Int // from trait `Hash`
+fn NFASS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+fn NFASS::is_empty(Self) -> Bool
+fn NFASS::iter(Self) -> Iter[Int]
 #deprecated
-fn NFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn NFAS::output(Self, &Logger) -> Unit // from trait `Show`
-fn NFAS::to_json(Self) -> Json // from trait `ToJson`
-fn NFAS::to_string(Self) -> String // from trait `Show`
-impl Eq for NFAS
-impl Hash for NFAS
-impl Show for NFAS
-impl ToJson for NFAS
+fn NFASS::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn NFASS::output(Self, &Logger) -> Unit // from trait `Show`
+fn NFASS::to_array(Self) -> Array[Int]
+fn NFASS::to_json(Self) -> Json // from trait `ToJson`
+fn NFASS::to_string(Self) -> String // from trait `Show`
+impl Eq for NFASS
+impl Hash for NFASS
+impl Show for NFASS
+impl ToJson for NFASS
 
 type NFAT
 fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
@@ -103,7 +104,7 @@ fn NFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAT::op_get(Self, Int) -> Map[Int, @set.Set[Int]]
 fn NFAT::op_set(Self, Int, Map[Int, @set.Set[Int]]) -> Unit
 fn NFAT::output(Self, &Logger) -> Unit // from trait `Show`
-fn NFAT::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
+fn NFAT::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 fn NFAT::to_json(Self) -> Json // from trait `ToJson`
 fn NFAT::to_string(Self) -> String // from trait `Show`
 impl Eq for NFAT
@@ -111,39 +112,39 @@ impl Show for NFAT
 impl ToJson for NFAT
 
 pub struct RDFA {
-  initial : NFAS
-  finals : @set.Set[NFAS]
+  initial : NFASS
+  finals : @set.Set[NFASS]
   dfat : RDFAT
   alphabet_count : Int
 }
 fn RDFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFA::to_dfa(Self) -> DFA
-fn RDFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
+fn RDFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 fn RDFA::to_json(Self) -> Json // from trait `ToJson`
 fn RDFA::to_string(Self) -> String // from trait `Show`
 impl Show for RDFA
 impl ToJson for RDFA
 
 type RDFAT
-fn RDFAT::contains(Self, NFAS) -> Bool
+fn RDFAT::contains(Self, NFASS) -> Bool
 fn RDFAT::equal(Self, Self) -> Bool // from trait `Eq`
-fn RDFAT::iter2(Self) -> Iter2[NFAS, Map[Int, NFAS]]
-fn RDFAT::keys(Self) -> Iter[NFAS]
+fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Int, NFASS]]
+fn RDFAT::keys(Self) -> Iter[NFASS]
 fn RDFAT::length(Self) -> Int
 #deprecated
 fn RDFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn RDFAT::op_get(Self, NFAS) -> Map[Int, NFAS]
-fn RDFAT::op_set(Self, NFAS, Map[Int, NFAS]) -> Unit
+fn RDFAT::op_get(Self, NFASS) -> Map[Int, NFASS]
+fn RDFAT::op_set(Self, NFASS, Map[Int, NFASS]) -> Unit
 fn RDFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFAT::to_json(Self) -> Json // from trait `ToJson`
 fn RDFAT::to_string(Self) -> String // from trait `Show`
-fn RDFAT::update(Self, NFAS, (Map[Int, NFAS]?) -> Map[Int, NFAS]?) -> Unit
+fn RDFAT::update(Self, NFASS, (Map[Int, NFASS]?) -> Map[Int, NFASS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
 impl ToJson for RDFAT
 
 pub(all) enum RNFA {
-  Symbol(initial~ : Int, Int, final_~ : Int)
+  Symbol(initial~ : Int, Symbol, final_~ : Int)
   Concat(RNFA, RNFA)
   Choice(initial~ : Int, RNFA, RNFA, final_~ : Int)
   Repeat(initial~ : Int, RNFA, final_~ : Int)
@@ -153,7 +154,7 @@ fn RNFA::equal(Self, Self) -> Bool // from trait `Eq`
 #deprecated
 fn RNFA::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn RNFA::output(Self, &Logger) -> Unit // from trait `Show`
-fn RNFA::to_digraph(Self, symbol_to_letter~ : (Int) -> Char) -> @graphviz.Digraph
+fn RNFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 fn RNFA::to_json(Self) -> Json // from trait `ToJson`
 fn RNFA::to_string(Self) -> String // from trait `Show`
 impl Compare for RNFA
@@ -165,7 +166,7 @@ pub(all) enum Regex {
   Concat(Regex, Regex)
   Choice(Regex, Regex)
   Repeat(Regex)
-  Symbol(Int)
+  Symbol(Symbol)
 }
 fn Regex::compare(Self, Self) -> Int // from trait `Compare`
 fn Regex::equal(Self, Self) -> Bool // from trait `Eq`
@@ -180,6 +181,21 @@ impl Compare for Regex
 impl Eq for Regex
 impl Show for Regex
 impl ToJson for Regex
+
+type Symbol
+fn Symbol::compare(Self, Self) -> Int // from trait `Compare`
+fn Symbol::equal(Self, Self) -> Bool // from trait `Eq`
+fn Symbol::from(Int) -> Self
+#deprecated
+fn Symbol::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn Symbol::output(Self, &Logger) -> Unit // from trait `Show`
+fn Symbol::to_int(Self) -> Int
+fn Symbol::to_json(Self) -> Json // from trait `ToJson`
+fn Symbol::to_string(Self) -> String // from trait `Show`
+impl Compare for Symbol
+impl Eq for Symbol
+impl Show for Symbol
+impl ToJson for Symbol
 
 // Type aliases
 
