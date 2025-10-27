@@ -125,7 +125,7 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : NFASS) -> NFASS {
 }
 
 ///|
-fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Int) -> NFASS {
+fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Symbol) -> NFASS {
   let result = NFASS::empty()
   for initial in initials {
     for final_ in nfat.trans(initial, sym) {
@@ -139,7 +139,7 @@ fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Int) -> NFASS {
 fn RDFAT::add_transition(
   dfat : RDFAT,
   from : NFASS,
-  sym : Int,
+  sym : Symbol,
   to : NFASS,
 ) -> Unit {
   fn connect(edge : Map[Symbol, NFASS]) -> Map[Symbol, NFASS]? {
@@ -170,7 +170,7 @@ pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   let dfa_finals : Set[NFASS] = Set::new()
   let dfat : RDFAT = Map::new()
   pending.push(dfa_initial)
-  fn connect(from : NFASS, sym : Int, to : NFASS) {
+  fn connect(from : NFASS, sym : Symbol, to : NFASS) {
     dfat.add_transition(from, sym, to)
   }
 
@@ -255,12 +255,16 @@ pub fn RNFA::to_digraph(
     @graphviz.Node::{ id, label: Some(id.to_string()) }
   }
 
-  fn mk_edge(from : Int, label : Char, to : Int) -> @graphviz.Edge {
-    { from, to, label: Some(String::make(1, label)) }
+  fn mk_edge(from : NFAS, label : Char, to : NFAS) -> @graphviz.Edge {
+    {
+      from: from.to_int(),
+      to: to.to_int(),
+      label: Some(String::make(1, label)),
+    }
   }
 
   fn connect(from : NFAS, label : Char, to : NFAS) {
-    edges.push(mk_edge(from.to_int(), label, to.to_int()))
+    edges.push(mk_edge(from, label, to))
   }
 
   fn add_fresh_state(initial : NFAS, final_ : NFAS) {
