@@ -142,7 +142,7 @@ fn RDFAT::add_transition(
   sym : Int,
   to : NFASS,
 ) -> Unit {
-  fn connect(edge : Map[Int, NFASS]) -> Map[Int, NFASS]? {
+  fn connect(edge : Map[Symbol, NFASS]) -> Map[Symbol, NFASS]? {
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
         None => Some(to)
@@ -221,7 +221,7 @@ pub fn RDFA::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : NFASS, sym : Int, to : NFASS) {
+  fn connect(from : NFASS, sym : Symbol, to : NFASS) {
     edges.push(mk_edge(from, symbol_to_letter(sym), to))
   }
 
@@ -430,7 +430,7 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
         let initial = map[initial]
         let final_ = map[final_]
         // exclude epsilon transitions
-        edfat.set_trans(initial, sym - 1, final_)
+        edfat.set_trans(initial, sym.to_int() - 1, final_)
       }
     }
   }

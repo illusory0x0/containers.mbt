@@ -50,7 +50,7 @@ struct DFASS(Set[DFAS]) derive(Eq, Show)
 /// DFA transition table 
 /// 
 /// DFA state is represented by NFA state sets
-struct RDFAT(Map[NFASS, Map[Int, NFASS]]) derive(Eq, Show, ToJson)
+struct RDFAT(Map[NFASS, Map[Symbol, NFASS]]) derive(Eq, Show, ToJson)
 
 ///|
 /// deterministic finite automaton
@@ -104,6 +104,7 @@ pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
   self.0[from.to_int()][sym.to_int()]
 }
 
+///|
 pub fn DFAT::set_trans(
   self : DFAT,
   from : DFAS,

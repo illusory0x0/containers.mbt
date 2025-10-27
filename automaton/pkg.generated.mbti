@@ -75,6 +75,7 @@ fn DFAT::length(Self) -> Int
 #deprecated
 fn DFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn DFAT::output(Self, &Logger) -> Unit // from trait `Show`
+fn DFAT::set_trans(Self, DFAS, Symbol, DFAS) -> Unit
 fn DFAT::to_json(Self) -> Json // from trait `ToJson`
 fn DFAT::to_string(Self) -> String // from trait `Show`
 fn DFAT::trans(Self, DFAS, Symbol) -> DFAS
@@ -181,17 +182,17 @@ impl ToJson for RDFA
 type RDFAT
 fn RDFAT::contains(Self, NFASS) -> Bool
 fn RDFAT::equal(Self, Self) -> Bool // from trait `Eq`
-fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Int, NFASS]]
+fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Symbol, NFASS]]
 fn RDFAT::keys(Self) -> Iter[NFASS]
 fn RDFAT::length(Self) -> Int
 #deprecated
 fn RDFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn RDFAT::op_get(Self, NFASS) -> Map[Int, NFASS]
-fn RDFAT::op_set(Self, NFASS, Map[Int, NFASS]) -> Unit
+fn RDFAT::op_get(Self, NFASS) -> Map[Symbol, NFASS]
+fn RDFAT::op_set(Self, NFASS, Map[Symbol, NFASS]) -> Unit
 fn RDFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFAT::to_json(Self) -> Json // from trait `ToJson`
 fn RDFAT::to_string(Self) -> String // from trait `Show`
-fn RDFAT::update(Self, NFASS, (Map[Int, NFASS]?) -> Map[Int, NFASS]?) -> Unit
+fn RDFAT::update(Self, NFASS, (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
 impl ToJson for RDFAT
