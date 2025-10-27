@@ -1,12 +1,12 @@
 ///|
-fn set_singleton(val : Int) -> Set[Int] {
+fn[A : Eq + Hash] set_singleton(val : A) -> Set[A] {
   let s = Set::new()
   s.add(val)
   s
 }
 
 ///|
-fn set_add(set : Set[Int], val : Int) -> Set[Int] {
+fn[A : Eq + Hash] set_add(set : Set[A], val : A) -> Set[A] {
   set.add(val)
   set
 }
