@@ -390,3 +390,17 @@ test "panic DFA/minimize/all/raw" (t : @test.T) {
   t.writeln(digraph)
   t.snapshot(filename="dfa_minimize_choice_repeat_raw.dot")
 }
+
+///|
+test "RDFA/no dead state" (t : @test.T) {
+  let sym : Regex = Choice(
+    Symbol(letter_to_symbol('a')),
+    Symbol(letter_to_symbol('b')),
+  )
+  let regex : Regex = Repeat(sym)
+  let nfa = regex_to_nfa(regex, alphabet_count=2)
+  let rdfa = nfa.powerset_construction()
+  let digraph = rdfa_to_digraph(rdfa)
+  t.writeln(digraph)
+  t.snapshot(filename="rdfa_no_dead_state.dot")
+}
