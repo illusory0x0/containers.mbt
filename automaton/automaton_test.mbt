@@ -374,3 +374,19 @@ test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
   t.writeln(digraph)
   t.snapshot(filename="dfa_minimize_choice_repeat_raw.dot")
 }
+
+///|
+test "panic DFA/minimize/all/raw" (t : @test.T) {
+  // FIXME: when DFA accept all language, in this cases would panic
+  let sym : Regex = Choice(
+    Symbol(letter_to_symbol('a')),
+    Symbol(letter_to_symbol('b')),
+  )
+  let regex : Regex = Repeat(sym)
+  let nfa = regex_to_nfa(regex, alphabet_count=2)
+  let rdfa = nfa.powerset_construction()
+  let dfa = rdfa.to_dfa()
+  let digraph = dfa_to_digraph(dfa)
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_minimize_choice_repeat_raw.dot")
+}
