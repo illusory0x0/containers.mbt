@@ -202,8 +202,14 @@ pub fn DFAT::iter2(self : DFAT) -> Iter2[DFAS, FixedArray[DFAS]] {
 
 ///|
 pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
-  self.0[from.to_int()][sym.to_int()]
+  self[from][sym.to_int()]
 }
+
+///|
+pub fn DFAT::op_get(self : DFAT, from : DFAS) -> FixedArray[DFAS] = "%fixedarray.get"
+
+///|
+pub fn DFAT::op_set(self : DFAT, from : DFAS, to : FixedArray[DFAS]) -> Unit = "%fixedarray.set"
 
 ///|
 pub fn DFAT::set_trans(
@@ -212,7 +218,7 @@ pub fn DFAT::set_trans(
   sym : Symbol,
   to : DFAS,
 ) -> Unit {
-  self.0[from.to_int()][sym.to_int()] = to
+  self[from][sym.to_int()] = to
 }
 
 ///|
