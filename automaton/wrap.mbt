@@ -216,9 +216,7 @@ pub fn DFAT::set_trans(
 }
 
 ///|
-pub fn DFAT::length(self : DFAT) -> Int {
-  self.0.length()
-}
+pub fn DFAT::length(self : DFAT) -> Int = "%fixedarray.length"
 
 ///|
 pub fn NFAS::from(val : Int) -> NFAS = "%identity"
