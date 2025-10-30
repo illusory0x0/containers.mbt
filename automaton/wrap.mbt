@@ -188,3 +188,54 @@ pub fn DFASS::empty() -> DFASS {
 pub fn DFASS::add(set : DFASS, val : DFAS) -> Unit {
   set.0.add(val)
 }
+
+///|
+pub fn DFAT::iter2(self : DFAT) -> Iter2[DFAS, FixedArray[DFAS]] {
+  Iter2::new(fn(k) {
+    for i, v in self.0.iter2() {
+      guard k(DFAS::from(i), v) is IterContinue else { break IterEnd }
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
+pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
+  self.0[from.to_int()][sym.to_int()]
+}
+
+///|
+pub fn DFAT::set_trans(
+  self : DFAT,
+  from : DFAS,
+  sym : Symbol,
+  to : DFAS,
+) -> Unit {
+  self.0[from.to_int()][sym.to_int()] = to
+}
+
+///|
+pub fn DFAT::length(self : DFAT) -> Int {
+  self.0.length()
+}
+
+///|
+pub fn NFAS::from(val : Int) -> NFAS {
+  NFAS(val)
+}
+
+///|
+pub fn DFAS::from(val : Int) -> DFAS {
+  DFAS(val)
+}
+
+///|
+pub fn NFAS::to_int(self : NFAS) -> Int {
+  self.0
+}
+
+///|
+pub fn DFAS::to_int(self : DFAS) -> Int {
+  self.0
+}

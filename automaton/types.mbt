@@ -89,37 +89,6 @@ pub struct DFA {
 struct DFAT(FixedArray[FixedArray[DFAS]]) derive(Eq, Show, ToJson)
 
 ///|
-pub fn DFAT::iter2(self : DFAT) -> Iter2[DFAS, FixedArray[DFAS]] {
-  Iter2::new(fn(k) {
-    for i, v in self.0.iter2() {
-      guard k(DFAS::from(i), v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
-  })
-}
-
-///|
-pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
-  self.0[from.to_int()][sym.to_int()]
-}
-
-///|
-pub fn DFAT::set_trans(
-  self : DFAT,
-  from : DFAS,
-  sym : Symbol,
-  to : DFAS,
-) -> Unit {
-  self.0[from.to_int()][sym.to_int()] = to
-}
-
-///|
-pub fn DFAT::length(self : DFAT) -> Int {
-  self.0.length()
-}
-
-///|
 struct Symbol(Int) derive(Eq, Show, ToJson, Compare, Hash)
 
 ///|
@@ -139,23 +108,3 @@ struct NFAS(Int) derive(Eq, Show, ToJson, Hash, Compare)
 ///|
 /// DFA state is represented by integer indices
 struct DFAS(Int) derive(Eq, Show, ToJson, Hash)
-
-///|
-pub fn NFAS::from(val : Int) -> NFAS {
-  NFAS(val)
-}
-
-///|
-pub fn DFAS::from(val : Int) -> DFAS {
-  DFAS(val)
-}
-
-///|
-pub fn NFAS::to_int(self : NFAS) -> Int {
-  self.0
-}
-
-///|
-pub fn DFAS::to_int(self : DFAS) -> Int {
-  self.0
-}
