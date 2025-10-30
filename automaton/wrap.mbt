@@ -221,21 +221,13 @@ pub fn DFAT::length(self : DFAT) -> Int {
 }
 
 ///|
-pub fn NFAS::from(val : Int) -> NFAS {
-  NFAS(val)
-}
+pub fn NFAS::from(val : Int) -> NFAS = "%identity"
 
 ///|
-pub fn DFAS::from(val : Int) -> DFAS {
-  DFAS(val)
-}
+pub fn DFAS::from(val : Int) -> DFAS = "%identity"
 
 ///|
-pub fn NFAS::to_int(self : NFAS) -> Int {
-  self.0
-}
+pub fn NFAS::to_int(self : NFAS) -> Int = "%identity"
 
 ///|
-pub fn DFAS::to_int(self : DFAS) -> Int {
-  self.0
-}
+pub fn DFAS::to_int(self : DFAS) -> Int = "%identity"
