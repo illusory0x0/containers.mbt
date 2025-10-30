@@ -74,6 +74,8 @@ fn DFAT::iter2(Self) -> Iter2[DFAS, FixedArray[DFAS]]
 fn DFAT::length(Self) -> Int
 #deprecated
 fn DFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn DFAT::op_get(Self, DFAS) -> FixedArray[DFAS]
+fn DFAT::op_set(Self, DFAS, FixedArray[DFAS]) -> Unit
 fn DFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFAT::set_trans(Self, DFAS, Symbol, DFAS) -> Unit
 fn DFAT::to_json(Self) -> Json // from trait `ToJson`
