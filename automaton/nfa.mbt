@@ -6,18 +6,19 @@ pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   let dfa_finals : Set[NFASS] = Set::new()
   let dfat : RDFAT = Map::new()
   pending.push(dfa_initial)
-  fn connect(from : NFASS, sym : Symbol, to : NFASS) {
+  fn connect(from : NFASS, sym : Label, to : NFASS) {
     dfat.add_transition(from, sym, to)
   }
 
   while pending.pop() is Some(dfs_state) {
-    // epsilon is 0, so start from 1
-    for sym in 1..<(nfa.alphabet_count + 1) {
-      let new_dfa_state = nfat.epsilon_closure(nfat.move_(dfs_state, sym))
+    for sym in 0..<nfa.alphabet_count {
+      let new_dfa_state = nfat.epsilon_closure(
+        nfat.move_(dfs_state, Symbol(sym)),
+      )
       if new_dfa_state.contains(nfa.final_.0) {
         dfa_finals.add(new_dfa_state)
       }
-      connect(dfs_state, sym, new_dfa_state)
+      connect(dfs_state, Symbol(sym), new_dfa_state)
       if !dfat.contains(new_dfa_state) {
         pending.push(new_dfa_state)
       }

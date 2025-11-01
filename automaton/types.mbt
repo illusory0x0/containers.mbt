@@ -4,13 +4,13 @@ pub(all) enum Regex {
   Concat(Regex, Regex)
   Choice(Regex, Regex)
   Repeat(Regex)
-  Symbol(Symbol)
+  Symbol(Label)
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
 /// regular expression NFA syntax
 pub(all) enum RNFA {
-  Symbol(initial~ : NFAS, Symbol, final_~ : NFAS)
+  Symbol(initial~ : NFAS, Label, final_~ : NFAS)
   Concat(RNFA, RNFA)
   Choice(initial~ : NFAS, RNFA, RNFA, final_~ : NFAS)
   Repeat(initial~ : NFAS, RNFA, final_~ : NFAS)
@@ -27,13 +27,13 @@ pub(all) struct NFA {
 
 ///|
 /// NFA transition table
-struct NFAT(FixedArray[Map[Symbol, NFASS]]) derive(Eq, Show, ToJson)
+struct NFAT(FixedArray[Map[Label, NFASS]]) derive(Eq, Show, ToJson)
 
 ///|
-pub const Epsilon = 'ε'
+pub const EpsilonChar = 'ε'
 
-///|
-pub const EpsilonSymbol : Int = 0
+// ///|
+// pub const EpsilonSymbol : Int = 0
 
 ///|
 pub const ToplevelInitialState = 0
@@ -50,7 +50,7 @@ struct DFASS(Set[DFAS]) derive(Eq, Show)
 /// DFA transition table 
 /// 
 /// DFA state is represented by NFA state sets
-struct RDFAT(Map[NFASS, Map[Symbol, NFASS]]) derive(Eq, Show, ToJson)
+struct RDFAT(Map[NFASS, Map[Label, NFASS]]) derive(Eq, Show, ToJson)
 
 ///|
 /// deterministic finite automaton
@@ -89,17 +89,13 @@ pub struct DFA {
 struct DFAT(FixedArray[FixedArray[DFAS]]) derive(Eq, Show, ToJson)
 
 ///|
-struct Symbol(Int) derive(Eq, Show, ToJson, Compare, Hash)
+pub(all) enum Label {
+  Symbol(Int)
+  Epsilon
+} derive(Eq, Show, ToJson, Compare, Hash)
 
 ///|
-pub fn Symbol::from(val : Int) -> Symbol {
-  Symbol(val)
-}
-
-///|
-pub fn Symbol::to_int(self : Symbol) -> Int {
-  self.0
-}
+struct DFASymbol(Int) derive(Eq, Show, ToJson, Compare, Hash)
 
 ///|
 /// NFA state is represented by integer indices

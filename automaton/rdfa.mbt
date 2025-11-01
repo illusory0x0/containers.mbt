@@ -32,7 +32,8 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
         let initial = map[initial]
         let final_ = map[final_]
         // exclude epsilon transitions
-        edfat.set_trans(initial, sym.to_int() - 1, final_)
+        guard sym is Symbol(sym)
+        edfat.set_trans(initial, sym, final_)
       }
     }
   }

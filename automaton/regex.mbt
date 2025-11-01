@@ -28,26 +28,26 @@ pub fn Regex::to_nfa(
 ) -> NFA {
   let { nfa, count } = regex.to_nfac(initial~)
   let nfat = NFAT::new(count)
-  fn connect(from : NFAS, sym : Symbol, to : NFAS) {
-    nfat.add_transition(from, sym.0, to)
+  fn connect(from : NFAS, sym : Label, to : NFAS) {
+    nfat.add_transition(from, sym, to)
   }
 
-  let eps = 0
+  // let eps = Epsilon
   fn dfs(nfa : RNFA) -> Edge[NFAS] {
     match nfa {
       Choice(initial~, top, bot, final_~) => {
         let edge_top = dfs(top)
         let edge_bot = dfs(bot)
-        connect(initial, eps, edge_top.initial)
-        connect(initial, eps, edge_bot.initial)
-        connect(edge_top.final_, eps, final_)
-        connect(edge_bot.final_, eps, final_)
+        connect(initial, Epsilon, edge_top.initial)
+        connect(initial, Epsilon, edge_bot.initial)
+        connect(edge_top.final_, Epsilon, final_)
+        connect(edge_bot.final_, Epsilon, final_)
         Edge::{ initial, final_ }
       }
       Concat(left, right) => {
         let { initial, final_: from } = dfs(left)
         let { initial: to, final_ } = dfs(right)
-        connect(from, eps, to)
+        connect(from, Epsilon, to)
         Edge::{ initial, final_ }
       }
       Symbol(initial~, sym, final_~) => {
@@ -56,9 +56,9 @@ pub fn Regex::to_nfa(
       }
       Repeat(initial~, nfa, final_~) => {
         let edge_nfa = dfs(nfa)
-        connect(initial, eps, edge_nfa.initial)
-        connect(edge_nfa.final_, eps, edge_nfa.initial)
-        connect(edge_nfa.final_, eps, final_)
+        connect(initial, Epsilon, edge_nfa.initial)
+        connect(edge_nfa.final_, Epsilon, edge_nfa.initial)
+        connect(edge_nfa.final_, Epsilon, final_)
         Edge::{ initial, final_ }
       }
     }

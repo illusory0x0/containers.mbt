@@ -1,7 +1,7 @@
 ///|
 pub fn RNFA::to_digraph(
   nfa : RNFA,
-  symbol_to_letter~ : (Symbol) -> Char,
+  symbol_to_letter~ : (Label) -> Char,
 ) -> @graphviz.Digraph {
   let nodes : Array[@graphviz.Node] = []
   let edges : Array[@graphviz.Edge] = []
@@ -32,16 +32,16 @@ pub fn RNFA::to_digraph(
         add_fresh_state(initial, final_)
         let edge_top = dfs(top)
         let edge_bot = dfs(bot)
-        connect(initial, Epsilon, edge_top.initial)
-        connect(initial, Epsilon, edge_bot.initial)
-        connect(edge_top.final_, Epsilon, final_)
-        connect(edge_bot.final_, Epsilon, final_)
+        connect(initial, EpsilonChar, edge_top.initial)
+        connect(initial, EpsilonChar, edge_bot.initial)
+        connect(edge_top.final_, EpsilonChar, final_)
+        connect(edge_bot.final_, EpsilonChar, final_)
         Edge::{ initial, final_ }
       }
       Concat(left, right) => {
         let { initial, final_: from } = dfs(left)
         let { initial: to, final_ } = dfs(right)
-        connect(from, Epsilon, to)
+        connect(from, EpsilonChar, to)
         Edge::{ initial, final_ }
       }
       Symbol(initial~, sym, final_~) => {
@@ -52,9 +52,9 @@ pub fn RNFA::to_digraph(
       Repeat(initial~, nfa, final_~) => {
         add_fresh_state(initial, final_)
         let edge_nfa = dfs(nfa)
-        connect(initial, Epsilon, edge_nfa.initial)
-        connect(edge_nfa.final_, Epsilon, edge_nfa.initial)
-        connect(edge_nfa.final_, Epsilon, final_)
+        connect(initial, EpsilonChar, edge_nfa.initial)
+        connect(edge_nfa.final_, EpsilonChar, edge_nfa.initial)
+        connect(edge_nfa.final_, EpsilonChar, final_)
         Edge::{ initial, final_ }
       }
     }
@@ -69,7 +69,7 @@ pub fn RNFA::to_digraph(
 ///|
 pub fn RDFA::to_digraph(
   self : RDFA,
-  symbol_to_letter~ : (Symbol) -> Char,
+  symbol_to_letter~ : (Label) -> Char,
 ) -> @graphviz.Digraph {
   let map : Map[NFASS, Int] = {}
   let mut count = 0
@@ -92,7 +92,7 @@ pub fn RDFA::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : NFASS, sym : Symbol, to : NFASS) {
+  fn connect(from : NFASS, sym : Label, to : NFASS) {
     edges.push(mk_edge(from, symbol_to_letter(sym), to))
   }
 
@@ -118,7 +118,7 @@ pub fn RDFA::to_digraph(
 ///|
 pub fn DFA::to_digraph(
   self : DFA,
-  symbol_to_letter~ : (Symbol) -> Char,
+  symbol_to_letter~ : (Label) -> Char,
 ) -> @graphviz.Digraph {
   let nodes = []
   let edges = []
@@ -134,7 +134,9 @@ pub fn DFA::to_digraph(
   fn connect(from : DFAS, sym : Int, to : DFAS) {
     // move to 1-based symbols for display
     // 0 is epsilon
-    edges.push(mk_edge(from.to_int(), symbol_to_letter(sym + 1), to.to_int()))
+    edges.push(
+      mk_edge(from.to_int(), symbol_to_letter(Symbol(sym)), to.to_int()),
+    )
   }
 
   fn add_fresh_state(id : DFAS) {
@@ -159,7 +161,7 @@ pub fn DFA::to_digraph(
 ///|
 pub fn NFAT::to_digraph(
   self : NFAT,
-  symbol_to_letter~ : (Symbol) -> Char,
+  symbol_to_letter~ : (Label) -> Char,
 ) -> @graphviz.Digraph {
   let nodes = []
   let edges = []
@@ -171,7 +173,7 @@ pub fn NFAT::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : NFAS, sym : Symbol, to : NFAS) {
+  fn connect(from : NFAS, sym : Label, to : NFAS) {
     edges.push(mk_edge(from.to_int(), symbol_to_letter(sym), to.to_int()))
   }
 
@@ -193,7 +195,7 @@ pub fn NFAT::to_digraph(
 ///|
 pub fn NFA::to_digraph(
   nfa : NFA,
-  symbol_to_letter~ : (Symbol) -> Char,
+  symbol_to_letter~ : (Label) -> Char,
 ) -> @graphviz.Digraph {
   nfa.nfat.to_digraph(symbol_to_letter~)
 }

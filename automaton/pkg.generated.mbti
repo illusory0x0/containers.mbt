@@ -7,9 +7,7 @@ import(
 )
 
 // Values
-const Epsilon : Char = 'ε'
-
-const EpsilonSymbol : Int = 0
+const EpsilonChar : Char = 'ε'
 
 const ToplevelInitialState : Int = 0
 
@@ -25,7 +23,7 @@ fn DFA::dead_state(Self) -> DFAS
 fn DFA::minimize(Self, Int) -> Self
 fn DFA::partition(Self, Int) -> @set.Set[DFASS]
 fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[DFASS]]
-fn DFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
+fn DFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 
 type DFAS
 fn DFAS::from(Int) -> Self
@@ -49,16 +47,35 @@ impl Hash for DFASS
 impl Show for DFASS
 impl Sub for DFASS
 
+type DFASymbol
+fn DFASymbol::from(Int) -> Self
+fn DFASymbol::to_int(Self) -> Int
+impl Compare for DFASymbol
+impl Eq for DFASymbol
+impl Hash for DFASymbol
+impl Show for DFASymbol
+impl ToJson for DFASymbol
+
 type DFAT
 fn DFAT::iter2(Self) -> Iter2[DFAS, FixedArray[DFAS]]
 fn DFAT::length(Self) -> Int
 fn DFAT::op_get(Self, DFAS) -> FixedArray[DFAS]
 fn DFAT::op_set(Self, DFAS, FixedArray[DFAS]) -> Unit
-fn DFAT::set_trans(Self, DFAS, Symbol, DFAS) -> Unit
-fn DFAT::trans(Self, DFAS, Symbol) -> DFAS
+fn DFAT::set_trans(Self, DFAS, DFASymbol, DFAS) -> Unit
+fn DFAT::trans(Self, DFAS, DFASymbol) -> DFAS
 impl Eq for DFAT
 impl Show for DFAT
 impl ToJson for DFAT
+
+pub(all) enum Label {
+  Symbol(Int)
+  Epsilon
+}
+impl Compare for Label
+impl Eq for Label
+impl Hash for Label
+impl Show for Label
+impl ToJson for Label
 
 pub(all) struct NFA {
   initial : NFAS
@@ -67,7 +84,7 @@ pub(all) struct NFA {
   nfat : NFAT
 }
 fn NFA::powerset_construction(Self) -> RDFA
-fn NFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
+fn NFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Eq for NFA
 impl Show for NFA
 impl ToJson for NFA
@@ -102,13 +119,13 @@ impl Show for NFASS
 impl ToJson for NFASS
 
 type NFAT
-fn NFAT::get(Self, NFAS) -> Map[Symbol, NFASS]?
-fn NFAT::iter(Self) -> Iter[Map[Symbol, NFASS]]
-fn NFAT::iter2(Self) -> Iter2[NFAS, Map[Symbol, NFASS]]
+fn NFAT::get(Self, NFAS) -> Map[Label, NFASS]?
+fn NFAT::iter(Self) -> Iter[Map[Label, NFASS]]
+fn NFAT::iter2(Self) -> Iter2[NFAS, Map[Label, NFASS]]
 fn NFAT::length(Self) -> Int
-fn NFAT::op_get(Self, NFAS) -> Map[Symbol, NFASS]
-fn NFAT::op_set(Self, NFAS, Map[Symbol, NFASS]) -> Unit
-fn NFAT::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
+fn NFAT::op_get(Self, NFAS) -> Map[Label, NFASS]
+fn NFAT::op_set(Self, NFAS, Map[Label, NFASS]) -> Unit
+fn NFAT::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Eq for NFAT
 impl Show for NFAT
 impl ToJson for NFAT
@@ -120,29 +137,29 @@ pub struct RDFA {
   alphabet_count : Int
 }
 fn RDFA::to_dfa(Self) -> DFA
-fn RDFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
+fn RDFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Show for RDFA
 impl ToJson for RDFA
 
 type RDFAT
 fn RDFAT::contains(Self, NFASS) -> Bool
-fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Symbol, NFASS]]
+fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Label, NFASS]]
 fn RDFAT::keys(Self) -> Iter[NFASS]
 fn RDFAT::length(Self) -> Int
-fn RDFAT::op_get(Self, NFASS) -> Map[Symbol, NFASS]
-fn RDFAT::op_set(Self, NFASS, Map[Symbol, NFASS]) -> Unit
-fn RDFAT::update(Self, NFASS, (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?) -> Unit
+fn RDFAT::op_get(Self, NFASS) -> Map[Label, NFASS]
+fn RDFAT::op_set(Self, NFASS, Map[Label, NFASS]) -> Unit
+fn RDFAT::update(Self, NFASS, (Map[Label, NFASS]?) -> Map[Label, NFASS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
 impl ToJson for RDFAT
 
 pub(all) enum RNFA {
-  Symbol(initial~ : NFAS, Symbol, final_~ : NFAS)
+  Symbol(initial~ : NFAS, Label, final_~ : NFAS)
   Concat(RNFA, RNFA)
   Choice(initial~ : NFAS, RNFA, RNFA, final_~ : NFAS)
   Repeat(initial~ : NFAS, RNFA, final_~ : NFAS)
 }
-fn RNFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
+fn RNFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Compare for RNFA
 impl Eq for RNFA
 impl Show for RNFA
@@ -152,7 +169,7 @@ pub(all) enum Regex {
   Concat(Regex, Regex)
   Choice(Regex, Regex)
   Repeat(Regex)
-  Symbol(Symbol)
+  Symbol(Label)
 }
 fn Regex::to_nfa(Self, initial~ : Int, alphabet_count~ : Int) -> NFA
 fn Regex::to_nfac(Self, initial~ : Int) -> NFAC
@@ -160,15 +177,6 @@ impl Compare for Regex
 impl Eq for Regex
 impl Show for Regex
 impl ToJson for Regex
-
-type Symbol
-fn Symbol::from(Int) -> Self
-fn Symbol::to_int(Self) -> Int
-impl Compare for Symbol
-impl Eq for Symbol
-impl Hash for Symbol
-impl Show for Symbol
-impl ToJson for Symbol
 
 // Type aliases
 

@@ -1,26 +1,26 @@
 ///|
-fn letter_to_symbol(letter : Char) -> Symbol {
-  Symbol::from(
-    match letter {
-      'ε' => 0
-      'a'..='z' => letter.to_int() - 'a'.to_int() + 1
-      _ => abort("invalid range")
-    },
-  )
-}
-
-///|
-fn symbol_to_letter(sym : Symbol) -> Char {
-  match sym.to_int() {
-    0 => Epsilon
-    1..=26 => Int::unsafe_to_char('a'.to_int() + sym.to_int() - 1)
+fn letter_to_label(letter : Char) -> Label {
+  match letter {
+    'ε' => Epsilon
+    'a'..='z' => Symbol(letter.to_int() - 'a'.to_int())
     _ => abort("invalid range")
   }
 }
 
 ///|
+fn label_to_letter(sym : Label) -> Char {
+  match sym {
+    Label::Epsilon => EpsilonChar
+    Label::Symbol(i) => {
+      guard 0 <= i && i <= 25
+      Int::unsafe_to_char('a'.to_int() + i)
+    }
+  }
+}
+
+///|
 fn rdfa_to_digraph(rdfa : RDFA) -> @graphviz.Digraph {
-  rdfa.to_digraph(symbol_to_letter~)
+  rdfa.to_digraph(symbol_to_letter=label_to_letter)
 }
 
 ///|
@@ -35,17 +35,17 @@ fn regex_to_nfat(regex : Regex, alphabet_count~ : Int) -> NFAT {
 
 ///|
 fn rnfa_to_digraph(nfa : RNFA) -> @graphviz.Digraph {
-  nfa.to_digraph(symbol_to_letter~)
+  nfa.to_digraph(symbol_to_letter=label_to_letter)
 }
 
 ///|
 fn nfat_to_digraph(nfat : NFAT) -> @graphviz.Digraph {
-  nfat.to_digraph(symbol_to_letter~)
+  nfat.to_digraph(symbol_to_letter=label_to_letter)
 }
 
 ///|
 fn dfa_to_digraph(dfa : DFA) -> @graphviz.Digraph {
-  dfa.to_digraph(symbol_to_letter~)
+  dfa.to_digraph(symbol_to_letter=label_to_letter)
 }
 
 ///|
@@ -55,7 +55,7 @@ fn regex_to_rnfa(regex : Regex) -> RNFA {
 
 ///|
 test "NFA/normal symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol('a'))
+  let regex : Regex = Symbol(letter_to_label('a'))
   let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
@@ -64,7 +64,7 @@ test "NFA/normal symbol" (t : @test.T) {
 
 ///|
 test "NFA/epsilon symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol(Epsilon))
+  let regex : Regex = Symbol(Epsilon)
   let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
   t.writeln(digraph)
@@ -73,8 +73,8 @@ test "NFA/epsilon symbol" (t : @test.T) {
 
 ///|
 test "NFA/concat" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
+  let left : Regex = Symbol(letter_to_label('a'))
+  let right : Regex = Symbol(letter_to_label('b'))
   let regex = Regex::Concat(left, right)
   let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
@@ -84,8 +84,8 @@ test "NFA/concat" (t : @test.T) {
 
 ///|
 test "NFA/choice" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
+  let left : Regex = Symbol(letter_to_label('a'))
+  let right : Regex = Symbol(letter_to_label('b'))
   let regex = Regex::Choice(left, right)
   let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
@@ -95,7 +95,7 @@ test "NFA/choice" (t : @test.T) {
 
 ///|
 test "NFA/repeat" (t : @test.T) {
-  let sym : Regex = Symbol(letter_to_symbol('a'))
+  let sym : Regex = Symbol(letter_to_label('a'))
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_rnfa(regex)
   let digraph = rnfa_to_digraph(nfa)
@@ -105,9 +105,9 @@ test "NFA/repeat" (t : @test.T) {
 
 ///|
 test "NFA/complex" (t : @test.T) {
-  let a : Regex = Symbol(letter_to_symbol('a'))
-  let b : Regex = Symbol(letter_to_symbol('b'))
-  let c : Regex = Symbol(letter_to_symbol('c'))
+  let a : Regex = Symbol(letter_to_label('a'))
+  let b : Regex = Symbol(letter_to_label('b'))
+  let c : Regex = Symbol(letter_to_label('c'))
   let ab : Regex = Concat(a, b)
   let ab_choice : Regex = Choice(ab, c)
   let regex : Regex = Repeat(ab_choice)
@@ -119,7 +119,7 @@ test "NFA/complex" (t : @test.T) {
 
 ///|
 test "NFA Transition/normal symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol('a'))
+  let regex : Regex = Symbol(letter_to_label('a'))
   let nfat = regex_to_nfat(regex, alphabet_count=1)
   let digraph = nfat_to_digraph(nfat)
   t.writeln(digraph)
@@ -128,7 +128,7 @@ test "NFA Transition/normal symbol" (t : @test.T) {
 
 ///|
 test "NFA Transition/epsilon symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol(Epsilon))
+  let regex : Regex = Symbol(Epsilon)
   let nfat = regex_to_nfat(regex, alphabet_count=1)
   let digraph = nfat_to_digraph(nfat)
   t.writeln(digraph)
@@ -137,8 +137,8 @@ test "NFA Transition/epsilon symbol" (t : @test.T) {
 
 ///|
 test "NFA Transition/concat" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
+  let left : Regex = Symbol(letter_to_label('a'))
+  let right : Regex = Symbol(letter_to_label('b'))
   let regex = Regex::Concat(left, right)
   let nfat = regex_to_nfat(regex, alphabet_count=2)
   let digraph = nfat_to_digraph(nfat)
@@ -148,8 +148,8 @@ test "NFA Transition/concat" (t : @test.T) {
 
 ///|
 test "NFA Transition/choice" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
+  let left : Regex = Symbol(letter_to_label('a'))
+  let right : Regex = Symbol(letter_to_label('b'))
   let regex = Regex::Choice(left, right)
   let nfat = regex_to_nfat(regex, alphabet_count=2)
   let digraph = nfat_to_digraph(nfat)
@@ -159,7 +159,7 @@ test "NFA Transition/choice" (t : @test.T) {
 
 ///|
 test "NFA Transition/repeat" (t : @test.T) {
-  let sym : Regex = Symbol(letter_to_symbol('a'))
+  let sym : Regex = Symbol(letter_to_label('a'))
   let regex : Regex = Repeat(sym)
   let nfat = regex_to_nfat(regex, alphabet_count=1)
   let digraph = nfat_to_digraph(nfat)
@@ -169,9 +169,9 @@ test "NFA Transition/repeat" (t : @test.T) {
 
 ///|
 test "NFA Transition/complex" (t : @test.T) {
-  let a : Regex = Symbol(letter_to_symbol('a'))
-  let b : Regex = Symbol(letter_to_symbol('b'))
-  let c : Regex = Symbol(letter_to_symbol('c'))
+  let a : Regex = Symbol(letter_to_label('a'))
+  let b : Regex = Symbol(letter_to_label('b'))
+  let c : Regex = Symbol(letter_to_label('c'))
   let ab : Regex = Concat(a, b)
   let ab_choice : Regex = Choice(ab, c)
   let regex : Regex = Repeat(ab_choice)
@@ -183,7 +183,7 @@ test "NFA Transition/complex" (t : @test.T) {
 
 ///|
 test "RDFA/Normal symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol('a'))
+  let regex : Regex = Symbol(letter_to_label('a'))
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
   let digraph = rdfa_to_digraph(rdfa)
@@ -192,55 +192,10 @@ test "RDFA/Normal symbol" (t : @test.T) {
 }
 
 ///|
-test "RDFA/epsilon symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol(Epsilon))
-  let nfa = regex_to_nfa(regex, alphabet_count=2)
-  let rdfa = nfa.powerset_construction()
-  let digraph = rdfa_to_digraph(rdfa)
-  t.writeln(digraph)
-  t.snapshot(filename="rdfa_symbol_epsilon.dot")
-}
-
-///|
-test "RDFA/concat" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
-  let regex = Regex::Concat(left, right)
-  let nfa = regex_to_nfa(regex, alphabet_count=2)
-  let rdfa = nfa.powerset_construction()
-  let digraph = rdfa_to_digraph(rdfa)
-  t.writeln(digraph)
-  t.snapshot(filename="rdfa_concat.dot")
-}
-
-///|
-test "RDFA/choice" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
-  let regex = Regex::Choice(left, right)
-  let nfa = regex_to_nfa(regex, alphabet_count=2)
-  let rdfa = nfa.powerset_construction()
-  let digraph = rdfa_to_digraph(rdfa)
-  t.writeln(digraph)
-  t.snapshot(filename="rdfa_choice.dot")
-}
-
-///|
-test "RDFA/repeat" (t : @test.T) {
-  let sym : Regex = Symbol(letter_to_symbol('a'))
-  let regex : Regex = Repeat(sym)
-  let nfa = regex_to_nfa(regex, alphabet_count=2)
-  let rdfa = nfa.powerset_construction()
-  let digraph = rdfa_to_digraph(rdfa)
-  t.writeln(digraph)
-  t.snapshot(filename="rdfa_repeat.dot")
-}
-
-///|
 test "RDFA/complex" (t : @test.T) {
-  let a : Regex = Symbol(letter_to_symbol('a'))
-  let b : Regex = Symbol(letter_to_symbol('b'))
-  let c : Regex = Symbol(letter_to_symbol('c'))
+  let a : Regex = Symbol(letter_to_label('a'))
+  let b : Regex = Symbol(letter_to_label('b'))
+  let c : Regex = Symbol(letter_to_label('c'))
   let ab : Regex = Concat(a, b)
   let ab_choice : Regex = Choice(ab, c)
   let regex : Regex = Repeat(ab_choice)
@@ -253,7 +208,7 @@ test "RDFA/complex" (t : @test.T) {
 
 ///|
 test "DFA/Normal symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol('a'))
+  let regex : Regex = Symbol(letter_to_label('a'))
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
   let dfa = rdfa.to_dfa()
@@ -264,7 +219,7 @@ test "DFA/Normal symbol" (t : @test.T) {
 
 ///|
 test "DFA/epsilon symbol" (t : @test.T) {
-  let regex : Regex = Symbol(letter_to_symbol(Epsilon))
+  let regex : Regex = Symbol(Epsilon)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
   let dfa = rdfa.to_dfa()
@@ -275,8 +230,8 @@ test "DFA/epsilon symbol" (t : @test.T) {
 
 ///|
 test "DFA/concat" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
+  let left : Regex = Symbol(letter_to_label('a'))
+  let right : Regex = Symbol(letter_to_label('b'))
   let regex = Regex::Concat(left, right)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
@@ -288,8 +243,8 @@ test "DFA/concat" (t : @test.T) {
 
 ///|
 test "DFA/choice" (t : @test.T) {
-  let left : Regex = Symbol(letter_to_symbol('a'))
-  let right : Regex = Symbol(letter_to_symbol('b'))
+  let left : Regex = Symbol(letter_to_label('a'))
+  let right : Regex = Symbol(letter_to_label('b'))
   let regex = Regex::Choice(left, right)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
@@ -301,7 +256,7 @@ test "DFA/choice" (t : @test.T) {
 
 ///|
 test "DFA/repeat" (t : @test.T) {
-  let sym : Regex = Symbol(letter_to_symbol('a'))
+  let sym : Regex = Symbol(letter_to_label('a'))
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
@@ -313,9 +268,9 @@ test "DFA/repeat" (t : @test.T) {
 
 ///|
 test "DFA/complex" (t : @test.T) {
-  let a : Regex = Symbol(letter_to_symbol('a'))
-  let b : Regex = Symbol(letter_to_symbol('b'))
-  let c : Regex = Symbol(letter_to_symbol('c'))
+  let a : Regex = Symbol(letter_to_label('a'))
+  let b : Regex = Symbol(letter_to_label('b'))
+  let c : Regex = Symbol(letter_to_label('c'))
   let ab : Regex = Concat(a, b)
   let ab_choice : Regex = Choice(ab, c)
   let regex : Regex = Repeat(ab_choice)
@@ -329,7 +284,7 @@ test "DFA/complex" (t : @test.T) {
 
 ///|
 test "DFA/minimize/repeat" (t : @test.T) {
-  let sym : Regex = Symbol(letter_to_symbol('a'))
+  let sym : Regex = Symbol(letter_to_label('a'))
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
   let rdfa = nfa.powerset_construction()
@@ -345,8 +300,8 @@ test "DFA/minimize/repeat" (t : @test.T) {
 ///|
 test "DFA/minimize/choice and repeat" (t : @test.T) {
   let sym : Regex = Choice(
-    Symbol(letter_to_symbol('a')),
-    Symbol(letter_to_symbol('b')),
+    Symbol(letter_to_label('a')),
+    Symbol(letter_to_label('b')),
   )
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=3)
@@ -363,8 +318,8 @@ test "DFA/minimize/choice and repeat" (t : @test.T) {
 ///|
 test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
   let sym : Regex = Choice(
-    Symbol(letter_to_symbol('a')),
-    Symbol(letter_to_symbol('b')),
+    Symbol(letter_to_label('a')),
+    Symbol(letter_to_label('b')),
   )
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=3)
@@ -379,8 +334,8 @@ test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
 test "panic DFA/minimize/all/raw" (t : @test.T) {
   // FIXME: when DFA accept all language, in this cases would panic
   let sym : Regex = Choice(
-    Symbol(letter_to_symbol('a')),
-    Symbol(letter_to_symbol('b')),
+    Symbol(letter_to_label('a')),
+    Symbol(letter_to_label('b')),
   )
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
@@ -394,8 +349,8 @@ test "panic DFA/minimize/all/raw" (t : @test.T) {
 ///|
 test "RDFA/no dead state" (t : @test.T) {
   let sym : Regex = Choice(
-    Symbol(letter_to_symbol('a')),
-    Symbol(letter_to_symbol('b')),
+    Symbol(letter_to_label('a')),
+    Symbol(letter_to_label('b')),
   )
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=2)

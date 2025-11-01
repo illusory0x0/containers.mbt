@@ -7,11 +7,11 @@ fn NFAT::new(count : Int) -> NFAT {
 fn NFAT::add_transition(
   self : NFAT,
   from : NFAS,
-  sym : Symbol,
+  sym : Label,
   to : NFAS,
 ) -> Unit {
   let edge = self[from.to_int()]
-  edge.update(sym.0, fn(set) {
+  edge.update(sym, fn(set) {
     match set {
       None => Some(NFASS::singleton(to))
       Some(set) => Some(set.update_with_add(to))
@@ -20,7 +20,7 @@ fn NFAT::add_transition(
 }
 
 ///|
-fn NFAT::trans(self : NFAT, from : NFAS, sym : Symbol) -> NFASS {
+fn NFAT::trans(self : NFAT, from : NFAS, sym : Label) -> NFASS {
   let edges = self[from]
   match self.get(from) {
     Some(_) =>
@@ -37,7 +37,7 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : NFASS) -> NFASS {
   let result = initials.copy()
   let pending = initials.to_array()
   while pending.pop() is Some(initial) {
-    for final_ in nfat.trans(initial, EpsilonSymbol) {
+    for final_ in nfat.trans(initial, Epsilon) {
       if !result.contains(final_) {
         result.add(final_)
         pending.push(final_)
@@ -48,7 +48,7 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : NFASS) -> NFASS {
 }
 
 ///|
-fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Symbol) -> NFASS {
+fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Label) -> NFASS {
   let result = NFASS::empty()
   for initial in initials {
     for final_ in nfat.trans(initial, sym) {

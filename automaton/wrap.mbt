@@ -97,7 +97,7 @@ pub fn DFASS::contains(set : DFASS, val : DFAS) -> Bool {
 }
 
 ///|
-pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFASS, Map[Symbol, NFASS]] {
+pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFASS, Map[Label, NFASS]] {
   self.0.iter2()
 }
 
@@ -120,7 +120,7 @@ pub fn RDFAT::contains(self : RDFAT, val : NFASS) -> Bool {
 pub fn RDFAT::update(
   self : RDFAT,
   key : NFASS,
-  f : (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?,
+  f : (Map[Label, NFASS]?) -> Map[Label, NFASS]?,
 ) -> Unit {
   self.0.update(key, f)
 }
@@ -129,13 +129,13 @@ pub fn RDFAT::update(
 pub fn RDFAT::op_set(
   self : RDFAT,
   key : NFASS,
-  val : Map[Symbol, NFASS],
+  val : Map[Label, NFASS],
 ) -> Unit {
   self.0[key] = val
 }
 
 ///|
-pub fn RDFAT::op_get(self : RDFAT, key : NFASS) -> Map[Symbol, NFASS] {
+pub fn RDFAT::op_get(self : RDFAT, key : NFASS) -> Map[Label, NFASS] {
   self.0[key]
 }
 
@@ -145,7 +145,7 @@ pub fn NFAT::length(self : NFAT) -> Int {
 }
 
 ///|
-pub fn NFAT::op_get(self : NFAT, from : NFAS) -> Map[Symbol, NFASS] {
+pub fn NFAT::op_get(self : NFAT, from : NFAS) -> Map[Label, NFASS] {
   self.0[from.to_int()]
 }
 
@@ -153,18 +153,18 @@ pub fn NFAT::op_get(self : NFAT, from : NFAS) -> Map[Symbol, NFASS] {
 pub fn NFAT::op_set(
   self : NFAT,
   from : NFAS,
-  trans : Map[Symbol, NFASS],
+  trans : Map[Label, NFASS],
 ) -> Unit {
   self.0[from.to_int()] = trans
 }
 
 ///|
-pub fn NFAT::iter(self : NFAT) -> Iter[Map[Symbol, NFASS]] {
+pub fn NFAT::iter(self : NFAT) -> Iter[Map[Label, NFASS]] {
   self.0.iter()
 }
 
 ///|
-pub fn NFAT::iter2(self : NFAT) -> Iter2[NFAS, Map[Symbol, NFASS]] {
+pub fn NFAT::iter2(self : NFAT) -> Iter2[NFAS, Map[Label, NFASS]] {
   Iter2::new(fn(k) {
     for i, v in self.0.iter2() {
       guard k(NFAS::from(i), v) is IterContinue else { break IterEnd }
@@ -175,7 +175,7 @@ pub fn NFAT::iter2(self : NFAT) -> Iter2[NFAS, Map[Symbol, NFASS]] {
 }
 
 ///|
-pub fn NFAT::get(self : NFAT, from : NFAS) -> Map[Symbol, NFASS]? {
+pub fn NFAT::get(self : NFAT, from : NFAS) -> Map[Label, NFASS]? {
   self.0.get(from.to_int())
 }
 
@@ -201,7 +201,7 @@ pub fn DFAT::iter2(self : DFAT) -> Iter2[DFAS, FixedArray[DFAS]] {
 }
 
 ///|
-pub fn DFAT::trans(self : DFAT, from : DFAS, sym : Symbol) -> DFAS {
+pub fn DFAT::trans(self : DFAT, from : DFAS, sym : DFASymbol) -> DFAS {
   self[from][sym.to_int()]
 }
 
@@ -215,7 +215,7 @@ pub fn DFAT::op_set(self : DFAT, from : DFAS, to : FixedArray[DFAS]) -> Unit = "
 pub fn DFAT::set_trans(
   self : DFAT,
   from : DFAS,
-  sym : Symbol,
+  sym : DFASymbol,
   to : DFAS,
 ) -> Unit {
   self[from][sym.to_int()] = to
@@ -235,3 +235,22 @@ pub fn NFAS::to_int(self : NFAS) -> Int = "%identity"
 
 ///|
 pub fn DFAS::to_int(self : DFAS) -> Int = "%identity"
+
+// ///|
+// pub fn Label::from(val : Int) -> Label {
+//   Label::Symbol(val)
+// }
+
+// ///|
+// pub fn Label::to_int(self : Label) -> Int {
+//   match self {
+//     Label::Symbol(val) => val + 1
+//     Label::Epsilon => 0
+//   }
+// }
+
+///|
+pub fn DFASymbol::from(val : Int) -> DFASymbol = "%identity"
+
+///|
+pub fn DFASymbol::to_int(self : DFASymbol) -> Int = "%identity"

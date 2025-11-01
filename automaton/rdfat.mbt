@@ -2,10 +2,10 @@
 fn RDFAT::add_transition(
   dfat : RDFAT,
   from : NFASS,
-  sym : Symbol,
+  sym : Label,
   to : NFASS,
 ) -> Unit {
-  fn connect(edge : Map[Symbol, NFASS]) -> Map[Symbol, NFASS]? {
+  fn connect(edge : Map[Label, NFASS]) -> Map[Label, NFASS]? {
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
         None => Some(to)
