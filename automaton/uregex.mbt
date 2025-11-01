@@ -29,6 +29,11 @@ pub fn URegex::epsilon() -> URegex {
 }
 
 ///|
+pub fn URegex::single(ch : Char) -> URegex {
+  URegex::range(ch, ch)
+}
+
+///|
 pub fn URegex::interval_table(ur : URegex) -> FixedArray[Int] {
   let table = []
   fn dfs(ur : URegex) {
