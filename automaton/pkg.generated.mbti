@@ -23,6 +23,7 @@ pub struct DFA {
 fn DFA::alphabet(Self) -> Iter[Symbol]
 fn DFA::dead_state(Self) -> DFAS
 fn DFA::minimize(Self) -> Self
+fn DFA::minimize_map(Self, @set.Set[DFASS]) -> Map[DFAS, DFAS]
 fn DFA::partition(Self) -> @set.Set[DFASS]
 fn DFA::reverse_transition(Self) -> FixedArray[FixedArray[DFASS]]
 fn DFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
