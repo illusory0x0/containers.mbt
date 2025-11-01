@@ -115,7 +115,10 @@ test "DFA/minimize/choice and repeat" (t : @test.T) {
   let rdfa = nfa.powerset_construction()
   let dfa = rdfa.to_dfa()
   let p = dfa.partition()
-  inspect(p, content="{DFASS({DFAS(2), DFAS(1)}), DFASS({DFAS(0)}), DFASS({DFAS(3)})}")
+  inspect(
+    p,
+    content="{DFASS({DFAS(2), DFAS(1)}), DFASS({DFAS(0)}), DFASS({DFAS(3)})}",
+  )
   let min_dfa = dfa.minimize()
   let digraph = dfa_to_digraph(min_dfa)
   t.writeln(digraph)
@@ -140,7 +143,7 @@ test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
 ///|
 test "panic DFA/minimize/all/raw" (t : @test.T) {
   // This is expected behavior
-  // DFA::partition depends on the dead state, 
+  // RDFA::to_dfa depends on the DFA having a dead state.
   // if the DFA accept the `.*` language it would cause no dead state.
   let sym : Regex = Choice(
     Symbol(letter_to_label('a')),
@@ -156,7 +159,7 @@ test "panic DFA/minimize/all/raw" (t : @test.T) {
 }
 
 ///|
-test "DFA/bug report" (t : @test.T) {
+test "DFA/state explosion" (t : @test.T) {
   let a : Regex = Symbol(letter_to_label('a'))
   let b : Regex = Symbol(letter_to_label('b'))
   let a_or_b : Regex = Choice(a, b)
