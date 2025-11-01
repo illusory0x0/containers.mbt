@@ -94,27 +94,15 @@ test "DFA/minimize/repeat" (t : @test.T) {
   let sym : Regex = Symbol(letter_to_label('a'))
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
-  @json.inspect(nfa, content={
-    "initial": ["NFAS", 0],
-    "final_": ["NFAS", 3],
-    "alphabet_count": 2,
-    "transition": [
-      "NFAT",
-      [
-        { "Epsilon": ["NFASS", [["NFAS", 1], ["NFAS", 3]]] },
-        { "Symbol(Symbol(0))": ["NFASS", [["NFAS", 2]]] },
-        { "Epsilon": ["NFASS", [["NFAS", 1], ["NFAS", 3]]] },
-        {},
-      ],
-    ],
-  })
   let rdfa = nfa.powerset_construction()
-  @json.inspect(rdfa, content=({"initial":["NFASS",[["NFAS",0],["NFAS",1],["NFAS",3]]],"finals":[["NFASS",[["NFAS",0],["NFAS",1],["NFAS",3]]],["NFASS",[["NFAS",2],["NFAS",1],["NFAS",3]]]],"transition":["RDFAT",{"NFASS({NFAS(0), NFAS(1), NFAS(3)})":{"Symbol(0)":["NFASS",[["NFAS",2],["NFAS",1],["NFAS",3]]],"Symbol(1)":["NFASS",[]]},"NFASS({})":{"Symbol(0)":["NFASS",[]],"Symbol(1)":["NFASS",[]]},"NFASS({NFAS(2), NFAS(1), NFAS(3)})":{"Symbol(0)":["NFASS",[["NFAS",2],["NFAS",1],["NFAS",3]]],"Symbol(1)":["NFASS",[]]}}],"alphabet_count":2}))
   let dfa = rdfa.to_dfa()
   let p = dfa.partition()
   inspect(p, content="{DFASS({DFAS(0), DFAS(1)}), DFASS({DFAS(2)})}")
   let min_dfa = dfa.minimize()
   let digraph = dfa_to_digraph(min_dfa)
+  inspect(dfa.full_match(""), content="true")
+  inspect(dfa.full_match("a"), content="true")
+  inspect(dfa.full_match("b"), content="false")
   t.writeln(digraph)
   t.snapshot(filename="dfa_minimize_repeat.dot")
 }
@@ -129,13 +117,11 @@ test "DFA/minimize/choice and repeat" (t : @test.T) {
   let nfa = regex_to_nfa(regex, alphabet_count=3)
   let rdfa = nfa.powerset_construction()
   let dfa = rdfa.to_dfa()
-  let p = dfa.partition()
-  inspect(
-    p,
-    content="{DFASS({DFAS(0), DFAS(2), DFAS(1)}), DFASS({DFAS(3)})}",
-  )
-  let min_dfa = dfa.minimize()
-  let digraph = dfa_to_digraph(min_dfa)
+  let dfa = dfa.minimize()
+  inspect(dfa.full_match("c"), content="false")
+  inspect(dfa.full_match("b"), content="true")
+  inspect(dfa.full_match("bc"), content="false")
+  let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_minimize_choice_repeat.dot")
 }
@@ -186,4 +172,35 @@ test "DFA/state explosion" (t : @test.T) {
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_state_explosion.dot")
+}
+
+///|
+fn DFA::full_match(dfa : DFA, input : String) -> Bool {
+  let mut state = dfa.initial
+  for ch in input {
+    let label = letter_to_label(ch)
+    guard label is Symbol(sym)
+    let new_state = dfa.transition.trans(state, sym)
+    guard new_state != dfa.dead_state() else { return false }
+    state = new_state
+  }
+  dfa.finals.contains(state)
+}
+
+///|
+test "DFA/full match" (t : @test.T) {
+  let a : Regex = Symbol(letter_to_label('a'))
+  let b : Regex = Symbol(letter_to_label('b'))
+  let a_or_b : Regex = Choice(a, b)
+  let regex : Regex = Concat(Repeat(a_or_b), a)
+  let nfa = regex_to_nfa(regex, alphabet_count=3)
+  let rdfa = nfa.powerset_construction()
+  let dfa = rdfa.to_dfa()
+  let dfa = dfa.minimize()
+  inspect(dfa.full_match("ba"), content="true")
+  inspect(dfa.full_match("aa"), content="true")
+  inspect(dfa.full_match("bb"), content="false")
+  inspect(dfa.full_match("ab"), content="false")
+  t.writeln(dfa_to_digraph(dfa))
+  t.snapshot(filename="dfa_full_match_001.dot")
 }
