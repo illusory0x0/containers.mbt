@@ -23,5 +23,6 @@
     "illusory0x0/list": {
       "path": "list"
     }
-  }
+  },
+  "warn-list": "-27"
 }
