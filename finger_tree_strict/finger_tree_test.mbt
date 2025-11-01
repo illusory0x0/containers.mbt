@@ -59,8 +59,14 @@ test (t : @test.T) {
     right = FingerTree::cons(x, right)
   }
   let ys = FingerTree::concat(left, right)
-  inspect(left.to_list(), content="@list.from_array([9, 8, 7, 6, 5, 4, 3, 2, 1])")
-  inspect(right.to_list(), content="@list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])")
+  inspect(
+    left.to_list(),
+    content="@list.from_array([9, 8, 7, 6, 5, 4, 3, 2, 1])",
+  )
+  inspect(
+    right.to_list(),
+    content="@list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
   inspect(
     ys.to_list(),
     content="@list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1])",
