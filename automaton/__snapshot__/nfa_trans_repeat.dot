@@ -3,6 +3,7 @@ digraph {
 rankdir=LR;
 node [shape = circle; style = filled;];
 0->1[label="ε"];
+0->3[label="ε"];
 1->2[label="a"];
 2->1[label="ε"];
 2->3[label="ε"];

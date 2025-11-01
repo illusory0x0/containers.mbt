@@ -94,10 +94,25 @@ test "DFA/minimize/repeat" (t : @test.T) {
   let sym : Regex = Symbol(letter_to_label('a'))
   let regex : Regex = Repeat(sym)
   let nfa = regex_to_nfa(regex, alphabet_count=2)
+  @json.inspect(nfa, content={
+    "initial": ["NFAS", 0],
+    "final_": ["NFAS", 3],
+    "alphabet_count": 2,
+    "transition": [
+      "NFAT",
+      [
+        { "Epsilon": ["NFASS", [["NFAS", 1], ["NFAS", 3]]] },
+        { "Symbol(Symbol(0))": ["NFASS", [["NFAS", 2]]] },
+        { "Epsilon": ["NFASS", [["NFAS", 1], ["NFAS", 3]]] },
+        {},
+      ],
+    ],
+  })
   let rdfa = nfa.powerset_construction()
+  @json.inspect(rdfa, content=({"initial":["NFASS",[["NFAS",0],["NFAS",1],["NFAS",3]]],"finals":[["NFASS",[["NFAS",0],["NFAS",1],["NFAS",3]]],["NFASS",[["NFAS",2],["NFAS",1],["NFAS",3]]]],"transition":["RDFAT",{"NFASS({NFAS(0), NFAS(1), NFAS(3)})":{"Symbol(0)":["NFASS",[["NFAS",2],["NFAS",1],["NFAS",3]]],"Symbol(1)":["NFASS",[]]},"NFASS({})":{"Symbol(0)":["NFASS",[]],"Symbol(1)":["NFASS",[]]},"NFASS({NFAS(2), NFAS(1), NFAS(3)})":{"Symbol(0)":["NFASS",[["NFAS",2],["NFAS",1],["NFAS",3]]],"Symbol(1)":["NFASS",[]]}}],"alphabet_count":2}))
   let dfa = rdfa.to_dfa()
   let p = dfa.partition()
-  inspect(p, content="{DFASS({DFAS(1)}), DFASS({DFAS(0)}), DFASS({DFAS(2)})}")
+  inspect(p, content="{DFASS({DFAS(0), DFAS(1)}), DFASS({DFAS(2)})}")
   let min_dfa = dfa.minimize()
   let digraph = dfa_to_digraph(min_dfa)
   t.writeln(digraph)
@@ -117,7 +132,7 @@ test "DFA/minimize/choice and repeat" (t : @test.T) {
   let p = dfa.partition()
   inspect(
     p,
-    content="{DFASS({DFAS(2), DFAS(1)}), DFASS({DFAS(0)}), DFASS({DFAS(3)})}",
+    content="{DFASS({DFAS(0), DFAS(2), DFAS(1)}), DFASS({DFAS(3)})}",
   )
   let min_dfa = dfa.minimize()
   let digraph = dfa_to_digraph(min_dfa)

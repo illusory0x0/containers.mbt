@@ -13,6 +13,7 @@ node [shape = circle; style = filled;];
 2->3[label="a"];
 8->1[label="ε"];
 8->9[label="ε"];
+0->9[label="ε"];
 0 [label="0";]
 9 [label="9";]
 1 [label="1";]

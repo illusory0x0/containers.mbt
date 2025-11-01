@@ -22,6 +22,9 @@ pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   fn connect(from : NFASS, sym : Symbol, to : NFASS) {
     transition.add_transition(from, sym, to)
   }
+  if initial.contains(nfa.final_) {
+    finals.add(initial)
+  }
 
   while pending.pop() is Some(dfs_state) {
     for sym in nfa.alphabet() {

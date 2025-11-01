@@ -55,6 +55,7 @@ pub fn RNFA::to_digraph(
         connect(initial, EpsilonChar, edge_nfa.initial)
         connect(edge_nfa.final_, EpsilonChar, edge_nfa.initial)
         connect(edge_nfa.final_, EpsilonChar, final_)
+        connect(initial, EpsilonChar, final_)
         Edge::{ initial, final_ }
       }
     }

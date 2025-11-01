@@ -58,6 +58,7 @@ pub fn Regex::thompson_construction(
         connect(initial, Epsilon, edge_nfa.initial)
         connect(edge_nfa.final_, Epsilon, edge_nfa.initial)
         connect(edge_nfa.final_, Epsilon, final_)
+        connect(initial, Epsilon, final_)
         Edge::{ initial, final_ }
       }
     }
