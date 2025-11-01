@@ -264,6 +264,8 @@ pub fn DFA::reverse_transition(
 }
 
 ///|
+/// Partition the equivalent DFA states into sets of DFASS.
+/// the DFA which must contain a dead state, otherwise would panic.
 pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
   let all : DFASS = Set::new()
