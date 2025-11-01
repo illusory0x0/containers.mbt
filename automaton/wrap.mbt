@@ -241,3 +241,12 @@ pub fn Symbol::from(val : Int) -> Symbol = "%identity"
 
 ///|
 pub fn Symbol::to_int(self : Symbol) -> Int = "%identity"
+
+///|
+pub fn SymbolMap::get(self : SymbolMap, index : Char) -> Symbol? {
+  match self.0.binary_search(index.to_int()) {
+    Ok(idx) => Some(idx)
+    Err(idx) if idx > 0 => Some(idx - 1)
+    Err(_) => None
+  }
+}
