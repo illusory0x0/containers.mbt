@@ -139,7 +139,9 @@ test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
 
 ///|
 test "panic DFA/minimize/all/raw" (t : @test.T) {
-  // FIXME: when DFA accept all language, in this cases would panic
+  // This is expected behavior
+  // DFA::partition depends on the dead state, 
+  // if the DFA accept the `.*` language it would cause no dead state.
   let sym : Regex = Choice(
     Symbol(letter_to_label('a')),
     Symbol(letter_to_label('b')),
