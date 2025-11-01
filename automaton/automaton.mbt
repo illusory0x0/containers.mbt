@@ -340,6 +340,7 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
 }
 
 ///|
+/// Minimize the DFA which must contain a dead state, otherwise would panic.
 pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
   let partitions = dfa.partition(alphabet_count)
   let map : Map[DFAS, DFAS] = Map::new()
