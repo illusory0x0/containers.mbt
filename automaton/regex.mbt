@@ -21,7 +21,7 @@ pub fn Regex::to_nfac(self : Regex, initial~ : Int) -> NFAC {
 }
 
 ///|
-pub fn Regex::to_nfa(
+pub fn Regex::thompson_construction(
   regex : Regex,
   initial~ : Int,
   alphabet_count~ : Int,
@@ -32,7 +32,6 @@ pub fn Regex::to_nfa(
     nfat.add_transition(from, sym, to)
   }
 
-  // let eps = Epsilon
   fn dfs(nfa : RNFA) -> Edge[NFAS] {
     match nfa {
       Choice(initial~, top, bot, final_~) => {

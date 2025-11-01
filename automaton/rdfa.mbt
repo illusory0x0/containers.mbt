@@ -1,12 +1,27 @@
 ///|
-fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFASS, DFAS] {
+pub fn RDFA::states(rdfa : RDFA) -> Iter[NFASS] {
+  rdfa.transition.states()
+}
+
+///|
+pub fn RDFA::count(rdfa : RDFA) -> Int {
+  rdfa.transition.length()
+}
+
+///|
+/// - DFA initial state: 0
+/// - DFA dead state: state_count - 1
+/// - DFA other states: { s in N, 0 < s < state_count - 1 }
+fn RDFA::nfass_to_dfas_map(rdfa : RDFA) -> Map[NFASS, DFAS] {
   let result : Map[NFASS, DFAS] = Map::new()
+  let initial = 0
   let mut count = 1
-  for dfas in dfa.transition.keys() {
-    if dfas == dfa.initial {
-      result[dfas] = 0
+  let dead = rdfa.count() - 1
+  for dfas in rdfa.states() {
+    if dfas == rdfa.initial {
+      result[dfas] = initial
     } else if dfas.is_empty() {
-      result[dfas] = dfa.transition.length() - 1
+      result[dfas] = dead
     } else {
       result[dfas] = count
       count += 1
@@ -18,26 +33,25 @@ fn RDFA::to_dfa_state_map(dfa : RDFA) -> Map[NFASS, DFAS] {
 ///|
 pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
   let state_count = rdfa.transition.length()
-  let alphabet_count = rdfa.transition[rdfa.initial].length()
-  // exclude the dead state 
+  // construct DFAT exclude the dead state 
   let transition : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
-    alphabet_count,
+    rdfa.alphabet_count,
     DFAS(0),
   ))
-  let map = rdfa.to_dfa_state_map()
+  let nfass_to_dfas = rdfa.nfass_to_dfas_map()
   for initial, trans in rdfa.transition {
     // exclude dead state
     if !initial.is_empty() {
       for sym, final_ in trans {
-        let initial = map[initial]
-        let final_ = map[final_]
+        let initial = nfass_to_dfas[initial]
+        let final_ = nfass_to_dfas[final_]
         // exclude epsilon transitions
         guard sym is Symbol(sym)
         transition.set_trans(initial, sym, final_)
       }
     }
   }
-  let initial = map[rdfa.initial]
-  let finals = rdfa.finals.iter().map(s => map[s]) |> Set::from_iter
+  let initial = nfass_to_dfas[rdfa.initial]
+  let finals = rdfa.finals.iter().map(s => nfass_to_dfas[s]) |> Set::from_iter
   DFA::{ initial, finals, transition }
 }

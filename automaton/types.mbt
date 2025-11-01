@@ -90,7 +90,7 @@ struct DFAT(FixedArray[FixedArray[DFAS]]) derive(Eq, Show, ToJson)
 
 ///|
 pub(all) enum Label {
-  Symbol(Int)
+  Symbol(Symbol)
   Epsilon
 } derive(Eq, Show, ToJson, Compare, Hash)
 

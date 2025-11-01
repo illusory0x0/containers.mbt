@@ -102,7 +102,7 @@ pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFASS, Map[Symbol, NFASS]] {
 }
 
 ///|
-pub fn RDFAT::keys(self : RDFAT) -> Iter[NFASS] {
+pub fn RDFAT::states(self : RDFAT) -> Iter[NFASS] {
   self.0.keys()
 }
 
