@@ -31,20 +31,20 @@ pub fn DFA::reverse_transition(dfa : DFA) -> FixedArray[FixedArray[DFASS]] {
 pub fn DFA::partition(dfa : DFA) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
   let all : DFASS = Set::new()
-  for s in 0..<dfa.dead_state().to_int() {
+  for s in 0..=dfa.dead_state().to_int() {
     all.add(DFAS(s))
   }
-  let dead_states : DFASS = set_singleton(DFAS(dfa.dead_state().to_int()))
-  let live_states : DFASS = all - dead_states
+  let finals : DFASS = dfa.finals
+  let non_finals : DFASS = all - finals
   let refiners : Set[DFASS] = Set::new()
   let reverse_trans = dfa.reverse_transition()
-  if dead_states.length() < live_states.length() {
-    refiners.add(dead_states)
+  if finals.length() < non_finals.length() {
+    refiners.add(finals)
   } else {
-    refiners.add(live_states)
+    refiners.add(non_finals)
   }
-  result.add(dead_states)
-  result.add(live_states)
+  result.add(finals)
+  result.add(non_finals)
   fn from_states(sym : Int, to_set : DFASS) -> DFASS {
     let result = DFASS::empty()
     for to in to_set {
@@ -104,27 +104,35 @@ pub fn DFA::partition(dfa : DFA) -> Set[DFASS] {
 }
 
 ///|
-/// Minimize the DFA which must contain a dead state, otherwise would panic.
-pub fn DFA::minimize(dfa : DFA) -> DFA {
-  let partitions = dfa.partition()
-  let map : Map[DFAS, DFAS] = Map::new()
-  let mut count = 0
+pub fn DFA::minimize_map(dfa : DFA, partitions : Set[DFASS]) -> Map[DFAS, DFAS] {
+  let result : Map[DFAS, DFAS] = Map::new()
+  let initial = 0
+  let mut count = 1
+  let dead = partitions.length() - 1
   for part in partitions {
     if part.contains(dfa.dead_state()) {
       for state in part {
-        map[state] = partitions.length() - 1
+        result[state] = dead
       }
     } else if part.contains(dfa.initial) {
       for state in part {
-        map[state] = 0
+        result[state] = initial
       }
     } else {
       for state in part {
-        map[state] = count
+        result[state] = count
       }
       count += 1
     }
   }
+  result
+}
+
+///|
+/// Minimize the DFA which must contain a dead state, otherwise would panic.
+pub fn DFA::minimize(dfa : DFA) -> DFA {
+  let partitions = dfa.partition()
+  let map = dfa.minimize_map(partitions)
   let state_count = partitions.length()
   let edfat : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
     dfa.alphabet_count,

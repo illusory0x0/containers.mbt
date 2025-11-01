@@ -97,7 +97,7 @@ test "DFA/minimize/repeat" (t : @test.T) {
   let rdfa = nfa.powerset_construction()
   let dfa = rdfa.to_dfa()
   let p = dfa.partition()
-  inspect(p, content="{DFASS({DFAS(2)}), DFASS({DFAS(0), DFAS(1)})}")
+  inspect(p, content="{DFASS({DFAS(1)}), DFASS({DFAS(0)}), DFASS({DFAS(2)})}")
   let min_dfa = dfa.minimize()
   let digraph = dfa_to_digraph(min_dfa)
   t.writeln(digraph)
@@ -115,7 +115,7 @@ test "DFA/minimize/choice and repeat" (t : @test.T) {
   let rdfa = nfa.powerset_construction()
   let dfa = rdfa.to_dfa()
   let p = dfa.partition()
-  inspect(p, content="{DFASS({DFAS(3)}), DFASS({DFAS(0), DFAS(1), DFAS(2)})}")
+  inspect(p, content="{DFASS({DFAS(2), DFAS(1)}), DFASS({DFAS(0)}), DFASS({DFAS(3)})}")
   let min_dfa = dfa.minimize()
   let digraph = dfa_to_digraph(min_dfa)
   t.writeln(digraph)
@@ -153,4 +153,19 @@ test "panic DFA/minimize/all/raw" (t : @test.T) {
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
   t.snapshot(filename="dfa_minimize_choice_repeat_raw.dot")
+}
+
+///|
+test "DFA/bug report" (t : @test.T) {
+  let a : Regex = Symbol(letter_to_label('a'))
+  let b : Regex = Symbol(letter_to_label('b'))
+  let a_or_b : Regex = Choice(a, b)
+  let regex : Regex = Concat(Repeat(a_or_b), Concat(a, Concat(a_or_b, a_or_b)))
+  let nfa = regex_to_nfa(regex, alphabet_count=3)
+  let rdfa = nfa.powerset_construction()
+  let dfa = rdfa.to_dfa()
+  let dfa = dfa.minimize()
+  let digraph = dfa_to_digraph(dfa)
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_state_explosion.dot")
 }
