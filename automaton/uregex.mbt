@@ -73,7 +73,7 @@ pub fn URegex::to_regex(ur : URegex) -> (Regex, SymbolMap) {
   fn dfa(ur : URegex) -> Regex {
     match ur {
       Concat(left, right) => Concat(dfa(left), dfa(right))
-      Choice(top, bot) => Concat(dfa(top), dfa(bot))
+      Choice(top, bot) => Choice(dfa(top), dfa(bot))
       Repeat(regex) => Repeat(dfa(regex))
       Range(start=0x10FFFF, end=0x110000) => Symbol(Epsilon)
       Range(start~, end~) => {
