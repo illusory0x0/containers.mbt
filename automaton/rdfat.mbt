@@ -9,6 +9,7 @@ fn RDFAT::add_transition(
     edge.update(sym, fn(dfa_state) {
       match dfa_state {
         None => Some(to)
+        // the powerset construction would construct many equivalent dead states 
         Some(dead) if dead.is_empty() => Some(dead)
         Some(to_) if to_ == to => Some(to)
         Some(_) => abort("impossible")

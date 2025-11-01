@@ -83,6 +83,7 @@ pub struct DFA {
   initial : DFAS
   finals : DFASS
   transition : DFAT
+  alphabet_count : Int
 }
 
 ///|

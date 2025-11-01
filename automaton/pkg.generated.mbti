@@ -18,11 +18,13 @@ pub struct DFA {
   initial : DFAS
   finals : DFASS
   transition : DFAT
+  alphabet_count : Int
 }
+fn DFA::alphabet(Self) -> Iter[Symbol]
 fn DFA::dead_state(Self) -> DFAS
-fn DFA::minimize(Self, Int) -> Self
-fn DFA::partition(Self, Int) -> @set.Set[DFASS]
-fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[DFASS]]
+fn DFA::minimize(Self) -> Self
+fn DFA::partition(Self) -> @set.Set[DFASS]
+fn DFA::reverse_transition(Self) -> FixedArray[FixedArray[DFASS]]
 fn DFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 
 type DFAS
@@ -59,7 +61,7 @@ impl Show for DFAT
 impl ToJson for DFAT
 
 pub(all) enum Label {
-  Symbol(Int)
+  Symbol(Symbol)
   Epsilon
 }
 impl Compare for Label
@@ -130,6 +132,8 @@ pub struct RDFA {
   transition : RDFAT
   alphabet_count : Int
 }
+fn RDFA::count(Self) -> Int
+fn RDFA::states(Self) -> Iter[NFASS]
 fn RDFA::to_dfa(Self) -> DFA
 fn RDFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Show for RDFA
@@ -138,10 +142,10 @@ impl ToJson for RDFA
 type RDFAT
 fn RDFAT::contains(Self, NFASS) -> Bool
 fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Symbol, NFASS]]
-fn RDFAT::keys(Self) -> Iter[NFASS]
 fn RDFAT::length(Self) -> Int
 fn RDFAT::op_get(Self, NFASS) -> Map[Symbol, NFASS]
 fn RDFAT::op_set(Self, NFASS, Map[Symbol, NFASS]) -> Unit
+fn RDFAT::states(Self) -> Iter[NFASS]
 fn RDFAT::update(Self, NFASS, (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
@@ -165,7 +169,7 @@ pub(all) enum Regex {
   Repeat(Regex)
   Symbol(Label)
 }
-fn Regex::to_nfa(Self, initial~ : Int, alphabet_count~ : Int) -> NFA
+fn Regex::thompson_construction(Self, initial~ : Int, alphabet_count~ : Int) -> NFA
 fn Regex::to_nfac(Self, initial~ : Int) -> NFAC
 impl Compare for Regex
 impl Eq for Regex

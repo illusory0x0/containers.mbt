@@ -45,13 +45,11 @@ pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
       for sym, final_ in trans {
         let initial = nfass_to_dfas[initial]
         let final_ = nfass_to_dfas[final_]
-        // exclude epsilon transitions
-        guard sym is Symbol(sym)
         transition.set_trans(initial, sym, final_)
       }
     }
   }
   let initial = nfass_to_dfas[rdfa.initial]
   let finals = rdfa.finals.iter().map(s => nfass_to_dfas[s]) |> Set::from_iter
-  DFA::{ initial, finals, transition }
+  DFA::{ initial, finals, transition, alphabet_count: rdfa.alphabet_count }
 }

@@ -4,18 +4,20 @@ pub fn DFA::dead_state(self : DFA) -> DFAS {
 }
 
 ///|
-pub fn DFA::reverse_transition(
-  dfa : DFA,
-  alphabet_count : Int,
-) -> FixedArray[FixedArray[DFASS]] {
+pub fn DFA::alphabet(dfa : DFA) -> Iter[Symbol] {
+  Int::until(0, dfa.alphabet_count).map(Symbol(_))
+}
+
+///|
+pub fn DFA::reverse_transition(dfa : DFA) -> FixedArray[FixedArray[DFASS]] {
   let dead_state = dfa.dead_state()
-  // include dead state 
+  // reverse_transition must include dead state 
   let result = FixedArray::makei(dead_state.to_int() + 1, _ => FixedArray::makei(
-    alphabet_count,
+    dfa.alphabet_count,
     _ => DFASS::empty(),
   ))
   for from, trans in dfa.transition {
-    for sym in 0..<alphabet_count {
+    for sym in 0..<dfa.alphabet_count {
       let to = trans[sym]
       result[to.to_int()][sym].add(from)
     }
@@ -26,7 +28,7 @@ pub fn DFA::reverse_transition(
 ///|
 /// Partition the equivalent DFA states into sets of DFASS.
 /// the DFA which must contain a dead state, otherwise would panic.
-pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
+pub fn DFA::partition(dfa : DFA) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
   let all : DFASS = Set::new()
   for s in 0..<dfa.dead_state().to_int() {
@@ -35,7 +37,7 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
   let dead_states : DFASS = set_singleton(DFAS(dfa.dead_state().to_int()))
   let live_states : DFASS = all - dead_states
   let refiners : Set[DFASS] = Set::new()
-  let reverse_trans = dfa.reverse_transition(alphabet_count)
+  let reverse_trans = dfa.reverse_transition()
   if dead_states.length() < live_states.length() {
     refiners.add(dead_states)
   } else {
@@ -65,7 +67,7 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
 
   let unrefined = []
   while pop(refiners) is Some(to_set) {
-    for sym in 0..<alphabet_count {
+    for sym in 0..<dfa.alphabet_count {
       let from_set = from_states(sym, to_set)
       // pop the result, if not refine, then re-add it from unrefined
       while pop(result) is Some(partition) {
@@ -103,8 +105,8 @@ pub fn DFA::partition(dfa : DFA, alphabet_count : Int) -> Set[DFASS] {
 
 ///|
 /// Minimize the DFA which must contain a dead state, otherwise would panic.
-pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
-  let partitions = dfa.partition(alphabet_count)
+pub fn DFA::minimize(dfa : DFA) -> DFA {
+  let partitions = dfa.partition()
   let map : Map[DFAS, DFAS] = Map::new()
   let mut count = 0
   for part in partitions {
@@ -125,13 +127,13 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
   }
   let state_count = partitions.length()
   let edfat : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
-    alphabet_count,
+    dfa.alphabet_count,
     DFAS(0),
   ))
   for part in partitions {
     let prev_from = part.iter().head().unwrap()
     let from = map[prev_from]
-    for sym in 0..<alphabet_count {
+    for sym in 0..<dfa.alphabet_count {
       let prev_to = if dfa.dead_state() == prev_from.to_int() {
         dfa.dead_state()
       } else {
@@ -148,5 +150,10 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
   for final_ in dfa.finals {
     finals.add(map[final_])
   }
-  DFA::{ initial, finals, transition: edfat }
+  DFA::{
+    initial,
+    finals,
+    transition: edfat,
+    alphabet_count: dfa.alphabet_count,
+  }
 }
