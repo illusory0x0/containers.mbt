@@ -1,4 +1,9 @@
 ///|
+pub fn NFA::alphabet(nfa : NFA) -> Iter[Symbol] {
+  Int::until(0, nfa.alphabet_count).map(Symbol(_))
+}
+
+///|
 pub fn NFA::powerset_construction(nfa : NFA) -> RDFA {
   let nfat = nfa.nfat
   let pending = []

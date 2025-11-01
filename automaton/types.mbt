@@ -95,7 +95,7 @@ pub(all) enum Label {
 } derive(Eq, Show, ToJson, Compare, Hash)
 
 ///|
-struct DFASymbol(Int) derive(Eq, Show, ToJson, Compare, Hash)
+struct Symbol(Int) derive(Eq, Show, ToJson, Compare, Hash)
 
 ///|
 /// NFA state is represented by integer indices
