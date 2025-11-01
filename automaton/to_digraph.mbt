@@ -73,7 +73,7 @@ pub fn RDFA::to_digraph(
 ) -> @graphviz.Digraph {
   let map : Map[NFASS, Int] = {}
   let mut count = 0
-  for dfs_state, _ in self.dfat {
+  for dfs_state, _ in self.transition {
     map[dfs_state] = count
     count += 1
   }
@@ -104,7 +104,7 @@ pub fn RDFA::to_digraph(
     }
   }
 
-  for initial, trans in self.dfat {
+  for initial, trans in self.transition {
     add_fresh_state(initial)
     if !initial.is_empty() {
       for sym, final_ in trans {
@@ -145,7 +145,7 @@ pub fn DFA::to_digraph(
     }
   }
 
-  for initial, trans in self.edfat {
+  for initial, trans in self.transition {
     add_fresh_state(initial)
     for sym, final_ in trans {
       connect(initial, sym, final_)
@@ -195,5 +195,5 @@ pub fn NFA::to_digraph(
   nfa : NFA,
   label_to_letter~ : (Label) -> Char,
 ) -> @graphviz.Digraph {
-  nfa.nfat.to_digraph(label_to_letter~)
+  nfa.transition.to_digraph(label_to_letter~)
 }

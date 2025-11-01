@@ -30,7 +30,7 @@ fn regex_to_nfa(regex : Regex, alphabet_count~ : Int) -> NFA {
 
 ///|
 fn regex_to_nfat(regex : Regex, alphabet_count~ : Int) -> NFAT {
-  regex.to_nfa(initial=ToplevelInitialState, alphabet_count~).nfat
+  regex.to_nfa(initial=ToplevelInitialState, alphabet_count~).transition
 }
 
 ///|

@@ -65,5 +65,5 @@ pub fn Regex::to_nfa(
   }
 
   let { initial, final_ } = dfs(nfa)
-  { initial, final_, nfat, alphabet_count }
+  { initial, final_, transition: nfat, alphabet_count }
 }

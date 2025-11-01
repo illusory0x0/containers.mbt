@@ -1,6 +1,6 @@
 ///|
 pub fn DFA::dead_state(self : DFA) -> DFAS {
-  self.edfat.length()
+  self.transition.length()
 }
 
 ///|
@@ -14,7 +14,7 @@ pub fn DFA::reverse_transition(
     alphabet_count,
     _ => DFASS::empty(),
   ))
-  for from, trans in dfa.edfat {
+  for from, trans in dfa.transition {
     for sym in 0..<alphabet_count {
       let to = trans[sym]
       result[to.to_int()][sym].add(from)
@@ -135,7 +135,7 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
       let prev_to = if dfa.dead_state() == prev_from.to_int() {
         dfa.dead_state()
       } else {
-        dfa.edfat.trans(prev_from, sym)
+        dfa.transition.trans(prev_from, sym)
       }
       let to = map[prev_to]
       if from != partitions.length() - 1 {
@@ -148,5 +148,5 @@ pub fn DFA::minimize(dfa : DFA, alphabet_count : Int) -> DFA {
   for final_ in dfa.finals {
     finals.add(map[final_])
   }
-  DFA::{ initial, finals, edfat }
+  DFA::{ initial, finals, transition: edfat }
 }

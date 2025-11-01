@@ -24,3 +24,8 @@ fn RDFAT::add_transition(
     }
   })
 }
+
+///|
+fn RDFAT::new() -> RDFAT {
+  Map::new()
+}

@@ -17,7 +17,7 @@ const ToplevelInitialState : Int = 0
 pub struct DFA {
   initial : DFAS
   finals : DFASS
-  edfat : DFAT
+  transition : DFAT
 }
 fn DFA::dead_state(Self) -> DFAS
 fn DFA::minimize(Self, Int) -> Self
@@ -47,22 +47,13 @@ impl Hash for DFASS
 impl Show for DFASS
 impl Sub for DFASS
 
-type DFASymbol
-fn DFASymbol::from(Int) -> Self
-fn DFASymbol::to_int(Self) -> Int
-impl Compare for DFASymbol
-impl Eq for DFASymbol
-impl Hash for DFASymbol
-impl Show for DFASymbol
-impl ToJson for DFASymbol
-
 type DFAT
 fn DFAT::iter2(Self) -> Iter2[DFAS, FixedArray[DFAS]]
 fn DFAT::length(Self) -> Int
 fn DFAT::op_get(Self, DFAS) -> FixedArray[DFAS]
 fn DFAT::op_set(Self, DFAS, FixedArray[DFAS]) -> Unit
-fn DFAT::set_trans(Self, DFAS, DFASymbol, DFAS) -> Unit
-fn DFAT::trans(Self, DFAS, DFASymbol) -> DFAS
+fn DFAT::set_trans(Self, DFAS, Symbol, DFAS) -> Unit
+fn DFAT::trans(Self, DFAS, Symbol) -> DFAS
 impl Eq for DFAT
 impl Show for DFAT
 impl ToJson for DFAT
@@ -81,8 +72,11 @@ pub(all) struct NFA {
   initial : NFAS
   final_ : NFAS
   alphabet_count : Int
-  nfat : NFAT
+  transition : NFAT
 }
+fn NFA::alphabet(Self) -> Iter[Symbol]
+fn NFA::epsilon_closure(Self, NFASS) -> NFASS
+fn NFA::move_(Self, NFASS, Symbol) -> NFASS
 fn NFA::powerset_construction(Self) -> RDFA
 fn NFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Eq for NFA
@@ -133,7 +127,7 @@ impl ToJson for NFAT
 pub struct RDFA {
   initial : NFASS
   finals : @set.Set[NFASS]
-  dfat : RDFAT
+  transition : RDFAT
   alphabet_count : Int
 }
 fn RDFA::to_dfa(Self) -> DFA
@@ -143,12 +137,12 @@ impl ToJson for RDFA
 
 type RDFAT
 fn RDFAT::contains(Self, NFASS) -> Bool
-fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Label, NFASS]]
+fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Symbol, NFASS]]
 fn RDFAT::keys(Self) -> Iter[NFASS]
 fn RDFAT::length(Self) -> Int
-fn RDFAT::op_get(Self, NFASS) -> Map[Label, NFASS]
-fn RDFAT::op_set(Self, NFASS, Map[Label, NFASS]) -> Unit
-fn RDFAT::update(Self, NFASS, (Map[Label, NFASS]?) -> Map[Label, NFASS]?) -> Unit
+fn RDFAT::op_get(Self, NFASS) -> Map[Symbol, NFASS]
+fn RDFAT::op_set(Self, NFASS, Map[Symbol, NFASS]) -> Unit
+fn RDFAT::update(Self, NFASS, (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
 impl ToJson for RDFAT
@@ -177,6 +171,15 @@ impl Compare for Regex
 impl Eq for Regex
 impl Show for Regex
 impl ToJson for Regex
+
+type Symbol
+fn Symbol::from(Int) -> Self
+fn Symbol::to_int(Self) -> Int
+impl Compare for Symbol
+impl Eq for Symbol
+impl Hash for Symbol
+impl Show for Symbol
+impl ToJson for Symbol
 
 // Type aliases
 

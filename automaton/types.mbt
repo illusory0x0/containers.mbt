@@ -22,7 +22,7 @@ pub(all) struct NFA {
   initial : NFAS
   final_ : NFAS
   alphabet_count : Int
-  nfat : NFAT
+  transition : NFAT
 } derive(Eq, Show, ToJson)
 
 ///|
@@ -59,7 +59,7 @@ struct RDFAT(Map[NFASS, Map[Symbol, NFASS]]) derive(Eq, Show, ToJson)
 pub struct RDFA {
   initial : NFASS
   finals : Set[NFASS]
-  dfat : RDFAT
+  transition : RDFAT
   alphabet_count : Int
 } derive(ToJson, Show)
 
@@ -82,7 +82,7 @@ pub struct NFAC {
 pub struct DFA {
   initial : DFAS
   finals : DFASS
-  edfat : DFAT
+  transition : DFAT
 }
 
 ///|
