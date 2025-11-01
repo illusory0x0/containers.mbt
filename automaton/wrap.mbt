@@ -236,19 +236,6 @@ pub fn NFAS::to_int(self : NFAS) -> Int = "%identity"
 ///|
 pub fn DFAS::to_int(self : DFAS) -> Int = "%identity"
 
-// ///|
-// pub fn Label::from(val : Int) -> Label {
-//   Label::Symbol(val)
-// }
-
-// ///|
-// pub fn Label::to_int(self : Label) -> Int {
-//   match self {
-//     Label::Symbol(val) => val + 1
-//     Label::Epsilon => 0
-//   }
-// }
-
 ///|
 pub fn DFASymbol::from(val : Int) -> DFASymbol = "%identity"
 
