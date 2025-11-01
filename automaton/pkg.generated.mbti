@@ -27,6 +27,13 @@ fn DFA::minimize_map(Self, @set.Set[DFASS]) -> Map[DFAS, DFAS]
 fn DFA::partition(Self) -> @set.Set[DFASS]
 fn DFA::reverse_transition(Self) -> FixedArray[FixedArray[DFASS]]
 fn DFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
+impl Show for DFA
+impl ToJson for DFA
+
+type DFAD
+fn DFAD::full_match(Self, String) -> Bool
+impl Show for DFAD
+impl ToJson for DFAD
 
 type DFAS
 fn DFAS::from(Int) -> Self
@@ -49,6 +56,7 @@ impl Eq for DFASS
 impl Hash for DFASS
 impl Show for DFASS
 impl Sub for DFASS
+impl ToJson for DFASS
 
 type DFAT
 fn DFAT::iter2(Self) -> Iter2[DFAS, FixedArray[DFAS]]
@@ -185,6 +193,28 @@ impl Eq for Symbol
 impl Hash for Symbol
 impl Show for Symbol
 impl ToJson for Symbol
+
+type SymbolMap
+fn SymbolMap::get(Self, Char) -> Symbol?
+fn SymbolMap::length(Self) -> Int
+impl Eq for SymbolMap
+impl Hash for SymbolMap
+impl Show for SymbolMap
+impl ToJson for SymbolMap
+
+type URegex
+fn URegex::choice(Self, Self) -> Self
+fn URegex::concat(Self, Self) -> Self
+fn URegex::epsilon() -> Self
+fn URegex::interval_table(Self) -> FixedArray[Int]
+fn URegex::range(Char, Char) -> Self
+fn URegex::repeat(Self) -> Self
+fn URegex::to_dfad(Self) -> DFAD
+fn URegex::to_regex(Self) -> (Regex, SymbolMap)
+impl Compare for URegex
+impl Eq for URegex
+impl Show for URegex
+impl ToJson for URegex
 
 // Type aliases
 

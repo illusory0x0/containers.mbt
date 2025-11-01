@@ -143,4 +143,3 @@ pub fn DFAD::full_match(dfad : DFAD, input : String) -> Bool {
   }
   dfa.finals.contains(state)
 }
-
