@@ -23,7 +23,7 @@ fn DFA::dead_state(Self) -> DFAS
 fn DFA::minimize(Self, Int) -> Self
 fn DFA::partition(Self, Int) -> @set.Set[DFASS]
 fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[DFASS]]
-fn DFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
+fn DFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 
 type DFAS
 fn DFAS::from(Int) -> Self
@@ -84,7 +84,7 @@ pub(all) struct NFA {
   nfat : NFAT
 }
 fn NFA::powerset_construction(Self) -> RDFA
-fn NFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
+fn NFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Eq for NFA
 impl Show for NFA
 impl ToJson for NFA
@@ -125,7 +125,7 @@ fn NFAT::iter2(Self) -> Iter2[NFAS, Map[Label, NFASS]]
 fn NFAT::length(Self) -> Int
 fn NFAT::op_get(Self, NFAS) -> Map[Label, NFASS]
 fn NFAT::op_set(Self, NFAS, Map[Label, NFASS]) -> Unit
-fn NFAT::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
+fn NFAT::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Eq for NFAT
 impl Show for NFAT
 impl ToJson for NFAT
@@ -137,7 +137,7 @@ pub struct RDFA {
   alphabet_count : Int
 }
 fn RDFA::to_dfa(Self) -> DFA
-fn RDFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
+fn RDFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Show for RDFA
 impl ToJson for RDFA
 
@@ -159,7 +159,7 @@ pub(all) enum RNFA {
   Choice(initial~ : NFAS, RNFA, RNFA, final_~ : NFAS)
   Repeat(initial~ : NFAS, RNFA, final_~ : NFAS)
 }
-fn RNFA::to_digraph(Self, symbol_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
+fn RNFA::to_digraph(Self, label_to_letter~ : (Label) -> Char) -> @graphviz.Digraph
 impl Compare for RNFA
 impl Eq for RNFA
 impl Show for RNFA
