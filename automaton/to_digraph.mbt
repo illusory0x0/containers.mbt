@@ -92,8 +92,8 @@ pub fn RDFA::to_digraph(
     { from, to, label: Some(String::make(1, label)) }
   }
 
-  fn connect(from : NFASS, sym : Label, to : NFASS) {
-    edges.push(mk_edge(from, label_to_letter(sym), to))
+  fn connect(from : NFASS, sym : Symbol, to : NFASS) {
+    edges.push(mk_edge(from, label_to_letter(Symbol(sym.0)), to))
   }
 
   fn add_fresh_state(s : NFASS) {

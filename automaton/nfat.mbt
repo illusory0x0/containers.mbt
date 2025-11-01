@@ -48,10 +48,10 @@ fn NFAT::epsilon_closure(nfat : NFAT, initials : NFASS) -> NFASS {
 }
 
 ///|
-fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Label) -> NFASS {
+fn NFAT::move_(nfat : NFAT, initials : NFASS, sym : Symbol) -> NFASS {
   let result = NFASS::empty()
   for initial in initials {
-    for final_ in nfat.trans(initial, sym) {
+    for final_ in nfat.trans(initial, Symbol(sym.0)) {
       result.add(final_)
     }
   }

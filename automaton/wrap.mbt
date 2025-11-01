@@ -97,7 +97,7 @@ pub fn DFASS::contains(set : DFASS, val : DFAS) -> Bool {
 }
 
 ///|
-pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFASS, Map[Label, NFASS]] {
+pub fn RDFAT::iter2(self : RDFAT) -> Iter2[NFASS, Map[Symbol, NFASS]] {
   self.0.iter2()
 }
 
@@ -120,7 +120,7 @@ pub fn RDFAT::contains(self : RDFAT, val : NFASS) -> Bool {
 pub fn RDFAT::update(
   self : RDFAT,
   key : NFASS,
-  f : (Map[Label, NFASS]?) -> Map[Label, NFASS]?,
+  f : (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?,
 ) -> Unit {
   self.0.update(key, f)
 }
@@ -129,13 +129,13 @@ pub fn RDFAT::update(
 pub fn RDFAT::op_set(
   self : RDFAT,
   key : NFASS,
-  val : Map[Label, NFASS],
+  val : Map[Symbol, NFASS],
 ) -> Unit {
   self.0[key] = val
 }
 
 ///|
-pub fn RDFAT::op_get(self : RDFAT, key : NFASS) -> Map[Label, NFASS] {
+pub fn RDFAT::op_get(self : RDFAT, key : NFASS) -> Map[Symbol, NFASS] {
   self.0[key]
 }
 
