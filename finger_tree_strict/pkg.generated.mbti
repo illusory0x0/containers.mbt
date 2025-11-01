@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "illusory0x0/containers/finger_tree_strict"
+package "illusory0x0/finger_tree_strict"
 
 import(
-  "illusory0x0/containers/graphviz"
+  "illusory0x0/graphviz"
 )
 
 // Values

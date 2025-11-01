@@ -21,13 +21,20 @@ priv enum Tree[A] {
 }
 
 ///|
-fnalias Lazy::(new as spine, from_val as spine_val)
+fn[A] spine(f : () -> FingerTree[A]) -> Lazy[FingerTree[A]] {
+  Lazy::new(f)
+}
 
 ///|
-typealias @lazy.Lazy
+fn[A] spine_val(ft : FingerTree[A]) -> Lazy[FingerTree[A]] {
+  Lazy::from_val(ft)
+}
 
 ///|
-typealias Lazy[FingerTree[A]] as Spine[A]
+using @lazy {type Lazy}
+
+///|
+type Spine[A] = Lazy[FingerTree[A]]
 
 ///|
 enum FingerTree[A] {

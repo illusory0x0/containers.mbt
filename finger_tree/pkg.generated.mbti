@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "illusory0x0/containers/finger_tree"
+package "illusory0x0/finger_tree"
 
 import(
-  "illusory0x0/containers/graphviz"
-  "illusory0x0/containers/lazy"
+  "illusory0x0/graphviz"
+  "illusory0x0/lazy"
 )
 
 // Values

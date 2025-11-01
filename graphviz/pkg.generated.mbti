@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "illusory0x0/containers/graphviz"
+package "illusory0x0/graphviz"
 
 // Values
 
@@ -11,8 +11,6 @@ pub(all) struct Digraph {
   edges : Array[Edge]
   rankdir : Direction
 }
-fn Digraph::output(Self, &Logger) -> Unit // from trait `Show`
-fn Digraph::to_string(Self) -> String // from trait `Show`
 impl Show for Digraph
 
 pub(all) enum Direction {

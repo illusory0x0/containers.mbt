@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "illusory0x0/containers/two_three_four_tree"
+package "illusory0x0/two_three_four_tree"
 
 import(
-  "illusory0x0/containers/graphviz"
+  "illusory0x0/graphviz"
 )
 
 // Values

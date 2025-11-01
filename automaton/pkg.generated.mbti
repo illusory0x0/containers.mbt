@@ -28,16 +28,8 @@ fn DFA::reverse_transition(Self, Int) -> FixedArray[FixedArray[DFASS]]
 fn DFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
 
 type DFAS
-fn DFAS::equal(Self, Self) -> Bool // from trait `Eq`
 fn DFAS::from(Int) -> Self
-fn DFAS::hash(Self) -> Int // from trait `Hash`
-fn DFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn DFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn DFAS::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFAS::to_int(Self) -> Int
-fn DFAS::to_json(Self) -> Json // from trait `ToJson`
-fn DFAS::to_string(Self) -> String // from trait `Show`
 impl Eq for DFAS
 impl Hash for DFAS
 impl Show for DFAS
@@ -47,21 +39,10 @@ type DFASS
 fn DFASS::add(Self, DFAS) -> Unit
 fn DFASS::contains(Self, DFAS) -> Bool
 fn DFASS::empty() -> Self
-fn DFASS::equal(Self, Self) -> Bool // from trait `Eq`
-fn DFASS::hash(Self) -> Int // from trait `Hash`
-fn DFASS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn DFASS::is_empty(Self) -> Bool
 fn DFASS::iter(Self) -> Iter[DFAS]
-fn DFASS::land(Self, Self) -> Self // from trait `BitAnd`
 fn DFASS::length(Self) -> Int
-#deprecated
-fn DFASS::op_equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn DFASS::op_sub(Self, Self) -> Self // from trait `Sub`
-fn DFASS::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFASS::singleton(DFAS) -> Self
-fn DFASS::sub(Self, Self) -> Self // from trait `Sub`
-fn DFASS::to_string(Self) -> String // from trait `Show`
 impl BitAnd for DFASS
 impl Eq for DFASS
 impl Hash for DFASS
@@ -69,17 +50,11 @@ impl Show for DFASS
 impl Sub for DFASS
 
 type DFAT
-fn DFAT::equal(Self, Self) -> Bool // from trait `Eq`
 fn DFAT::iter2(Self) -> Iter2[DFAS, FixedArray[DFAS]]
 fn DFAT::length(Self) -> Int
-#deprecated
-fn DFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn DFAT::op_get(Self, DFAS) -> FixedArray[DFAS]
 fn DFAT::op_set(Self, DFAS, FixedArray[DFAS]) -> Unit
-fn DFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn DFAT::set_trans(Self, DFAS, Symbol, DFAS) -> Unit
-fn DFAT::to_json(Self) -> Json // from trait `ToJson`
-fn DFAT::to_string(Self) -> String // from trait `Show`
 fn DFAT::trans(Self, DFAS, Symbol) -> DFAS
 impl Eq for DFAT
 impl Show for DFAT
@@ -91,14 +66,8 @@ pub(all) struct NFA {
   alphabet_count : Int
   nfat : NFAT
 }
-fn NFA::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn NFA::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn NFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFA::powerset_construction(Self) -> RDFA
 fn NFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
-fn NFA::to_json(Self) -> Json // from trait `ToJson`
-fn NFA::to_string(Self) -> String // from trait `Show`
 impl Eq for NFA
 impl Show for NFA
 impl ToJson for NFA
@@ -109,17 +78,8 @@ pub struct NFAC {
 }
 
 type NFAS
-fn NFAS::compare(Self, Self) -> Int // from trait `Compare`
-fn NFAS::equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAS::from(Int) -> Self
-fn NFAS::hash(Self) -> Int // from trait `Hash`
-fn NFAS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn NFAS::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn NFAS::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFAS::to_int(Self) -> Int
-fn NFAS::to_json(Self) -> Json // from trait `ToJson`
-fn NFAS::to_string(Self) -> String // from trait `Show`
 impl Compare for NFAS
 impl Eq for NFAS
 impl Hash for NFAS
@@ -131,18 +91,10 @@ fn NFASS::add(Self, NFAS) -> Unit
 fn NFASS::contains(Self, NFAS) -> Bool
 fn NFASS::copy(Self) -> Self
 fn NFASS::empty() -> Self
-fn NFASS::equal(Self, Self) -> Bool // from trait `Eq`
-fn NFASS::hash(Self) -> Int // from trait `Hash`
-fn NFASS::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn NFASS::is_empty(Self) -> Bool
 fn NFASS::iter(Self) -> Iter[NFAS]
-#deprecated
-fn NFASS::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn NFASS::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFASS::singleton(NFAS) -> Self
 fn NFASS::to_array(Self) -> Array[NFAS]
-fn NFASS::to_json(Self) -> Json // from trait `ToJson`
-fn NFASS::to_string(Self) -> String // from trait `Show`
 fn NFASS::update_with_add(Self, NFAS) -> Self
 impl Eq for NFASS
 impl Hash for NFASS
@@ -150,19 +102,13 @@ impl Show for NFASS
 impl ToJson for NFASS
 
 type NFAT
-fn NFAT::equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAT::get(Self, NFAS) -> Map[Symbol, NFASS]?
 fn NFAT::iter(Self) -> Iter[Map[Symbol, NFASS]]
 fn NFAT::iter2(Self) -> Iter2[NFAS, Map[Symbol, NFASS]]
 fn NFAT::length(Self) -> Int
-#deprecated
-fn NFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn NFAT::op_get(Self, NFAS) -> Map[Symbol, NFASS]
 fn NFAT::op_set(Self, NFAS, Map[Symbol, NFASS]) -> Unit
-fn NFAT::output(Self, &Logger) -> Unit // from trait `Show`
 fn NFAT::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
-fn NFAT::to_json(Self) -> Json // from trait `ToJson`
-fn NFAT::to_string(Self) -> String // from trait `Show`
 impl Eq for NFAT
 impl Show for NFAT
 impl ToJson for NFAT
@@ -173,27 +119,18 @@ pub struct RDFA {
   dfat : RDFAT
   alphabet_count : Int
 }
-fn RDFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn RDFA::to_dfa(Self) -> DFA
 fn RDFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
-fn RDFA::to_json(Self) -> Json // from trait `ToJson`
-fn RDFA::to_string(Self) -> String // from trait `Show`
 impl Show for RDFA
 impl ToJson for RDFA
 
 type RDFAT
 fn RDFAT::contains(Self, NFASS) -> Bool
-fn RDFAT::equal(Self, Self) -> Bool // from trait `Eq`
 fn RDFAT::iter2(Self) -> Iter2[NFASS, Map[Symbol, NFASS]]
 fn RDFAT::keys(Self) -> Iter[NFASS]
 fn RDFAT::length(Self) -> Int
-#deprecated
-fn RDFAT::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn RDFAT::op_get(Self, NFASS) -> Map[Symbol, NFASS]
 fn RDFAT::op_set(Self, NFASS, Map[Symbol, NFASS]) -> Unit
-fn RDFAT::output(Self, &Logger) -> Unit // from trait `Show`
-fn RDFAT::to_json(Self) -> Json // from trait `ToJson`
-fn RDFAT::to_string(Self) -> String // from trait `Show`
 fn RDFAT::update(Self, NFASS, (Map[Symbol, NFASS]?) -> Map[Symbol, NFASS]?) -> Unit
 impl Eq for RDFAT
 impl Show for RDFAT
@@ -205,14 +142,7 @@ pub(all) enum RNFA {
   Choice(initial~ : NFAS, RNFA, RNFA, final_~ : NFAS)
   Repeat(initial~ : NFAS, RNFA, final_~ : NFAS)
 }
-fn RNFA::compare(Self, Self) -> Int // from trait `Compare`
-fn RNFA::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn RNFA::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn RNFA::output(Self, &Logger) -> Unit // from trait `Show`
 fn RNFA::to_digraph(Self, symbol_to_letter~ : (Symbol) -> Char) -> @graphviz.Digraph
-fn RNFA::to_json(Self) -> Json // from trait `ToJson`
-fn RNFA::to_string(Self) -> String // from trait `Show`
 impl Compare for RNFA
 impl Eq for RNFA
 impl Show for RNFA
@@ -224,32 +154,16 @@ pub(all) enum Regex {
   Repeat(Regex)
   Symbol(Symbol)
 }
-fn Regex::compare(Self, Self) -> Int // from trait `Compare`
-fn Regex::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn Regex::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn Regex::output(Self, &Logger) -> Unit // from trait `Show`
-fn Regex::to_json(Self) -> Json // from trait `ToJson`
 fn Regex::to_nfa(Self, initial~ : Int, alphabet_count~ : Int) -> NFA
 fn Regex::to_nfac(Self, initial~ : Int) -> NFAC
-fn Regex::to_string(Self) -> String // from trait `Show`
 impl Compare for Regex
 impl Eq for Regex
 impl Show for Regex
 impl ToJson for Regex
 
 type Symbol
-fn Symbol::compare(Self, Self) -> Int // from trait `Compare`
-fn Symbol::equal(Self, Self) -> Bool // from trait `Eq`
 fn Symbol::from(Int) -> Self
-fn Symbol::hash(Self) -> Int // from trait `Hash`
-fn Symbol::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn Symbol::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn Symbol::output(Self, &Logger) -> Unit // from trait `Show`
 fn Symbol::to_int(Self) -> Int
-fn Symbol::to_json(Self) -> Json // from trait `ToJson`
-fn Symbol::to_string(Self) -> String // from trait `Show`
 impl Compare for Symbol
 impl Eq for Symbol
 impl Hash for Symbol

@@ -1,5 +1,5 @@
 ///|
-typealias @list.List
+using @list {type List}
 
 ///|
 fn[A] TwoThreeFourTree::to_list(tree : TwoThreeFourTree[A]) -> List[A] {
@@ -14,7 +14,7 @@ test "cons" (t : @test.T) {
   }
   inspect(
     tree.to_list(),
-    content="@list.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31])",
+    content="@list.from_array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31])",
   )
   t.writeln(tree.to_node_payload_tree().to_digraph())
   t.snapshot(filename="two_three_four_cons.dot")
@@ -28,7 +28,7 @@ test "snoc" (t : @test.T) {
   }
   inspect(
     tree.to_list(),
-    content="@list.of([31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])",
+    content="@list.from_array([31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])",
   )
   t.writeln(tree.to_node_payload_tree().to_digraph())
   t.snapshot(filename="two_three_four_snoc.dot")

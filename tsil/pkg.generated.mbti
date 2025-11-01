@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "illusory0x0/containers/tsil"
+package "illusory0x0/tsil"
 
 import(
-  "illusory0x0/containers/graphviz"
+  "illusory0x0/graphviz"
 )
 
 // Values
