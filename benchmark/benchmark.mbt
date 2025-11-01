@@ -1,17 +1,17 @@
 ///|
-typealias @finger_tree.FingerTree
+using @finger_tree {type FingerTree}
 
 ///|
-typealias @illusory0x0/list.List
+using @illusory0x0/list {type List}
 
 ///|
-typealias @two_three_four_tree.TwoThreeFourTree
+using @two_three_four_tree {type TwoThreeFourTree}
 
 ///|
-typealias @two_three_tree.TwoThreeTree
+using @two_three_tree {type TwoThreeTree}
 
 ///|
-typealias @finger_tree_strict.FingerTree as FingerTreeStrict
+using @finger_tree_strict {type FingerTree as FingerTreeStrict}
 
 ///|
 test (b : @bench.T) {
