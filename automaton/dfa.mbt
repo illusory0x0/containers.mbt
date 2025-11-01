@@ -17,9 +17,9 @@ pub fn DFA::reverse_transition(dfa : DFA) -> FixedArray[FixedArray[DFASS]] {
     _ => DFASS::empty(),
   ))
   for from, trans in dfa.transition {
-    for sym in 0..<dfa.alphabet_count {
-      let to = trans[sym]
-      result[to.to_int()][sym].add(from)
+    for sym in dfa.alphabet() {
+      let to = trans[sym.to_int()]
+      result[to.to_int()][sym.to_int()].add(from)
     }
   }
   result
@@ -134,14 +134,14 @@ pub fn DFA::minimize(dfa : DFA) -> DFA {
   let partitions = dfa.partition()
   let map = dfa.minimize_map(partitions)
   let state_count = partitions.length()
-  let edfat : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
+  let transition : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
     dfa.alphabet_count,
     DFAS(0),
   ))
   for part in partitions {
     let prev_from = part.iter().head().unwrap()
     let from = map[prev_from]
-    for sym in 0..<dfa.alphabet_count {
+    for sym in dfa.alphabet() {
       let prev_to = if dfa.dead_state() == prev_from.to_int() {
         dfa.dead_state()
       } else {
@@ -149,7 +149,7 @@ pub fn DFA::minimize(dfa : DFA) -> DFA {
       }
       let to = map[prev_to]
       if from != partitions.length() - 1 {
-        edfat.set_trans(from, sym, to)
+        transition.set_trans(from, sym, to)
       }
     }
   }
@@ -158,10 +158,5 @@ pub fn DFA::minimize(dfa : DFA) -> DFA {
   for final_ in dfa.finals {
     finals.add(map[final_])
   }
-  DFA::{
-    initial,
-    finals,
-    transition: edfat,
-    alphabet_count: dfa.alphabet_count,
-  }
+  DFA::{ initial, finals, transition, alphabet_count: dfa.alphabet_count }
 }
