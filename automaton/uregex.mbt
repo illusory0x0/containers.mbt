@@ -18,6 +18,7 @@ pub fn URegex::symbol_map(ur : URegex) -> SymbolMap {
   // add the Unicode impossible character 0x10FFFF to
   // enforce generate the dead state
   let char_to_idx = [0x10FFFF]
+  // here we use `start` in to represent [start,end) code point range
   let start_table = [0x10FFFF]
   fn dfs(ur : URegex) {
     match ur {
@@ -34,6 +35,7 @@ pub fn URegex::symbol_map(ur : URegex) -> SymbolMap {
       Range(start~, end~) => {
         char_to_idx.push(start)
         char_to_idx.push(end)
+        // collect the actual in use code point range
         start_table.push(start)
       }
     }
@@ -45,6 +47,7 @@ pub fn URegex::symbol_map(ur : URegex) -> SymbolMap {
   start_table.sort()
   start_table.dedup()
   let char_to_idx = FixedArray::makei(char_to_idx.length(), idx => char_to_idx[idx])
+  // shrink the symbol map exclude the unused code point ranges
   let idx_to_sym : FixedArray[_] = FixedArray::makei(start_table.length(), idx => char_to_idx
     .binary_search(start_table[idx])
     .unwrap())

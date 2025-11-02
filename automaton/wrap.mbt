@@ -244,10 +244,14 @@ pub fn Symbol::to_int(self : Symbol) -> Int = "%identity"
 
 ///|
 pub fn SymbolMap::get(self : SymbolMap, ch : Char) -> Symbol? {
+  // binary search to find the code point range
+  // here we use `start` to represent [start,end) code point range
   let idx = match self.char_to_idx.binary_search(ch.to_int()) {
     Ok(idx) => idx
+    // if ch in [start,end), return start's index
     Err(idx) => idx - 1
   }
+  // map code point range index to symbol
   match self.idx_to_sym.binary_search(idx) {
     Ok(sym) => Some(Symbol(sym))
     Err(_) => None
