@@ -32,9 +32,11 @@ fn RDFA::nfass_to_dfas_map(rdfa : RDFA) -> Map[NFASS, DFAS] {
 
 ///|
 pub fn RDFA::to_dfa(rdfa : RDFA) -> DFA {
-  let state_count = rdfa.transition.length()
-  // construct DFAT exclude the dead state 
-  let transition : DFAT = FixedArray::makei(state_count - 1, _ => FixedArray::make(
+  let state_count = rdfa.transition
+    .states()
+    .filter(nfass => !nfass.is_empty())
+    .count()
+  let transition : DFAT = FixedArray::makei(state_count, _ => FixedArray::make(
     rdfa.alphabet_count,
     DFAS(0),
   ))

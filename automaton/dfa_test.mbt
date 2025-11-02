@@ -142,10 +142,7 @@ test "DFA/minimize/choice and repeat/raw" (t : @test.T) {
 }
 
 ///|
-test "panic DFA/minimize/all/raw" (t : @test.T) {
-  // This is expected behavior
-  // RDFA::to_dfa depends on the DFA having a dead state.
-  // if the DFA accept the `.*` language it would cause no dead state.
+test "DFA/minimize/all/raw" (t : @test.T) {
   let sym : Regex = Choice(
     Symbol(letter_to_label('a')),
     Symbol(letter_to_label('b')),
@@ -156,7 +153,23 @@ test "panic DFA/minimize/all/raw" (t : @test.T) {
   let dfa = rdfa.to_dfa()
   let digraph = dfa_to_digraph(dfa)
   t.writeln(digraph)
-  t.snapshot(filename="dfa_minimize_choice_repeat_raw.dot")
+  t.snapshot(filename="dfa_minimize_non_dead_state_raw.dot")
+}
+
+///|
+test "DFA/minimize/all" (t : @test.T) {
+  let sym : Regex = Choice(
+    Symbol(letter_to_label('a')),
+    Symbol(letter_to_label('b')),
+  )
+  let regex : Regex = Repeat(sym)
+  let nfa = regex_to_nfa(regex, alphabet_count=2)
+  let rdfa = nfa.powerset_construction()
+  let dfa = rdfa.to_dfa()
+  let dfa = dfa.minimize()
+  let digraph = dfa_to_digraph(dfa)
+  t.writeln(digraph)
+  t.snapshot(filename="dfa_minimize_non_dead_state.dot")
 }
 
 ///|

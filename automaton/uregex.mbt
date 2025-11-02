@@ -15,11 +15,9 @@ pub fn URegex::single(ch : Char) -> URegex {
 
 ///|
 pub fn URegex::symbol_map(ur : URegex) -> SymbolMap {
-  // add the Unicode impossible character 0x10FFFF to
-  // enforce generate the dead state
-  let char_to_idx = [0x10FFFF]
+  let char_to_idx = []
   // here we use `start` in to represent [start,end) code point range
-  let start_table = [0x10FFFF]
+  let start_table = []
   fn dfs(ur : URegex) {
     match ur {
       Concat(left, right) => {
