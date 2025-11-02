@@ -250,3 +250,6 @@ pub fn SymbolMap::get(self : SymbolMap, index : Char) -> Symbol? {
     Err(_) => None
   }
 }
+
+///|
+pub fn SymbolMap::length(self : SymbolMap) -> Int = "%fixedarray.length"

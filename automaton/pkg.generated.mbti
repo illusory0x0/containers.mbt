@@ -209,6 +209,7 @@ fn URegex::epsilon() -> Self
 fn URegex::interval_table(Self) -> FixedArray[Int]
 fn URegex::range(Char, Char) -> Self
 fn URegex::repeat(Self) -> Self
+fn URegex::single(Char) -> Self
 fn URegex::to_dfad(Self) -> DFAD
 fn URegex::to_regex(Self) -> (Regex, SymbolMap)
 impl Compare for URegex

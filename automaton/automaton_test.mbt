@@ -47,3 +47,11 @@ test {
   inspect(dfad.full_match("1abc"), content="false")
   inspect(dfad.full_match("0721"), content="false")
 }
+
+///|
+test {
+  let regex = URegex::single('a')
+  let dfad = regex.to_dfad()
+  inspect(dfad.full_match("a"), content="true")
+  inspect(dfad.full_match("b"), content="false")
+}
