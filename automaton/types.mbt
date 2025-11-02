@@ -8,7 +8,7 @@ pub(all) enum Regex {
 } derive(Eq, Show, Compare, ToJson)
 
 ///|
-enum URegex {
+pub(all) enum URegex {
   Concat(URegex, URegex)
   Choice(URegex, URegex)
   Repeat(URegex)

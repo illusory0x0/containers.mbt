@@ -202,7 +202,12 @@ impl Hash for SymbolMap
 impl Show for SymbolMap
 impl ToJson for SymbolMap
 
-type URegex
+pub(all) enum URegex {
+  Concat(URegex, URegex)
+  Choice(URegex, URegex)
+  Repeat(URegex)
+  Range(start~ : Int, end~ : Int)
+}
 fn URegex::choice(Self, Self) -> Self
 fn URegex::concat(Self, Self) -> Self
 fn URegex::epsilon() -> Self
