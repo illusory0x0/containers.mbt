@@ -13,6 +13,7 @@ pub(all) enum URegex {
   Choice(URegex, URegex)
   Repeat(URegex)
   Range(start~ : Int, end~ : Int)
+  Epsilon
 } derive(Eq, Show, Compare, ToJson)
 
 ///|

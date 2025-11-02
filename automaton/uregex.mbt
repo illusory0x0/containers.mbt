@@ -9,11 +9,6 @@ pub fn URegex::range(min : Char, max : Char) -> URegex {
 }
 
 ///|
-pub fn URegex::epsilon() -> URegex {
-  URegex::Range(start=0x10FFFF, end=0x110000)
-}
-
-///|
 pub fn URegex::single(ch : Char) -> URegex {
   URegex::range(ch, ch)
 }
@@ -32,7 +27,7 @@ pub fn URegex::interval_table(ur : URegex) -> FixedArray[Int] {
         dfs(bot)
       }
       Repeat(regex) => dfs(regex)
-      Range(start=0x10ffff, end=0x110000) => ()
+      Epsilon => ()
       Range(start~, end~) => {
         table.push(start)
         table.push(end)
@@ -65,7 +60,7 @@ pub fn URegex::to_regex(ur : URegex) -> (Regex, SymbolMap) {
       Concat(left, right) => Concat(dfa(left), dfa(right))
       Choice(top, bot) => Choice(dfa(top), dfa(bot))
       Repeat(regex) => Repeat(dfa(regex))
-      Range(start=0x10FFFF, end=0x110000) => Symbol(Epsilon)
+      Epsilon => Symbol(Epsilon)
       Range(start~, end~) => {
         let start = table.binary_search(start).unwrap()
         let end = table.binary_search(end).unwrap()
