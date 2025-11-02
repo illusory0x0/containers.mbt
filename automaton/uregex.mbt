@@ -1,19 +1,4 @@
 ///|
-pub fn URegex::concat(lhs : URegex, rhs : URegex) -> URegex {
-  URegex::Concat(lhs, rhs)
-}
-
-///|
-pub fn URegex::choice(lhs : URegex, rhs : URegex) -> URegex {
-  URegex::Choice(lhs, rhs)
-}
-
-///|
-pub fn URegex::repeat(expr : URegex) -> URegex {
-  URegex::Repeat(expr)
-}
-
-///|
 pub fn URegex::range(min : Char, max : Char) -> URegex {
   let start = min.to_int()
   let end = max.to_int() + 1
