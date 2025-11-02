@@ -243,13 +243,18 @@ pub fn Symbol::from(val : Int) -> Symbol = "%identity"
 pub fn Symbol::to_int(self : Symbol) -> Int = "%identity"
 
 ///|
-pub fn SymbolMap::get(self : SymbolMap, index : Char) -> Symbol? {
-  match self.0.binary_search(index.to_int()) {
-    Ok(idx) => Some(idx)
-    Err(idx) if idx > 0 => Some(idx - 1)
+pub fn SymbolMap::get(self : SymbolMap, ch : Char) -> Symbol? {
+  let idx = match self.char_to_idx.binary_search(ch.to_int()) {
+    Ok(idx) => idx
+    Err(idx) => idx - 1
+  }
+  match self.idx_to_sym.binary_search(idx) {
+    Ok(sym) => Some(Symbol(sym))
     Err(_) => None
   }
 }
 
 ///|
-pub fn SymbolMap::length(self : SymbolMap) -> Int = "%fixedarray.length"
+pub fn SymbolMap::length(self : SymbolMap) -> Int {
+  self.idx_to_sym.length()
+}

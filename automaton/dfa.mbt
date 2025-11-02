@@ -26,8 +26,6 @@ pub fn DFA::reverse_transition(dfa : DFA) -> FixedArray[FixedArray[DFASS]] {
 }
 
 ///|
-/// Partition the equivalent DFA states into sets of DFASS.
-/// the DFA which must contain a dead state, otherwise would panic.
 pub fn DFA::partition(dfa : DFA) -> Set[DFASS] {
   let result : Set[DFASS] = Set::new()
   let all : DFASS = Set::new()
@@ -129,7 +127,6 @@ pub fn DFA::minimize_map(dfa : DFA, partitions : Set[DFASS]) -> Map[DFAS, DFAS] 
 }
 
 ///|
-/// Minimize the DFA which must contain a dead state, otherwise would panic.
 pub fn DFA::minimize(dfa : DFA) -> DFA {
   let partitions = dfa.partition()
   let map = dfa.minimize_map(partitions)

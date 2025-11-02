@@ -14,8 +14,11 @@ pub fn URegex::single(ch : Char) -> URegex {
 }
 
 ///|
-pub fn URegex::interval_table(ur : URegex) -> FixedArray[Int] {
-  let table = []
+pub fn URegex::symbol_map(ur : URegex) -> SymbolMap {
+  // add the Unicode impossible character 0x10FFFF to
+  // enforce generate the dead state
+  let char_to_idx = [0x10FFFF]
+  let start_table = [0x10FFFF]
   fn dfs(ur : URegex) {
     match ur {
       Concat(left, right) => {
@@ -29,16 +32,23 @@ pub fn URegex::interval_table(ur : URegex) -> FixedArray[Int] {
       Repeat(regex) => dfs(regex)
       Epsilon => ()
       Range(start~, end~) => {
-        table.push(start)
-        table.push(end)
+        char_to_idx.push(start)
+        char_to_idx.push(end)
+        start_table.push(start)
       }
     }
   }
 
   dfs(ur)
-  table.sort()
-  table.dedup()
-  FixedArray::makei(table.length(), idx => table[idx])
+  char_to_idx.sort()
+  char_to_idx.dedup()
+  start_table.sort()
+  start_table.dedup()
+  let char_to_idx = FixedArray::makei(char_to_idx.length(), idx => char_to_idx[idx])
+  let idx_to_sym : FixedArray[_] = FixedArray::makei(start_table.length(), idx => char_to_idx
+    .binary_search(start_table[idx])
+    .unwrap())
+  SymbolMap::{ char_to_idx, idx_to_sym }
 }
 
 ///|
@@ -54,7 +64,8 @@ fn URegex::split(start : Int, end : Int) -> Regex {
 
 ///|
 pub fn URegex::to_regex(ur : URegex) -> (Regex, SymbolMap) {
-  let table = ur.interval_table()
+  let symbol_map = ur.symbol_map()
+  let { char_to_idx, idx_to_sym } = symbol_map
   fn dfa(ur : URegex) -> Regex {
     match ur {
       Concat(left, right) => Concat(dfa(left), dfa(right))
@@ -62,14 +73,19 @@ pub fn URegex::to_regex(ur : URegex) -> (Regex, SymbolMap) {
       Repeat(regex) => Repeat(dfa(regex))
       Epsilon => Symbol(Epsilon)
       Range(start~, end~) => {
-        let start = table.binary_search(start).unwrap()
-        let end = table.binary_search(end).unwrap()
-        URegex::split(start, end)
+        let idx_start = char_to_idx.binary_search(start).unwrap()
+        let idx_end = char_to_idx.binary_search(end).unwrap()
+        let sym_start = idx_to_sym.binary_search(idx_start).unwrap()
+        let sym_end = match idx_to_sym.binary_search(idx_end) {
+          Ok(sym) => sym
+          Err(sym) => sym
+        }
+        URegex::split(sym_start, sym_end)
       }
     }
   }
 
-  (dfa(ur), table)
+  (dfa(ur), symbol_map)
 }
 
 ///|

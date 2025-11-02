@@ -116,7 +116,11 @@ struct NFAS(Int) derive(Eq, Show, ToJson, Hash, Compare)
 struct DFAS(Int) derive(Eq, Show, ToJson, Hash)
 
 ///|
-struct SymbolMap(FixedArray[Int]) derive(Eq, Show, ToJson, Hash)
+struct SymbolMap{
+  char_to_idx : FixedArray[Int]
+  idx_to_sym : FixedArray[Int]
+
+}derive(Eq, Show, ToJson, Hash)
 
 ///|
 struct DFAD {
