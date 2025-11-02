@@ -55,3 +55,15 @@ test {
   inspect(dfad.full_match("a"), content="true")
   inspect(dfad.full_match("b"), content="false")
 }
+
+///|
+test {
+  let regex : URegex = Concat(URegex::single('+'), URegex::single('+'))
+  let dfad = regex.to_dfad()
+  inspect(dfad.full_match("++"), content="true")
+  // not match
+  inspect(dfad.full_match("+"), content="false")
+  inspect(dfad.full_match("+-"), content="false")
+  inspect(dfad.full_match("++-"), content="false")
+  inspect(dfad.full_match("a"), content="false")
+}
